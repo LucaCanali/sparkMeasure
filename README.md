@@ -1,6 +1,7 @@
 # Spark Measure 
 
-Spark Measure is a proof-of-concept tool for measuring Apache Spark performance metrics
+Spark Measure is a proof-of-concept tool for troubleshooting Apache Spark performance, 
+in particular for collecting and reporting performance metrics.
 * Created by Luca.Canali@cern.ch, March 2017
  
 It is based on using Spark Listeners as data source and collecting metrics into a ListBuffer of a case class. 
