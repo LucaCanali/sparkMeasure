@@ -4,9 +4,6 @@ import scala.collection.mutable.ListBuffer
 import java.io.{FileInputStream, ObjectInputStream, ObjectStreamClass}
 import java.nio.file.Paths
 
-/**
-  * Created by luca on 3/16/17.
-  */
 object Utils {
 
   /** boilerplate code for pretty printing, formatDuration code borrowed from Spark UIUtils */
