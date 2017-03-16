@@ -7,9 +7,6 @@ import org.apache.log4j.LogManager
 import org.apache.spark.SparkConf
 import org.apache.spark.scheduler.SparkListenerApplicationEnd
 
-/**
-  * Created by luca on 3/15/17.
-  */
 
 class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListener {
 
