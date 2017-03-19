@@ -39,7 +39,7 @@ import org.apache.log4j.LogManager
  */
 
 case class StageVals (jobId: Int, stageId: Int, name: String,
-                 submissionTime: Long, duration: Long, numTasks: Int,
+                 submissionTime: Long, completionTime: Long, stageDuration: Long, numTasks: Int,
                  executorRunTime: Long, executorCpuTime: Long,
                  executorDeserializeTime: Long, executorDeserializeCpuTime: Long,
                  resultSerializationTime: Long, jvmGCTime: Long, resultSize: Long, numUpdatedBlockStatuses: Int,
@@ -70,8 +70,8 @@ class StageInfoRecorderListener extends SparkListener {
     val stageInfo = stageCompleted.stageInfo
     val taskMetrics = stageInfo.taskMetrics
     val currentStage = StageVals(currentJobId, stageInfo.stageId, stageInfo.name, stageInfo.submissionTime.getOrElse(0L),
-      stageInfo.completionTime.getOrElse(0L) - stageInfo.submissionTime.getOrElse(0L), stageInfo.numTasks,
-      taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
+      stageInfo.completionTime.getOrElse(0L), stageInfo.completionTime.getOrElse(0L) - stageInfo.submissionTime.getOrElse(0L),
+      stageInfo.numTasks, taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
       taskMetrics.executorDeserializeTime, taskMetrics.executorDeserializeCpuTime / 1000000,
       taskMetrics.resultSerializationTime, taskMetrics.jvmGCTime, taskMetrics.resultSize,
       taskMetrics.updatedBlockStatuses.length, taskMetrics.diskBytesSpilled, taskMetrics.memoryBytesSpilled,
@@ -149,7 +149,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"and name like 'internal.metric%' " +
       s"group by name")
     println("\nAggregated Spark accumulables of type internal.metric:")
-    internalMetricsDf.show(100, false)
+    internalMetricsDf.show(200, false)
 
     val otherAccumulablesDf = sparkSession.sql(s"select jobId, stageId, name, value " +
       s"from AccumulablesMetrics " +
@@ -157,7 +157,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"and name not like 'internal.metric%'" +
       s"order by jobId, stageId, submissionTime")
     println("\nSpark accumulables of type != internal.metric:")
-    otherAccumulablesDf.show(100,false)
+    otherAccumulablesDf.show(200,false)
   }
 
   /** Custom aggreagations and post-processing of the metrics data */
@@ -165,7 +165,7 @@ case class StageMetrics(sparkSession: SparkSession) {
 
     createStageMetricsDF("PerfStageMetrics")
     val aggregateDF = sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
-      s"sum(duration), sum(executorRunTime), " +
+      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
       s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
       s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
       s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
@@ -174,9 +174,11 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
       s"from PerfStageMetrics " +
       s"where submissionTime between $beginSnapshot and $endSnapshot")
-
     val results = aggregateDF.take(1)
-    println("\nAggregated Spark stage metrics:")
+
+    println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
+    println(s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    println("Aggregated Spark stage metrics:")
 
     (aggregateDF.columns zip results(0).toSeq).foreach(r => {
       val name = r._1.toLowerCase()
@@ -191,9 +193,6 @@ case class StageMetrics(sparkSession: SparkSession) {
         else ""
       })
     })
-
-    println(s"SparkContex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
-    println(s"Scheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}\n")
   }
 
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
