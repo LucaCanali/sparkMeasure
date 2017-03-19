@@ -76,12 +76,17 @@ class TaskInfoRecorderListener extends SparkListener {
   override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
     val taskInfo = taskEnd.taskInfo
     val taskMetrics = taskEnd.taskMetrics
+    val gettingResultTime = {
+      if (taskInfo.gettingResultTime == 0L) 0L
+      else taskInfo.finishTime - taskInfo.gettingResultTime
+    }
+    val duration = taskInfo.finishTime - taskInfo.launchTime
     val currentTask = TaskVals(currentJobId, taskEnd.stageId, taskInfo.taskId, taskInfo.launchTime,
-      taskInfo.finishTime, taskInfo.finishTime - taskInfo.launchTime,
-      math.max(0L, taskInfo.finishTime - taskInfo.launchTime -
-        taskMetrics.executorRunTime - taskMetrics.executorDeserializeTime - taskMetrics.resultSerializationTime),
+      taskInfo.finishTime, duration,
+      math.max(0L, duration - taskMetrics.executorRunTime - taskMetrics.executorDeserializeTime -
+        taskMetrics.resultSerializationTime - gettingResultTime),
       taskInfo.executorId, taskInfo.host, encodeTaskLocality(taskInfo.taskLocality),
-      taskInfo.speculative, taskInfo.gettingResultTime, taskInfo.successful,
+      taskInfo.speculative, gettingResultTime, taskInfo.successful,
       taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
       taskMetrics.executorDeserializeTime, taskMetrics.executorDeserializeCpuTime / 1000000,
       taskMetrics.resultSerializationTime, taskMetrics.jvmGCTime, taskMetrics.resultSize,
