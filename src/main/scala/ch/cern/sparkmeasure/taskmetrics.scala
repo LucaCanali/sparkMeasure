@@ -39,7 +39,7 @@ import scala.collection.mutable.ListBuffer
  */
 
 case class TaskVals(jobId: Int, stageId: Int, index: Long, launchTime: Long, finishTime: Long,
-                duration: Long, executorId: String, host: String, taskLocality: Int,
+                duration: Long, schedulerDelay: Long, executorId: String, host: String, taskLocality: Int,
                 speculative: Boolean, gettingResultTime: Long, successful: Boolean,
                 executorRunTime: Long, executorCpuTime: Long,
                 executorDeserializeTime: Long, executorDeserializeCpuTime: Long,
@@ -77,8 +77,10 @@ class TaskInfoRecorderListener extends SparkListener {
     val taskInfo = taskEnd.taskInfo
     val taskMetrics = taskEnd.taskMetrics
     val currentTask = TaskVals(currentJobId, taskEnd.stageId, taskInfo.taskId, taskInfo.launchTime,
-      taskInfo.finishTime, taskInfo.finishTime - taskInfo.launchTime, taskInfo.executorId, taskInfo.host,
-      encodeTaskLocality(taskInfo.taskLocality),
+      taskInfo.finishTime, taskInfo.finishTime - taskInfo.launchTime,
+      math.max(0L, taskInfo.finishTime - taskInfo.launchTime -
+        taskMetrics.executorRunTime - taskMetrics.executorDeserializeTime - taskMetrics.resultSerializationTime),
+      taskInfo.executorId, taskInfo.host, encodeTaskLocality(taskInfo.taskLocality),
       taskInfo.speculative, taskInfo.gettingResultTime, taskInfo.successful,
       taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
       taskMetrics.executorDeserializeTime, taskMetrics.executorDeserializeCpuTime / 1000000,
