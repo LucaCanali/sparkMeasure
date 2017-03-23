@@ -1,43 +1,40 @@
-# Spark Measure 
+# sparkMeasure
 
-Spark Measure is a proof-of-concept tool for troubleshooting Apache Spark performance, 
-in particular for collecting and reporting performance metrics.
-* Created by Luca.Canali@cern.ch, March 2017
- 
-It is based on using Spark Listeners as data source and collecting metrics into a ListBuffer of a case class. 
+sparkMeasure is a custom tool for performance investigations in Spark and provides proof-of-concept code for 
+collecting and analyzing workload metrics.
+ * Created by Luca.Canali@cern.ch, March 2017
+ * Additional credits to: Viktor Khristenko 
+ * Originally developed and tested with Spark 2.1.0 
+ * Current version 0.1, first release
+
+Main ideas of how it sparkMeasure works:
+The tool is based on the Spark Listener interface, that is used as the data source. 
+Metrics and flattened and collected into a ListBuffer of a case class. 
 Data is then transformed into a Spark DataFrame for analysis.
- *  Stage Metrics: collects and aggregates metrics at the end of each stage
- *  Task Metrics: collects data at task granularity
 
-Build with sbt and add the target jar to 
+**How to build** use sbt and add the target jar to 
 <code>spark-submit/spark-shell/pyspark --jars <PATH>/spark-measure_2.11-0.1-SNAPSHOT.jar</code>
 
-
-It can be use in:
- * Interactive mode from the REPL (spark-shell, pyspark, Jupyter notebook)
+sparkMeasure can be used:
+ * To measure and analyze performance on the REPL: spark-shell (Scala), pyspark (Python) or Jupyter notebooks
  * Inside your code, instrumented to use Spark Measure APIs for collecting data
- * Flight recorder mode: records the performance metrics automatically and saves data for later processing
+ * For batch jobs using the Flight Recorder mode: this records the performance metrics automatically and saves data for later processing
 
-Supported languages:
- *   The tool is written in Scala, but it can be used both from Scala and Python
-
-Example usage for stage metrics:
-
-Stage metrics:
+Examples
+ 
+Stage metrics, Scala:
 ```val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
-Task metrics:
+Task metrics, Scala:
 ```
 val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
 val df = taskMetrics.createTaskMetricsDF()
 ```
 
-Examples of usage in Python:
-
-Stage metrics:
+Stage metrics, Python:
 ```
 stageMetrics = sc._jvm.ch.cern.sparkmeasure.StageMetrics(spark._jsparkSession)
 stageMetrics.begin()
@@ -46,7 +43,7 @@ stageMetrics.end()
 stageMetrics.printReport()
 ```
 
-Task Metrics:
+Task Metrics, Python:
 ```
 taskMetrics = sc._jvm.ch.cern.sparkmeasure.TaskMetrics(spark._jsparkSession)
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
@@ -56,7 +53,7 @@ df.show()
 taskMetrics.saveData(df, "taskmetrics_test1", "json")
 ```
 
-To use in flight recorder mode add:
+Flight Recorder mode add:
 * for stage metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics</code>
 * for task metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics</code>
 
@@ -66,5 +63,68 @@ val m1 = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("/tmp/stageMetric
 m1.toDF.show
 ```
 
-Current version 0.1, first release
-Developed and tested on Spark 2.1.0
+---
+**Additional info on Stage Metrics:**
+
+* class StageInfoRecorderListener extends SparkListener -> collects metrics at the end of each Stage
+* case class StageVals -> used to collect and store "flatten" the stageinfo and TaskMetric info 
+  collected by the Listener. Metrics are aggregated per stage and include: executor run time, 
+  CPU time, shuffle read and write time, serialization and deserialization time, HDFS I/O metrics, etc
+* case class accumulablesInfo -> used to collect and store the metrics of type "accumulables"
+
+* ase class StageMetrics(sparkSession: SparkSession)-> instantiate this class to start measuring Stage metrics
+   * Metrics are collected in a ListBuffer of case class StageVals for metrics generating from TaskMetrics and in a ListBuffer of accumulablesInfo
+   for metrics generated from "accumulables"
+   * def begin() and def end() methods -> use them at mark beginning and end of data collection if you plan to use printReport()
+   * def createStageMetricsDF(nameTempView: String = "PerfStageMetrics"): DataFrame -> converts the ListBuffer with stage 
+   metrics into a DataFrame and creates a temporary view, useful for data analytics
+   * def createAccumulablesDF(nameTempView: String = "AccumulablesMetrics"): DataFrame -> converts the accumulables agrgegate
+   at stage level in a ListBuffer into a DataFrame and temporary view
+   * def printReport(): Unit -> prints a report of the metrics in "PerfStageMetrics" between the timestamps: beginSnapshot and
+   endSnapshot
+   * def printAccumulables(): Unit -> prints the accumulables metrics divided in 2 groups: internal metrics (which are
+   basically the same as TaskMetrics) and the rest (typically metrics generated custom by parts of the SQL execution engine)
+   * def runAndMeasure[T](f: => T): T -> a handy extension to do 3 actions: runs the Spark workload, measure its metrics
+   and print the report. You can see this as an extension of spark.time() command
+   * def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") -> helper method to save metrics data collected 
+   in a DataFrame for later analysis/plotting
+   
+   
+**Additional info on Task Metrics:**
+
+* class TaskInfoRecorderListener extends SparkListener > collects metrics at the end of each Task
+* case class TaskVals -> used to collect and store "flatten" TaskMetric info collected by the Listener.
+Metrics are collected per task and include:executor run time,  CPU time, scheduler delay, shuffle read and write time, 
+serialization and deserialization time, HDFS I/O metrics, etc 
+  read and write time, serializa and deserialization time, HDFS I/O metrics, etc
+* case class TaskMetrics(sparkSession: SparkSession -> instantiate this class to start measuring Task metrics
+   * def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame ->  converts the ListBuffer with stage 
+     metrics into a DataFrame and creates a temporary view, useful for data analytics
+   * def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") -> helper method to save metrics data collected 
+      in a DataFrame for later analysis/plotting
+
+**Additional info on Flight Recorder Mode:**
+
+To use in flight recorder mode add one or both of the following to the spark-submit/spark-shell/pyspark command line:
+ * --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
+ * --conf class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListener
+
+The flight recorder mode writes the collected metrics serializaed into a file in the driver's filesystem. 
+Optionally add one or both of the following configuration parameters to determine the path of the output file  
+--conf spark.executorEnv.stageMetricsFileName"=<file path> (default is "/tmp/stageMetrics.serialized")
+--conf spark.executorEnv.taskMetricsFileName"=<file path> (default is "/tmp/taskMetrics.serialized")
+ 
+**Additional info on Utils:**
+
+The object Utils contains some helper code for the sparkMeasure package
+ * The methods formatDuration and formatBytes are used for printing stage metrics reports
+ * The methods readSerializedStageMetrics and readSerializedTaskMetrics are used to read data serialized 
+ into files by "flight recorder" mode
+
+Examples:
+
+val taskVals = ch.cern.sparkmeasure.Utils.readSerializedTaskMetrics("<file name>")
+val taskMetricsDF = taskVals.toDF
+
+val stageVals = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("<file name>")
+val stageMetricsDF = stageVals.toDF

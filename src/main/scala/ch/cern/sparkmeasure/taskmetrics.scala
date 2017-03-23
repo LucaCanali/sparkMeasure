@@ -34,7 +34,6 @@ import scala.collection.mutable.ListBuffer
  * --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
  *
  * Created by Luca.Canali@cern.ch, March 2017
- * Tested on Spark 2.1
  *
  */
 

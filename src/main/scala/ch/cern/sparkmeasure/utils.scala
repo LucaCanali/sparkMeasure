@@ -4,6 +4,13 @@ import scala.collection.mutable.ListBuffer
 import java.io.{FileInputStream, ObjectInputStream, ObjectStreamClass}
 import java.nio.file.Paths
 
+/**
+ * The object Utils contains some helper code for the sparkMeasure package
+ * The methods formatDuration and formatBytes are used for printing stage metrics reports
+ * The methods readSerializedStageMetrics and readSerializedTaskMetrics are used to read data serialized into files by
+ * "flight recorder" mode
+ */
+
 object Utils {
 
   /** boilerplate code for pretty printing, formatDuration code borrowed from Spark UIUtils */
