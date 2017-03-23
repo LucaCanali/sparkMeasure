@@ -23,8 +23,25 @@ sparkMeasure can be used:
 Examples
  
 Stage metrics, Scala:
-```val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
+```
+val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
+```
+
+Stage metrics, alternative way to collect and print metrics, Scala:
+```
+val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
+stageMetrics.begin()
+
+...execute one or more Spark jobs...
+
+stageMetrics.end()
+stageMetrics.printReport()
+```
+
+Print additional accumulables metrics collected at stage-level, Scala:
+```
+stageMetrics.printAccumulables()
 ```
 
 Task metrics, Scala:
@@ -72,7 +89,7 @@ m1.toDF.show
   CPU time, shuffle read and write time, serialization and deserialization time, HDFS I/O metrics, etc
 * case class accumulablesInfo -> used to collect and store the metrics of type "accumulables"
 
-* ase class StageMetrics(sparkSession: SparkSession)-> instantiate this class to start measuring Stage metrics
+* case class StageMetrics(sparkSession: SparkSession)-> instantiate this class to start measuring Stage metrics
    * Metrics are collected in a ListBuffer of case class StageVals for metrics generating from TaskMetrics and in a ListBuffer of accumulablesInfo
    for metrics generated from "accumulables"
    * def begin() and def end() methods -> use them at mark beginning and end of data collection if you plan to use printReport()
@@ -122,9 +139,10 @@ The object Utils contains some helper code for the sparkMeasure package
  into files by "flight recorder" mode
 
 Examples:
-
+```
 val taskVals = ch.cern.sparkmeasure.Utils.readSerializedTaskMetrics("<file name>")
 val taskMetricsDF = taskVals.toDF
 
 val stageVals = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("<file name>")
 val stageMetricsDF = stageVals.toDF
+```
