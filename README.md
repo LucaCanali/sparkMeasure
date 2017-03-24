@@ -1,16 +1,16 @@
 # sparkMeasure
 
-sparkMeasure is a custom tool for performance investigations in Spark and provides proof-of-concept code for 
-collecting and analyzing workload metrics.
+sparkMeasure is a tool for performance investigations of Apache Spark workloads.  
+It simplifies the collection and analysis of Spark performance metrics.
+It is intended also as proof-of-concept code on how to use Spark listeners for custom metrics collection. 
  * Created by Luca.Canali@cern.ch, March 2017
  * Additional credits to: Viktor Khristenko 
- * Originally developed and tested with Spark 2.1.0 
- * Current version 0.1, first release
+ * Current version 0.1, developed and tested for Spark 2.1.0
 
-Main ideas of how it sparkMeasure works:
-The tool is based on the Spark Listener interface, that is used as the data source. 
-Metrics and flattened and collected into a ListBuffer of a case class. 
-Data is then transformed into a Spark DataFrame for analysis.
+Main ideas of how it sparkMeasure works:  
+The tool is based on the Spark Listener interface, that is used as the data source.   
+Metrics and flattened and collected into a ListBuffer of a case class.   
+Data is then transformed into a Spark DataFrame for analysis.  
 
 **How to build** use sbt and add the target jar to 
 <code>spark-submit/spark-shell/pyspark --jars <PATH>/spark-measure_2.11-0.1-SNAPSHOT.jar</code>
@@ -78,6 +78,25 @@ Helper function to deserialize objects saved by the flight mode:
 ```
 val m1 = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("/tmp/stageMetrics.serialized")
 m1.toDF.show
+```
+
+Analytics on performance metrics:  
+One of the key features of sparkMeasure is that it presents the performance metrics in a form easily accessible for analysis.  
+This is achieved by exporting the collected data into Spark DataFrames where they can be queries with Spark APIs and/or SQL.
+In addition the metrics can be used to make plot and other visualizations (for example using Jupyter notebooks).
+Examples:
+```
+// export task metrics collected by the Listener into a DataFrame and registers as a temporary view 
+val df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
+
+// other option: read metrics previously saved on a json file
+val df = spark.read.json("taskmetrics_test1")
+df.createOrReplaceTempView("PerfTaskMetrics")
+
+// show the top 5 tasks by duration
+spark.sql("select jobId, host, duration from PerfTaskMetrics order by duration desc limit 5").show()
+// show the available metrics
+spark.sql("desc PerfTaskMetrics").show()
 ```
 
 ---
