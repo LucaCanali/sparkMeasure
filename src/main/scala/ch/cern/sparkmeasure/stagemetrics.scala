@@ -172,7 +172,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
       s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
       s"from PerfStageMetrics " +
-      s"where submissionTime between $beginSnapshot and $endSnapshot")
+      s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
     val results = aggregateDF.take(1)
 
     println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")

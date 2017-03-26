@@ -146,7 +146,7 @@ case class TaskMetrics(sparkSession: SparkSession) {
       s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
       s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
       s"from PerfTaskMetrics " +
-      s"where launchTime between $beginSnapshot and $endSnapshot")
+      s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
     val results = aggregateDF.take(1)
 
     println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
