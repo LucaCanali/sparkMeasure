@@ -28,7 +28,7 @@ val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark)
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
-Stage metrics, alternative way to collect and print metrics, Scala:
+Stage metric, this is an alternative way to collect and print metrics with Scala:
 ```
 val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.begin()
@@ -47,8 +47,7 @@ stageMetrics.printAccumulables()
 Task metrics, Scala:
 ```
 val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
-spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
-val df = taskMetrics.createTaskMetricsDF()
+taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
 Stage metrics, Python:
@@ -60,10 +59,14 @@ stageMetrics.end()
 stageMetrics.printReport()
 ```
 
-Task Metrics, Python:
+Task Metrics, Python: 
 ```
 taskMetrics = sc._jvm.ch.cern.sparkmeasure.TaskMetrics(spark._jsparkSession)
+taskMetrics.begin()
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
+taskMetrics.end()
+taskMetrics.printReport()
+// alternatively:
 df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
 spark.sql("select * from PerfTaskMetrics").show()
 df.show()
@@ -102,15 +105,19 @@ spark.sql("desc PerfTaskMetrics").show()
 ---
 **Additional info on Stage Metrics:**
 
-* class StageInfoRecorderListener extends SparkListener -> collects metrics at the end of each Stage
+* class StageInfoRecorderListener extends SparkListener
+   * Collects metrics at the end of each Stage
+   * This is the main engine to collect metrics. Metrics are collected in a ListBuffer of case class StageVals for metrics generating from TaskMetrics and in a ListBuffer of accumulablesInfo
+   for metrics generated from "accumulables".
 * case class StageVals -> used to collect and store "flatten" the stageinfo and TaskMetric info 
   collected by the Listener. Metrics are aggregated per stage and include: executor run time, 
   CPU time, shuffle read and write time, serialization and deserialization time, HDFS I/O metrics, etc
 * case class accumulablesInfo -> used to collect and store the metrics of type "accumulables"
 
-* case class StageMetrics(sparkSession: SparkSession)-> instantiate this class to start measuring Stage metrics
-   * Metrics are collected in a ListBuffer of case class StageVals for metrics generating from TaskMetrics and in a ListBuffer of accumulablesInfo
-   for metrics generated from "accumulables"
+* case class StageMetrics(sparkSession: SparkSession)
+   * Helper class to help in collecting and storing performance metrics. It provides wrapper methods to add the listener to
+   the Spark Context (ListenerBus) and other other methods for analysis. When you instantiate this class you start collecting 
+   stage metrics data.
    * def begin() and def end() methods -> use them at mark beginning and end of data collection if you plan to use printReport()
    * def createStageMetricsDF(nameTempView: String = "PerfStageMetrics"): DataFrame -> converts the ListBuffer with stage 
    metrics into a DataFrame and creates a temporary view, useful for data analytics
@@ -128,14 +135,24 @@ spark.sql("desc PerfTaskMetrics").show()
    
 **Additional info on Task Metrics:**
 
-* class TaskInfoRecorderListener extends SparkListener > collects metrics at the end of each Task
+* class TaskInfoRecorderListener extends SparkListener
+   * Collects metrics at the end of each Task
+   * This is the main engine to collect metrics. Metrics are collected in a ListBuffer of case class TaskVals
 * case class TaskVals -> used to collect and store "flatten" TaskMetric info collected by the Listener.
 Metrics are collected per task and include:executor run time,  CPU time, scheduler delay, shuffle read and write time, 
 serialization and deserialization time, HDFS I/O metrics, etc 
   read and write time, serializa and deserialization time, HDFS I/O metrics, etc
-* case class TaskMetrics(sparkSession: SparkSession -> instantiate this class to start measuring Task metrics
+* case class TaskMetrics(sparkSession: SparkSession
+   * Helper class to help in collecting and storing performance metrics. It provides wrapper methods to add the listener to
+      the Spark Context (ListenerBus) and other other methods for analysis. When you instantiate this class you start collecting 
+      task-level metrics data.
+   * def begin() and def end() methods -> use them at mark beginning and end of data collection if you plan to use printReport()
+   * def printReport(): Unit -> prints a report of the metrics in "TaskStageMetrics" between the timestamps: beginSnapshot and
+   endSnapshot
    * def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame ->  converts the ListBuffer with stage 
      metrics into a DataFrame and creates a temporary view, useful for data analytics
+   * def runAndMeasure[T](f: => T): T -> a handy extension to do 3 actions: runs the Spark workload, measure its metrics
+   and print the report. You can see this as an extension of spark.time() command     
    * def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") -> helper method to save metrics data collected 
       in a DataFrame for later analysis/plotting
 

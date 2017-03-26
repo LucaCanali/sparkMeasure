@@ -111,12 +111,73 @@ case class TaskMetrics(sparkSession: SparkSession) {
   val listenerTask = new TaskInfoRecorderListener
   sparkSession.sparkContext.addSparkListener(listenerTask)
 
+  /** Variables used to store the start and end time of the period of interest for the metrics report */
+  var beginSnapshot: Long = 0L
+  var endSnapshot: Long = 0L
+
+  def begin(): Long = {
+    beginSnapshot = System.currentTimeMillis()
+    beginSnapshot
+  }
+
+  def end(): Long = {
+    endSnapshot = System.currentTimeMillis()
+    endSnapshot
+  }
+
   def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
     import sparkSession.implicits._
     val resultDF = listenerTask.taskMetricsData.toDF
     resultDF.createOrReplaceTempView(nameTempView)
     logger.warn(s"Stage metrics data refreshed into temp view $nameTempView")
     resultDF
+  }
+
+  def printReport(): Unit = {
+
+    createTaskMetricsDF("PerfTaskMetrics")
+    val aggregateDF = sparkSession.sql(s"select count(*) numtasks, " +
+      s"max(finishTime) - min(launchTime) as elapsedTime, sum(duration), sum(schedulerDelay), sum(executorRunTime), " +
+      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
+      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
+      s"sum(gettingResultTime), " +
+      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
+      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
+      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
+      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
+      s"from PerfTaskMetrics " +
+      s"where launchTime between $beginSnapshot and $endSnapshot")
+    val results = aggregateDF.take(1)
+
+    println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
+    println(s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    println("Aggregated Spark task metrics:")
+
+    (aggregateDF.columns zip results(0).toSeq).foreach(r => {
+      val name = r._1.toLowerCase()
+      val value = r._2.asInstanceOf[Long]
+      println(name + " = " + value.toString + {
+        if (name.contains("time") || name.contains("duration")) {
+          " (" + Utils.formatDuration(value) + ")"
+        }
+        else if (name.contains("bytes") && value > 1000L) {
+          " (" + Utils.formatBytes(value) + ")"
+        }
+        else ""
+      })
+    })
+  }
+
+  /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
+  def runAndMeasure[T](f: => T): T = {
+    this.begin()
+    val startTime = System.nanoTime()
+    val ret = f
+    val endTime = System.nanoTime()
+    this.end()
+    println(s"Time taken: ${(endTime - startTime) / 1000000} ms")
+    printReport()
+    ret
   }
 
   /** helper method to save data, we expect to have moderate amounts of data so collapsing to 1 partition seems OK */
