@@ -1,34 +1,38 @@
 # sparkMeasure
 
-sparkMeasure is a tool for performance investigations of Apache Spark workloads.  
+**sparkMeasure is a tool for performance investigations of Apache Spark workloads.**  
 It simplifies the collection and analysis of Spark performance metrics.
 It is intended also as proof-of-concept code on how to use Spark listeners for custom metrics collection. 
  * Created by Luca.Canali@cern.ch, March 2017
- * Additional credits to: Viktor Khristenko 
- * Current version 0.1, developed and tested for Spark 2.1.0
+ * Additional credits: Viktor Khristenko 
+ * Version 0.1 beta, developed and tested on Spark 2.1.0
 
-Main ideas of how it sparkMeasure works:  
-The tool is based on the Spark Listener interface, that is used as the data source.   
-Metrics and flattened and collected into a ListBuffer of a case class.   
-Data is then transformed into a Spark DataFrame for analysis.  
+**Main ideas of how sparkMeasure works:**  
+* The tool is based on the Spark Listener interface, that is used as source for Spark workload metrics data.     
+* Metrics are collected at the granularity or stage and task (configurable)
+* Metrics are flattened and collected into a ListBuffer of a case class.   
+* Data is then transformed into a Spark DataFrame for analysis.  
+* Data can be saved for offline analysis
 
-**How to build** use sbt and add the target jar to 
+**Where sparkMeasure can be useful:**
+ * REPL: To measure and analyze performance interactively from: spark-shell (Scala), pyspark (Python) or Jupyter notebooks
+ * Inside your code: add instrumentation calls in your code to use sparkMeasure custom Listeners and/or use the
+ classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and optionally saving metrics data
+ * Instrument code that you cannot change: use sparkMeasure in the "Flight Recorde"r mode, this records the performance metrics automatically and saves data for later processing
+
+**How to use:** use sbt to package (or use the jar uploaded in the target/scala-2.11 folder if relevant to your environemnt).  
+Run by adding the target jar to 
 <code>spark-submit/spark-shell/pyspark --jars <PATH>/spark-measure_2.11-0.1-SNAPSHOT.jar</code>
 
-sparkMeasure can be used:
- * To measure and analyze performance on the REPL: spark-shell (Scala), pyspark (Python) or Jupyter notebooks
- * Inside your code, instrumented to use Spark Measure APIs for collecting data
- * For batch jobs using the Flight Recorder mode: this records the performance metrics automatically and saves data for later processing
-
-Examples
+**Examples**
  
-Stage metrics, Scala:
+1. Measure metrics at the Stage level (example in Scala):
 ```
 val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
-Stage metric, this is an alternative way to collect and print metrics with Scala:
+2. This is an alternative way to collect and print metrics (Scala):
 ```
 val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.begin()
@@ -39,18 +43,18 @@ stageMetrics.end()
 stageMetrics.printReport()
 ```
 
-Print additional accumulables metrics collected at stage-level, Scala:
+3. Print additional accumulables metrics collected at stage-level, Scala:
 ```
 stageMetrics.printAccumulables()
 ```
 
-Task metrics, Scala:
+4. Collect and report Task metrics, Scala:
 ```
 val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
 taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
-Stage metrics, Python:
+5. Stage metrics example in Python:
 ```
 stageMetrics = sc._jvm.ch.cern.sparkmeasure.StageMetrics(spark._jsparkSession)
 stageMetrics.begin()
@@ -59,7 +63,7 @@ stageMetrics.end()
 stageMetrics.printReport()
 ```
 
-Task Metrics, Python: 
+6. Task metrics example in Python: 
 ```
 taskMetrics = sc._jvm.ch.cern.sparkmeasure.TaskMetrics(spark._jsparkSession)
 taskMetrics.begin()
@@ -73,20 +77,24 @@ df.show()
 taskMetrics.saveData(df, "taskmetrics_test1", "json")
 ```
 
-Flight Recorder mode add:
-* for stage metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics</code>
-* for task metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics</code>
+*Flight Recorder mode*
+This is for instrumenting Spark applications without touching their code. Just add an extra custom listener that will 
+record the metrics of interest and save to a file at the end of the application.
+* For recording stage metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics</code>
+* For recording task-level metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics</code>
 
-Helper function to deserialize objects saved by the flight mode:
+To post-process the saved metrics you will need to deserialize objects saved by the flight mode. This is an example of
+how to do that using the supplied helper object sparkmeasure.Utils
 ```
 val m1 = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("/tmp/stageMetrics.serialized")
 m1.toDF.show
 ```
 
-Analytics on performance metrics:  
-One of the key features of sparkMeasure is that it presents the performance metrics in a form easily accessible for analysis.  
+*Analytics on performance metrics:*  
+One of the key features of sparkMeasure is that it makes data easily accessible for analysis.  
 This is achieved by exporting the collected data into Spark DataFrames where they can be queries with Spark APIs and/or SQL.
-In addition the metrics can be used to make plot and other visualizations (for example using Jupyter notebooks).
+In addition the metrics can be used for plotting and other visualizations, for example using Jupyter notebooks.
+
 Examples:
 ```
 // export task metrics collected by the Listener into a DataFrame and registers as a temporary view 
@@ -103,7 +111,7 @@ spark.sql("desc PerfTaskMetrics").show()
 ```
 
 ---
-**Additional info on Stage Metrics:**
+**Additional info on Stage Metrics implementation:**
 
 * class StageInfoRecorderListener extends SparkListener
    * Collects metrics at the end of each Stage
