@@ -77,7 +77,7 @@ df.show()
 taskMetrics.saveData(df, "taskmetrics_test1", "json")
 ```
 
-*Flight Recorder mode*
+**Flight Recorder mode**
 This is for instrumenting Spark applications without touching their code. Just add an extra custom listener that will 
 record the metrics of interest and save to a file at the end of the application.
 * For recording stage metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics</code>
@@ -90,12 +90,14 @@ val m1 = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("/tmp/stageMetric
 m1.toDF.show
 ```
 
-*Analytics on performance metrics:*  
+**Analysis of performance metrics:**  
 One of the key features of sparkMeasure is that it makes data easily accessible for analysis.  
 This is achieved by exporting the collected data into Spark DataFrames where they can be queries with Spark APIs and/or SQL.
 In addition the metrics can be used for plotting and other visualizations, for example using Jupyter notebooks.
 
-Examples:
+Example of analysis of Task Metrics using a Jupyter notebook at: [SparkTaskMetricsAnalysisExample.ipynb](examples/SparkTaskMetricsAnalysisExample.ipynb)
+
+Additional example code:
 ```
 // export task metrics collected by the Listener into a DataFrame and registers as a temporary view 
 val df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
@@ -109,6 +111,7 @@ spark.sql("select jobId, host, duration from PerfTaskMetrics order by duration d
 // show the available metrics
 spark.sql("desc PerfTaskMetrics").show()
 ```
+   
 
 ---
 **Additional info on Stage Metrics implementation:**
