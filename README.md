@@ -6,6 +6,7 @@ It is intended also as proof-of-concept code on how to use Spark listeners for c
  * Created by Luca.Canali@cern.ch, March 2017
  * Additional credits: Viktor Khristenko 
  * Version 0.1 beta, developed and tested on Spark 2.1.0
+ * [Link to the accompanying blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
 
 **Main ideas of how sparkMeasure works:**  
 * The tool is based on the Spark Listener interface, that is used as source for Spark workload metrics data.     
