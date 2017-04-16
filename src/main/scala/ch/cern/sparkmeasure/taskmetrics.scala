@@ -154,22 +154,27 @@ case class TaskMetrics(sparkSession: SparkSession) {
   }
 
   def printAccumulables(): Unit = {
-    createAccumulablesDF("AccumulablesTaskMetrics")
-    val internalMetricsDf = sparkSession.sql(s"select name, sum(value) " +
-      s"from AccumulablesTaskMetrics " +
+    val accumulableTaskMetrics="AccumulablesTaskMetrics"
+    val aggregatedAccumulables="AggregatedAccumulables"
+    createAccumulablesDF(accumulableTaskMetrics)
+
+    sparkSession.sql(s"select accId, name, max(value) as endValue " +
+      s"from $accumulableTaskMetrics " +
       s"where submissionTime >= $beginSnapshot and finishTime <= $endSnapshot " +
-      s"and name like 'internal.metric%' " +
+      s"group by accId, name").createOrReplaceTempView(aggregatedAccumulables)
+
+    val internalMetricsDf = sparkSession.sql(s"select name, sum(endValue) " +
+      s"from $aggregatedAccumulables " +
+      s"where name like 'internal.metric%' " +
       s"group by name")
     println("\nAggregated Spark accumulables of type internal.metric:")
     internalMetricsDf.show(200, false)
 
-    val otherAccumulablesDf = sparkSession.sql(s"select jobId, stageId, taskId, AccId, name, value " +
-      s"from AccumulablesTaskMetrics " +
-      s"where submissionTime >= $beginSnapshot and finishTime <= $endSnapshot " +
-      s"and name not like 'internal.metric%'" +
-      s"order by jobId, stageId, submissionTime")
-    println("\nSpark accumulables of type != internal.metric:")
-    otherAccumulablesDf.show(200,false)
+    val otherAccumulablesDf = sparkSession.sql(s"select accId, name, endValue " +
+      s"from $aggregatedAccumulables " +
+      s"where name not like 'internal.metric%' ")
+    println("\nSpark accumulables by accId of type != internal.metric:")
+    otherAccumulablesDf.show(200, false)
   }
 
 
