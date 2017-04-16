@@ -49,10 +49,15 @@ case class TaskVals(jobId: Int, stageId: Int, index: Long, launchTime: Long, fin
                 shuffleLocalBlocksFetched: Long, shuffleRemoteBlocksFetched: Long, shuffleWriteTime: Long,
                 shuffleBytesWritten: Long, shuffleRecordsWritten: Long)
 
+// repetition of the case class, with modification TO FIX
+case class TaskAccumulablesInfo(jobId: Int, stageId: Int, taskId: Long, submissionTime: Long, finishTime: Long,
+                                accId: Long, name: String, value: Long)
+
 class TaskInfoRecorderListener extends SparkListener {
 
-  var currentJobId: Int = 0
   val taskMetricsData: ListBuffer[TaskVals] = ListBuffer.empty[TaskVals]
+  val accumulablesMetricsData: ListBuffer[TaskAccumulablesInfo] = ListBuffer.empty[TaskAccumulablesInfo]
+  val StageIdtoJobId: collection.mutable.HashMap[Int, Int] = collection.mutable.HashMap.empty[Int, Int]
 
   def encodeTaskLocality(taskLocality: TaskLocality.TaskLocality): Int = {
     taskLocality match {
@@ -65,13 +70,13 @@ class TaskInfoRecorderListener extends SparkListener {
   }
 
   override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
-    currentJobId = jobStart.jobId
+    jobStart.stageIds.foreach(stageId => StageIdtoJobId += (stageId -> jobStart.jobId))
   }
 
   /**
-    * This methods fires at the end of the Task and collects metrics flattened into the taskMetricsData ListBuffer
-    * Note all times are in ms, cpu time and shufflewrite are originally in nanosec, thus in the code are divided by 1e6
-    */
+   * This methods fires at the end of the Task and collects metrics flattened into the taskMetricsData ListBuffer
+   * Note all times are in ms, cpu time and shufflewrite are originally in nanosec, thus in the code are divided by 1e6
+   */
   override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
     val taskInfo = taskEnd.taskInfo
     val taskMetrics = taskEnd.taskMetrics
@@ -80,7 +85,8 @@ class TaskInfoRecorderListener extends SparkListener {
       else taskInfo.finishTime - taskInfo.gettingResultTime
     }
     val duration = taskInfo.finishTime - taskInfo.launchTime
-    val currentTask = TaskVals(currentJobId, taskEnd.stageId, taskInfo.taskId, taskInfo.launchTime,
+    val jobId = StageIdtoJobId(taskEnd.stageId)
+    val currentTask = TaskVals(jobId, taskEnd.stageId, taskInfo.taskId, taskInfo.launchTime,
       taskInfo.finishTime, duration,
       math.max(0L, duration - taskMetrics.executorRunTime - taskMetrics.executorDeserializeTime -
         taskMetrics.resultSerializationTime - gettingResultTime),
@@ -100,6 +106,20 @@ class TaskInfoRecorderListener extends SparkListener {
       taskMetrics.shuffleWriteMetrics.recordsWritten
     )
     taskMetricsData += currentTask
+
+    /** Collect data from accumulators, with additional care to keep only numerical values */
+    taskInfo.accumulables.foreach(acc => try {
+      val value = acc.value.getOrElse(0L).asInstanceOf[Long]
+      val name = acc.name.getOrElse("")
+      val currentAccumulablesInfo = TaskAccumulablesInfo(jobId, taskEnd.stageId, taskInfo.taskId,
+        taskInfo.launchTime, taskInfo.finishTime ,acc.id, name, value)
+      accumulablesMetricsData += currentAccumulablesInfo
+    }
+    catch {
+      case ex: ClassCastException => None
+    }
+    )
+
   }
 }
 
@@ -124,6 +144,34 @@ case class TaskMetrics(sparkSession: SparkSession) {
     endSnapshot = System.currentTimeMillis()
     endSnapshot
   }
+
+  def createAccumulablesDF(nameTempView: String = "AccumulablesTaskMetrics"): DataFrame = {
+    import sparkSession.implicits._
+    val resultDF = listenerTask.accumulablesMetricsData.toDF
+    resultDF.createOrReplaceTempView(nameTempView)
+    logger.warn(s"Accumulables metrics data refreshed into temp view $nameTempView")
+    resultDF
+  }
+
+  def printAccumulables(): Unit = {
+    createAccumulablesDF("AccumulablesTaskMetrics")
+    val internalMetricsDf = sparkSession.sql(s"select name, sum(value) " +
+      s"from AccumulablesTaskMetrics " +
+      s"where submissionTime >= $beginSnapshot and finishTime <= $endSnapshot " +
+      s"and name like 'internal.metric%' " +
+      s"group by name")
+    println("\nAggregated Spark accumulables of type internal.metric:")
+    internalMetricsDf.show(200, false)
+
+    val otherAccumulablesDf = sparkSession.sql(s"select jobId, stageId, taskId, AccId, name, value " +
+      s"from AccumulablesTaskMetrics " +
+      s"where submissionTime >= $beginSnapshot and finishTime <= $endSnapshot " +
+      s"and name not like 'internal.metric%'" +
+      s"order by jobId, stageId, submissionTime")
+    println("\nSpark accumulables of type != internal.metric:")
+    otherAccumulablesDf.show(200,false)
+  }
+
 
   def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
     import sparkSession.implicits._

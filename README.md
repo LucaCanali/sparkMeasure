@@ -133,7 +133,7 @@ spark.sql("desc PerfTaskMetrics").show()
    * def begin() and def end() methods -> use them at mark beginning and end of data collection if you plan to use printReport()
    * def createStageMetricsDF(nameTempView: String = "PerfStageMetrics"): DataFrame -> converts the ListBuffer with stage 
    metrics into a DataFrame and creates a temporary view, useful for data analytics
-   * def createAccumulablesDF(nameTempView: String = "AccumulablesMetrics"): DataFrame -> converts the accumulables agrgegate
+   * def createAccumulablesDF(nameTempView: String = "AccumulablesStageMetrics"): DataFrame -> converts the accumulables aggregated
    at stage level in a ListBuffer into a DataFrame and temporary view
    * def printReport(): Unit -> prints a report of the metrics in "PerfStageMetrics" between the timestamps: beginSnapshot and
    endSnapshot
@@ -167,6 +167,11 @@ serialization and deserialization time, HDFS I/O metrics, etc
    and print the report. You can see this as an extension of spark.time() command     
    * def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") -> helper method to save metrics data collected 
       in a DataFrame for later analysis/plotting
+   * def createAccumulablesDF(nameTempView: String = "AccumulablesTaskMetrics"): DataFrame -> converts the accumulables aggregated
+   at task level in a ListBuffer into a DataFrame and temporary view
+   * def printAccumulables(): Unit -> prints the accumulables metrics divided in 2 groups: internal metrics (which are
+      basically the same as TaskMetrics) and the rest (typically metrics generated custom by parts of the SQL execution engine)
+
 
 **Additional info on Flight Recorder Mode:**
 
