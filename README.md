@@ -5,7 +5,9 @@ It simplifies the collection and analysis of Spark performance metrics.
 It is intended also as proof-of-concept code on how to use Spark listeners for custom metrics collection. 
  * Created by Luca.Canali@cern.ch, March 2017
  * Additional credits: Viktor Khristenko 
- * Version 0.1 beta, developed and tested on Spark 2.1.0
+ * Version 0.1 beta, last modified May 2017
+    * developed and tested on Spark 2.1.0 and 2.1.1
+    * note and todo: TaskMetrics implementation need work (for Spark 2.2 and higher) to comply with the changes in from [SPARK-12837](https://github.com/apache/spark/pull/17596) 
  * [Link to the accompanying blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
 
 **Main ideas of how sparkMeasure works:**  
