@@ -143,6 +143,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     resultDF
   }
 
+  /** for internal metrics summ all the values, for the accumulables compute max value for eax accId and name */
   def printAccumulables(): Unit = {
     createAccumulablesDF("AccumulablesStageMetrics")
     val internalMetricsDf = sparkSession.sql(s"select name, sum(value) " +
@@ -153,12 +154,12 @@ case class StageMetrics(sparkSession: SparkSession) {
     println("\nAggregated Spark accumulables of type internal.metric:")
     internalMetricsDf.show(200, false)
 
-    val otherAccumulablesDf = sparkSession.sql(s"select jobId, stageId, accId, name, value " +
+    val otherAccumulablesDf = sparkSession.sql(s"select accId, name, max(value) as endValue " +
       s"from AccumulablesStageMetrics " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot " +
       s"and name not like 'internal.metric%'" +
-      s"order by jobId, stageId, submissionTime")
-    println("\nSpark accumulables of type != internal.metric:")
+      s"group by accId, name")
+    println("\nAggregated Spark accumulables of type != internal.metric:")
     otherAccumulablesDf.show(200,false)
   }
 
