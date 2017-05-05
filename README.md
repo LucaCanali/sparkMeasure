@@ -30,13 +30,13 @@ Run by adding the target jar to
 **Examples**
  
 1. Measure metrics at the Stage level (example in Scala):
-```
+```scala
 val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
 2. This is an alternative way to collect and print metrics (Scala):
-```
+```scala
 val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.begin()
 
@@ -47,18 +47,18 @@ stageMetrics.printReport()
 ```
 
 3. Print additional accumulables metrics collected at stage-level, Scala:
-```
+```scala
 stageMetrics.printAccumulables()
 ```
 
 4. Collect and report Task metrics, Scala:
-```
+```scala
 val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
 taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
 5. Stage metrics example in Python:
-```
+```python
 stageMetrics = sc._jvm.ch.cern.sparkmeasure.StageMetrics(spark._jsparkSession)
 stageMetrics.begin()
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
@@ -67,7 +67,7 @@ stageMetrics.printReport()
 ```
 
 6. Task metrics example in Python: 
-```
+```python
 taskMetrics = sc._jvm.ch.cern.sparkmeasure.TaskMetrics(spark._jsparkSession)
 taskMetrics.begin()
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
@@ -88,7 +88,7 @@ record the metrics of interest and save to a file at the end of the application.
 
 To post-process the saved metrics you will need to deserialize objects saved by the flight mode. This is an example of
 how to do that using the supplied helper object sparkmeasure.Utils
-```
+```scala
 val m1 = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("/tmp/stageMetrics.serialized")
 m1.toDF.show
 ```
@@ -101,7 +101,7 @@ In addition the metrics can be used for plotting and other visualizations, for e
 Example of analysis of Task Metrics using a Jupyter notebook at: [SparkTaskMetricsAnalysisExample.ipynb](examples/SparkTaskMetricsAnalysisExample.ipynb)
 
 Additional example code:
-```
+```scala
 // export task metrics collected by the Listener into a DataFrame and registers as a temporary view 
 val df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
 
@@ -194,7 +194,7 @@ The object Utils contains some helper code for the sparkMeasure package
  into files by "flight recorder" mode
 
 Examples:
-```
+```scala
 val taskVals = ch.cern.sparkmeasure.Utils.readSerializedTaskMetrics("<file name>")
 val taskMetricsDF = taskVals.toDF
 
