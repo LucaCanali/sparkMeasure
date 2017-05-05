@@ -183,8 +183,8 @@ To use in flight recorder mode add one or both of the following to the spark-sub
 
 The flight recorder mode writes the collected metrics serializaed into a file in the driver's filesystem. 
 Optionally add one or both of the following configuration parameters to determine the path of the output file  
---conf spark.executorEnv.stageMetricsFileName"=<file path> (default is "/tmp/stageMetrics.serialized")
---conf spark.executorEnv.taskMetricsFileName"=<file path> (default is "/tmp/taskMetrics.serialized")
+ * --conf spark.executorEnv.stageMetricsFileName"=<file path> (default is "/tmp/stageMetrics.serialized")
+ * --conf spark.executorEnv.taskMetricsFileName"=<file path> (default is "/tmp/taskMetrics.serialized")
  
 **Additional info on Utils:**
 
