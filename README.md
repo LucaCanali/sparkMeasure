@@ -57,7 +57,7 @@ val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
 taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
-5. Stage metrics example in Python:
+5. How to collect stage metrics, example in Python:
 ```python
 stageMetrics = sc._jvm.ch.cern.sparkmeasure.StageMetrics(spark._jsparkSession)
 stageMetrics.begin()
@@ -66,14 +66,15 @@ stageMetrics.end()
 stageMetrics.printReport()
 ```
 
-6. Task metrics example in Python: 
+6. How to collect task metrics, example in Python: 
 ```python
 taskMetrics = sc._jvm.ch.cern.sparkmeasure.TaskMetrics(spark._jsparkSession)
 taskMetrics.begin()
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
 taskMetrics.end()
 taskMetrics.printReport()
-// alternatively:
+
+# As an alternative to using begin() and end(), you can run the following:
 df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
 spark.sql("select * from PerfTaskMetrics").show()
 df.show()
