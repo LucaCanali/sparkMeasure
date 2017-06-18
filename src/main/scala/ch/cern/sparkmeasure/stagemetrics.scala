@@ -22,11 +22,11 @@ import org.apache.log4j.LogManager
  *   The tool is written in Scala, but it can be used both from Scala and Python
  *
  * Example usage for stage metrics:
- * val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark)
+ * val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
  * stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
  *
  * for task metrics:
- * val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
+ * val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
  * spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
  * val df = taskMetrics.createTaskMetricsDF()
  *

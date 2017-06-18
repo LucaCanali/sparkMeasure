@@ -4,10 +4,10 @@
 It simplifies the collection and analysis of Spark performance metrics.
 It is intended also as proof-of-concept code on how to use Spark listeners for custom metrics collection. 
  * Created by Luca.Canali@cern.ch, March 2017
- * Additional credits: Viktor Khristenko 
- * Version 0.1 beta, last modified May 2017
-    * developed and tested on Spark 2.1.0 and 2.1.1
-    * note and todo: TaskMetrics implementation need work (for Spark 2.2 and higher) to comply with the changes in from [SPARK-12837](https://github.com/apache/spark/pull/17596) 
+ * Credits: Viktor Khristenko 
+ * Version 0.11 beta, last modified June 2017
+    * developed and tested for Spark 2.1.0 and 2.1.1, 2.2.0
+   
  * [Link to the accompanying blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
 
 **Main ideas of how sparkMeasure works:**  
@@ -31,29 +31,30 @@ Run by adding the target jar to
  
 1. Measure metrics at the Stage level (example in Scala):
 ```scala
-val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
+val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
 2. This is an alternative way to collect and print metrics (Scala):
 ```scala
-val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark) 
+val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.begin()
 
 ...execute one or more Spark jobs...
 
 stageMetrics.end()
 stageMetrics.printReport()
+stageMetrics.printAccumulables
 ```
 
-3. Print additional accumulables metrics collected at stage-level, Scala:
+3. Print additional accumulables metrics (including SQL metrics) collected at stage-level, Scala:
 ```scala
 stageMetrics.printAccumulables()
 ```
 
 4. Collect and report Task metrics, Scala:
 ```scala
-val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
+val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
 taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
 
@@ -64,11 +65,12 @@ stageMetrics.begin()
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
 stageMetrics.end()
 stageMetrics.printReport()
+stageMetrics.printAccumulables()
 ```
 
 6. How to collect task metrics, example in Python: 
 ```python
-taskMetrics = sc._jvm.ch.cern.sparkmeasure.TaskMetrics(spark._jsparkSession)
+taskMetrics = sc._jvm.ch.cern.sparkmeasure.TaskMetrics(spark._jsparkSession, False)
 taskMetrics.begin()
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
 taskMetrics.end()
@@ -150,9 +152,10 @@ spark.sql("desc PerfTaskMetrics").show()
    
 **Additional info on Task Metrics:**
 
-* class TaskInfoRecorderListener extends SparkListener
+* case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean = false)
    * Collects metrics at the end of each Task
    * This is the main engine to collect metrics. Metrics are collected in a ListBuffer of case class TaskVals
+   * optionally gathers accumulabels (with task metrics and SQL metrics per task if gatherAccumulables is set to true)
 * case class TaskVals -> used to collect and store "flatten" TaskMetric info collected by the Listener.
 Metrics are collected per task and include:executor run time,  CPU time, scheduler delay, shuffle read and write time, 
 serialization and deserialization time, HDFS I/O metrics, etc 
@@ -202,3 +205,12 @@ val taskMetricsDF = taskVals.toDF
 val stageVals = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("<file name>")
 val stageMetricsDF = stageVals.toDF
 ```
+
+**Known issues and TODO**
+   * gatherAccumulables=true for taskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean) 
+   currently only works only on Spark 2.1.x and breaks from Spark 2.2.1. This is a consequence of
+   [SPARK PR 17596](https://github.com/apache/spark/pull/17596).
+   Todo: restore the functionality of measuring task accumulables for Spark 2.2.x.
+   * Task/stage failures and other errors are mostly not handled by the code in this version, this puts the effort
+   on the user to validate the output. This needs to be fixed in a future version.
+   

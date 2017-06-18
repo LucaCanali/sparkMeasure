@@ -22,11 +22,11 @@ import scala.collection.mutable.ListBuffer
  *   The tool is written in Scala, but it can be used both from Scala and Python
  *
  * Example usage for stage metrics:
- * val stageMetrics = new ch.cern.sparkmeasure.StageMetrics(spark)
+ * val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
  * stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
  *
  * for task metrics:
- * val taskMetrics = new ch.cern.sparkmeasure.TaskMetrics(spark)
+ * val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
  * spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
  * val df = taskMetrics.createTaskMetricsDF()
  *
@@ -49,11 +49,10 @@ case class TaskVals(jobId: Int, stageId: Int, index: Long, launchTime: Long, fin
                 shuffleLocalBlocksFetched: Long, shuffleRemoteBlocksFetched: Long, shuffleWriteTime: Long,
                 shuffleBytesWritten: Long, shuffleRecordsWritten: Long)
 
-// repetition of the case class, with modification TO FIX
 case class TaskAccumulablesInfo(jobId: Int, stageId: Int, taskId: Long, submissionTime: Long, finishTime: Long,
                                 accId: Long, name: String, value: Long)
 
-class TaskInfoRecorderListener extends SparkListener {
+class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends SparkListener {
 
   val taskMetricsData: ListBuffer[TaskVals] = ListBuffer.empty[TaskVals]
   val accumulablesMetricsData: ListBuffer[TaskAccumulablesInfo] = ListBuffer.empty[TaskAccumulablesInfo]
@@ -107,28 +106,35 @@ class TaskInfoRecorderListener extends SparkListener {
     )
     taskMetricsData += currentTask
 
-    /** Collect data from accumulators, with additional care to keep only numerical values */
-    taskInfo.accumulables.foreach(acc => try {
-      val value = acc.value.getOrElse(0L).asInstanceOf[Long]
-      val name = acc.name.getOrElse("")
-      val currentAccumulablesInfo = TaskAccumulablesInfo(jobId, taskEnd.stageId, taskInfo.taskId,
-        taskInfo.launchTime, taskInfo.finishTime ,acc.id, name, value)
-      accumulablesMetricsData += currentAccumulablesInfo
+    /** Collect data from accumulators (includes task metrics and SQL metrics)
+     * as this can be a lot of data, only gather data if gatherAccumulables is true
+     * note the additional filters to keep only numerical values to make this code simpler
+     * note and todo: gatherAccumulables for TaskMetrics implementation currently works only for spark 2.1.x,
+     * this feature is broken on 2.2.1 as a consequence of [SPARK PR 17596](https://github.com/apache/spark/pull/17596)
+     */
+    if (gatherAccumulables) {
+      taskInfo.accumulables.foreach(acc => try {
+        val value = acc.value.getOrElse(0L).asInstanceOf[Long]
+        val name = acc.name.getOrElse("")
+        val currentAccumulablesInfo = TaskAccumulablesInfo(jobId, taskEnd.stageId, taskInfo.taskId,
+          taskInfo.launchTime, taskInfo.finishTime, acc.id, name, value)
+        accumulablesMetricsData += currentAccumulablesInfo
+      }
+      catch {
+        case ex: ClassCastException => None
+      }
+      )
     }
-    catch {
-      case ex: ClassCastException => None
-    }
-    )
 
   }
 }
 
-case class TaskMetrics(sparkSession: SparkSession) {
+case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean = false) {
 
   lazy val logger = LogManager.getLogger("TaskMetrics")
 
   /** This inserts the custom Spark Listener into the live Spark Context */
-  val listenerTask = new TaskInfoRecorderListener
+  val listenerTask = new TaskInfoRecorderListener(gatherAccumulables)
   sparkSession.sparkContext.addSparkListener(listenerTask)
 
   /** Variables used to store the start and end time of the period of interest for the metrics report */
