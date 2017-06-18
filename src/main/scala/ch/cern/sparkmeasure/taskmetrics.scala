@@ -171,14 +171,14 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
 
     val internalMetricsDf = sparkSession.sql(s"select name, sum(endValue) " +
       s"from $aggregatedAccumulables " +
-      s"where name like 'internal.metric%' " +
+      s"where name like 'internal.metrics%' " +
       s"group by name")
     println("\nAggregated Spark accumulables of type internal.metric:")
     internalMetricsDf.show(200, false)
 
     val otherAccumulablesDf = sparkSession.sql(s"select accId, name, endValue " +
       s"from $aggregatedAccumulables " +
-      s"where name not like 'internal.metric%' ")
+      s"where name not like 'internal.metrics%' ")
     println("\nSpark accumulables by accId of type != internal.metric:")
     otherAccumulablesDf.show(200, false)
   }
@@ -206,26 +206,21 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
       s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
       s"from PerfTaskMetrics " +
       s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
-    val results = aggregateDF.take(1)
 
     println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
     println(s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
     println("Aggregated Spark task metrics:")
 
-    (aggregateDF.columns zip results(0).toSeq).foreach(r => {
-      val name = r._1.toLowerCase()
-      val value = r._2.asInstanceOf[Long]
-      println(name + " = " + value.toString + {
-        if (name.contains("time") || name.contains("duration")) {
-          " (" + Utils.formatDuration(value) + ")"
-        }
-        else if (name.contains("bytes") && value > 1000L) {
-          " (" + Utils.formatBytes(value) + ")"
-        }
-        else ""
-      })
-    })
+    /** Print a summary of the task metrics. */
+    val aggregateValues = aggregateDF.take(1)(0).toSeq
+    val cols = aggregateDF.columns
+    (cols zip aggregateValues)
+      .foreach {
+        case((n:String, v:Long)) =>
+          println(Utils.preattyPrintValues(n, v))
+      }
   }
+
 
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
   def runAndMeasure[T](f: => T): T = {

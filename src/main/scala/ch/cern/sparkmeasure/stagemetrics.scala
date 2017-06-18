@@ -145,27 +145,54 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   /** for internal metrics summ all the values, for the accumulables compute max value for eax accId and name */
   def printAccumulables(): Unit = {
+    import sparkSession.implicits._
+
     createAccumulablesDF("AccumulablesStageMetrics")
     val internalMetricsDf = sparkSession.sql(s"select name, sum(value) " +
       s"from AccumulablesStageMetrics " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot " +
-      s"and name like 'internal.metric%' " +
-      s"group by name")
-    println("\nAggregated Spark accumulables of type internal.metric:")
-    internalMetricsDf.show(200, false)
+      s"and name like 'internal.metrics%' " +
+      s"group by name order by name")
+    println("\nAggregated Spark accumulables of type internal.metric. Sum of values grouped by metric name")
+    println("Name => sum(value) [group by name]\n")
+
+    val prefixLength = "internal.metrics.".size  // 17
+    internalMetricsDf.as[(String,Long)].
+      collect.
+      foreach {
+        case ((name: String, value: Long)) => {
+          // executorCpuTime, executorDeserializeCpuTime and shuffle.write.writeTime are in nanoseconds,
+          // this piece of code armonizes the values to milliseconds
+          val printVal =
+            if (name.contains("CpuTime") || name.contains("shuffle.write.writeTime"))
+              (value / 1e6).toLong
+            else
+              value
+          // trim the prefix internal.metrics as it is just noise in this context
+          println(Utils.preattyPrintValues(name.substring(prefixLength), printVal))
+        }
+      }
 
     val otherAccumulablesDf = sparkSession.sql(s"select accId, name, max(value) as endValue " +
       s"from AccumulablesStageMetrics " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot " +
-      s"and name not like 'internal.metric%'" +
-      s"group by accId, name")
-    println("\nAggregated Spark accumulables of type != internal.metric:")
-    otherAccumulablesDf.show(200,false)
+      s"and name not like 'internal.metrics%'" +
+      s"group by accId, name order by accId, name")
+    println("\nSQL Metrics and other non-internal metrics. Values grouped per accumulatorId and metric name.")
+    println("Accid, Name => max(value) [group by accId, name]\n")
+
+    otherAccumulablesDf.as[(String, String,Long)].
+      collect.
+      foreach {
+        case((accId: String, name: String, value: Long)) =>
+          // remove the suffix (min, med, max) where present in the metric name as it is just noise in this context
+          println("%5s".format(accId) + ", " + Utils.preattyPrintValues(name.replace(" (min, med, max)",""), value))
+      }
   }
+
 
   /** Custom aggreagations and post-processing of the metrics data */
   def printReport(): Unit = {
-
     createStageMetricsDF("PerfStageMetrics")
     val aggregateDF = sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
       s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
@@ -177,25 +204,19 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
       s"from PerfStageMetrics " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
-    val results = aggregateDF.take(1)
 
     println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
-    println(s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    println(s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
     println("Aggregated Spark stage metrics:")
 
-    (aggregateDF.columns zip results(0).toSeq).foreach(r => {
-      val name = r._1.toLowerCase()
-      val value = r._2.asInstanceOf[Long]
-      println(name + " = " + value.toString + {
-        if (name.contains("time") || name.contains("duration")) {
-          " (" + Utils.formatDuration(value) + ")"
-        }
-        else if (name.contains("bytes") && value > 1000L) {
-          " (" + Utils.formatBytes(value) + ")"
-        }
-        else ""
-      })
-    })
+    /** Print a summary of the stage metrics. */
+    val aggregateValues = aggregateDF.take(1)(0).toSeq
+    val cols = aggregateDF.columns
+    (cols zip aggregateValues)
+      .foreach {
+        case((n:String, v:Long)) =>
+          println(Utils.preattyPrintValues(n, v))
+      }
   }
 
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */

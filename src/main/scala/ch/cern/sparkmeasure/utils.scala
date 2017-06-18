@@ -51,14 +51,29 @@ object Utils {
       } else if (bytes >= 2*thousand) {
         (bytes / thousand, " KB")
       } else {
-        (bytes, "")
+        (bytes, " Bytes")
       }
     }
-    if (unit.isEmpty) {
-      "%d".format(value.toInt)
+    if (unit == " Bytes") {
+      "%d%s".format(value.toInt, unit)
     } else {
       "%.1f%s".format(value, unit)
     }
+  }
+
+  def preattyPrintValues(metric: String, value: Long): String = {
+    val name = metric.toLowerCase()
+    val basicValue = value.toString
+    val optionalValueWithUnits = {
+      if (name.contains("time") || name.contains("duration")) {
+        " (" + formatDuration(value) + ")"
+      }
+      else if (name.contains("bytes") || name.contains("size")) {
+        " (" + formatBytes(value) + ")"
+      }
+      else ""
+    }
+    metric + " => " + basicValue + optionalValueWithUnits
   }
 
   class ObjectInputStreamWithCustomClassLoader(fileInputStream: FileInputStream) extends ObjectInputStream(fileInputStream) {
