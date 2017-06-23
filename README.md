@@ -206,11 +206,15 @@ val stageVals = ch.cern.sparkmeasure.Utils.readSerializedStageMetrics("<file nam
 val stageMetricsDF = stageVals.toDF
 ```
 
-**Known issues and TODO**
+**Known issues and TODO list**
    * gatherAccumulables=true for taskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean) 
    currently only works only on Spark 2.1.x and breaks from Spark 2.2.1. This is a consequence of
    [SPARK PR 17596](https://github.com/apache/spark/pull/17596).
    Todo: restore the functionality of measuring task accumulables for Spark 2.2.x.
    * Task/stage failures and other errors are mostly not handled by the code in this version, this puts the effort
    on the user to validate the output. This needs to be fixed in a future version.
+   * Following [SPARK PR 18249](https://github.com/apache/spark/pull/18249/files) add support for the newly introduced 
+   remoteBytesReadToDisk Task Metric (I believe this is for Spark 2.3, to be checked).
+   * Following [SPARK PR 18162](https://github.com/apache/spark/pull/18162) TaskMetrics._updatedBlockStatuses is off by 
+   default, so maybe can be taken out of the list of metrics collected by sparkMetric
    
