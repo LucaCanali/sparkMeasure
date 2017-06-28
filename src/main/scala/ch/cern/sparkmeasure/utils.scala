@@ -36,10 +36,10 @@ object Utils {
   }
 
   def formatBytes(bytes: Long): String = {
-    val trillion = 1e12
-    val billion = 1e9
-    val million = 1e6
-    val thousand = 1e3
+    val trillion = 1024L*1024L*1024L*1024L
+    val billion = 1024L*1024L*1024L
+    val million = 1024L*1024L
+    val thousand = 1024L
 
     val (value, unit): (Double, String) = {
       if (bytes >= 2*trillion) {
