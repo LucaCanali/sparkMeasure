@@ -3,29 +3,30 @@
 **sparkMeasure is a tool for performance investigations of Apache Spark workloads.**  
 It simplifies the collection and analysis of Spark performance metrics.
 It is intended also as proof-of-concept code on how to use Spark listeners for custom metrics collection. 
- * Created by Luca.Canali@cern.ch, March 2017
- * Credits: Viktor Khristenko 
- * Version 0.11 beta, last modified June 2017
-    * developed and tested for Spark 2.1.0 and 2.1.1, 2.2.0
+ * Developed and tested for Spark 2.1.0 and 2.1.1, 2.2.0
+    * Latest version 0.11, last modified June 2017
+ * Created and maintained by: Luca.Canali@cern.ch
+    * Additional credits to: Viktor Khristenko 
    
  * [Link to the accompanying blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+    
+     
+**Where sparkMeasure can be useful:**
+ * Performance investigations: Measure and analyze performance interactively from spark-shell (Scala), pyspark (Python) or Jupyter notebooks
+ * Inside your code: add instrumentation calls in your code to use sparkMeasure custom Listeners and/or use the
+ classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and optionally saving metrics data
+ * Instrument code that you cannot change: use sparkMeasure in the "Flight Recorde"r mode, this records the performance metrics automatically and saves data for later processing
 
-**Main ideas of how sparkMeasure works:**  
+**Main concepts underlying sparkMeasure:**  
 * The tool is based on the Spark Listener interface, that is used as source for Spark workload metrics data.     
 * Metrics are collected at the granularity or stage and task (configurable)
 * Metrics are flattened and collected into a ListBuffer of a case class.   
 * Data is then transformed into a Spark DataFrame for analysis.  
 * Data can be saved for offline analysis
 
-**Where sparkMeasure can be useful:**
- * REPL: To measure and analyze performance interactively from: spark-shell (Scala), pyspark (Python) or Jupyter notebooks
- * Inside your code: add instrumentation calls in your code to use sparkMeasure custom Listeners and/or use the
- classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and optionally saving metrics data
- * Instrument code that you cannot change: use sparkMeasure in the "Flight Recorde"r mode, this records the performance metrics automatically and saves data for later processing
-
 **How to use:** use sbt to package (or use the jar uploaded in the target/scala-2.11 folder if relevant to your environemnt).  
 Run by adding the target jar to 
-<code>spark-submit/spark-shell/pyspark --jars <PATH>/spark-measure_2.11-0.1-SNAPSHOT.jar</code>
+<code>spark-submit/spark-shell/pyspark --jars spark-measure_2.11-0.11-SNAPSHOT.jar</code>
 
 **Examples**
  
