@@ -4,7 +4,7 @@
 It simplifies the collection and analysis of Spark performance metrics.
 It is intended also as proof-of-concept code on how to use Spark listeners for custom metrics collection. 
  * Developed and tested for Spark 2.1.0 and 2.1.1, 2.2.0
-    * Latest version 0.11, last modified June 2017
+    * Latest development version 0.12-SNAPSHOT, last modified July 2017
  * Created and maintained by: Luca.Canali@cern.ch
     * Additional credits to: Viktor Khristenko 
    

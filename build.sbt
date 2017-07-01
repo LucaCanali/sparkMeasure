@@ -1,6 +1,6 @@
 name := "spark-measure"
 
-version := "0.11-SNAPSHOT"
+version := "0.12-SNAPSHOT"
 
 scalaVersion := "2.11.11"
     
