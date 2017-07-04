@@ -31,7 +31,7 @@ bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
 ```
 or use the jar as in :
 ```scala
-spark-submit/pyspark/spark-shell --jars spark-measure_2.11-0.12-SNAPSHOT.jar</code>
+spark-submit/pyspark/spark-shell --jars spark-measure_2.11-0.12-SNAPSHOT.jar
 ```
 
 **Examples**
