@@ -8,9 +8,10 @@ It is intended also as proof-of-concept code on how to use Spark listeners for c
  * Created and maintained by: Luca.Canali@cern.ch
     * Additional credits to: Viktor Khristenko 
    
+ * https://mvnrepository.com/artifact/ch.cern.sparkmeasure - sparkMeasure on Maven Central   
  * [Link to the accompanying blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+   
     
-     
 **Where sparkMeasure can be useful:**
  * Performance investigations: Measure and analyze performance interactively from spark-shell (Scala), pyspark (Python) or Jupyter notebooks
  * Inside your code: add instrumentation calls in your code to use sparkMeasure custom Listeners and/or use the
@@ -24,9 +25,14 @@ It is intended also as proof-of-concept code on how to use Spark listeners for c
 * Data is then transformed into a Spark DataFrame for analysis.  
 * Data can be saved for offline analysis
 
-**How to use:** use sbt to package (or use the jar uploaded in the target/scala-2.11 folder if relevant to your environemnt).  
-Run by adding the target jar to 
-<code>spark-submit/spark-shell/pyspark --jars spark-measure_2.11-0.11-SNAPSHOT.jar</code>
+**How to use:** use sbt to compile are package the jar, or use the package on Maven Central. Example:     
+```scala
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
+```
+or use the jar as in :
+```scala
+spark-submit/pyspark/spark-shell --jars spark-measure_2.11-0.12-SNAPSHOT.jar</code>
+```
 
 **Examples**
  
