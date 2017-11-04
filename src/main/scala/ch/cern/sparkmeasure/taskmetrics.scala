@@ -1,8 +1,8 @@
 package ch.cern.sparkmeasure
 
-import org.apache.log4j.LogManager
 import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.slf4j.LoggerFactory
 
 import scala.collection.mutable.ListBuffer
 
@@ -131,7 +131,7 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
 
 case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean = false) {
 
-  lazy val logger = LogManager.getLogger("TaskMetrics")
+  lazy val logger = LoggerFactory.getLogger(getClass)
 
   /** This inserts the custom Spark Listener into the live Spark Context */
   val listenerTask = new TaskInfoRecorderListener(gatherAccumulables)

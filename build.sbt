@@ -13,7 +13,8 @@ spIgnoreProvided := true
 sparkVersion := "2.1.1"
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.1.1"
-libraryDependencies += "org.apache.logging.log4j" % "log4j" % "2.8"
+libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.1" % "test"
 
 organization := "ch.cern.sparkmeasure"
 

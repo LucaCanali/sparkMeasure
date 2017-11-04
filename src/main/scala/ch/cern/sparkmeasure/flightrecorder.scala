@@ -3,9 +3,9 @@ package ch.cern.sparkmeasure
 import java.io.{FileOutputStream, ObjectOutputStream}
 import java.nio.file.Paths
 
-import org.apache.log4j.LogManager
 import org.apache.spark.SparkConf
 import org.apache.spark.scheduler.SparkListenerApplicationEnd
+import org.slf4j.LoggerFactory
 
 /**
  * Spark Measure package: proof-of-concept tool for measuring Spark performance metrics
@@ -40,7 +40,7 @@ import org.apache.spark.scheduler.SparkListenerApplicationEnd
 
 class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListener {
 
-  lazy val logger = LogManager.getLogger("flightrecorder")
+  lazy val logger = LoggerFactory.getLogger(getClass)
 
   val metricsFileName = conf.get("spark.executorEnv.stageMetricsFileName", "/tmp/stageMetrics.serialized")
   val fullPath = Paths.get(metricsFileName).toString
@@ -59,7 +59,7 @@ class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListe
 
 class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListener {
 
-  lazy val logger = LogManager.getLogger("flightrecorder")
+  lazy val logger = LoggerFactory.getLogger(getClass)
 
   val metricsFileName = conf.get("spark.executorEnv.taskMetricsFileName", "/tmp/taskMetrics.serialized")
   val fullPath = Paths.get(metricsFileName).toString

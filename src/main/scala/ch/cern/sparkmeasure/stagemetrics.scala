@@ -2,9 +2,9 @@ package ch.cern.sparkmeasure
 
 import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import scala.collection.mutable.ListBuffer
-import org.apache.log4j.LogManager
+
+import org.slf4j.LoggerFactory
 
 /**
  * Spark Measure package: proof-of-concept tool for measuring Spark performance metrics
@@ -106,7 +106,7 @@ class StageInfoRecorderListener extends SparkListener {
 
 case class StageMetrics(sparkSession: SparkSession) {
 
-  lazy val logger = LogManager.getLogger("StageMetrics")
+  lazy val logger = LoggerFactory.getLogger(getClass)
 
   /** This inserts the custom Spark Listener into the live Spark Context */
   val listenerStage = new StageInfoRecorderListener
