@@ -217,7 +217,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     (cols zip aggregateValues)
       .foreach {
         case((n:String, v:Long)) =>
-          println(Utils.preattyPrintValues(n, v))
+          println(Utils.prettyPrintValues(n, v))
       }
   }
 
