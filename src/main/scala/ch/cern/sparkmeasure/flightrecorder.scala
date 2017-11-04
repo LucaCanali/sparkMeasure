@@ -47,7 +47,7 @@ class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListe
 
   /** when the application stops serialize the content of stageMetricsData into a file in the driver's filesystem */
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
-    logger.warn(s"application end, timestmap = ${applicationEnd.time}")
+    logger.warn(s"application end, timestamp = ${applicationEnd.time}")
 
     val os = new ObjectOutputStream(new FileOutputStream(fullPath))
     os.writeObject(stageMetricsData)
@@ -66,7 +66,7 @@ class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListene
 
   /** when the application stops serialize the content of taskMetricsData into a file in the driver's filesystem */
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
-    logger.warn(s"application end, timestmap = ${applicationEnd.time}")
+    logger.warn(s"application end, timestamp = ${applicationEnd.time}")
 
     val os = new ObjectOutputStream(new FileOutputStream(fullPath))
     os.writeObject(taskMetricsData)
