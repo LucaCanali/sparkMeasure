@@ -1,6 +1,5 @@
 package ch.cern.sparkmeasure
 
-import java.io.{FileOutputStream, ObjectOutputStream}
 import java.nio.file.Paths
 
 import org.apache.spark.SparkConf
@@ -43,16 +42,17 @@ class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListe
   lazy val logger = LoggerFactory.getLogger(getClass)
 
   val metricsFileName = conf.get("spark.executorEnv.stageMetricsFileName", "/tmp/stageMetrics.serialized")
+  val metricsFormat = conf.get("spark.executorEnv.stageMetricsFormat", "java")
   val fullPath = Paths.get(metricsFileName).toString
 
   /** when the application stops serialize the content of stageMetricsData into a file in the driver's filesystem */
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
     logger.warn(s"application end, timestamp = ${applicationEnd.time}")
-
-    val os = new ObjectOutputStream(new FileOutputStream(fullPath))
-    os.writeObject(stageMetricsData)
-    os.close()
-
+    if (metricsFormat.equalsIgnoreCase("json")) {
+      Utils.writeSerializedJSON(fullPath, stageMetricsData)
+    } else {
+      Utils.writeSerialized(fullPath, stageMetricsData)
+    }
     logger.warn(s"Stagemetrics data serialized to $fullPath")
   }
 }
@@ -62,16 +62,17 @@ class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListene
   lazy val logger = LoggerFactory.getLogger(getClass)
 
   val metricsFileName = conf.get("spark.executorEnv.taskMetricsFileName", "/tmp/taskMetrics.serialized")
+  val metricsFormat = conf.get("spark.executorEnv.taskMetricsFormat", "java")
   val fullPath = Paths.get(metricsFileName).toString
 
   /** when the application stops serialize the content of taskMetricsData into a file in the driver's filesystem */
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
     logger.warn(s"application end, timestamp = ${applicationEnd.time}")
-
-    val os = new ObjectOutputStream(new FileOutputStream(fullPath))
-    os.writeObject(taskMetricsData)
-    os.close()
-
+    if (metricsFormat.equalsIgnoreCase("json")) {
+      Utils.writeSerializedJSON(fullPath, taskMetricsData)
+    } else {
+      Utils.writeSerialized(fullPath, taskMetricsData)
+    }
     logger.warn(s"Taskmetrics data serialized to $fullPath")
   }
 }

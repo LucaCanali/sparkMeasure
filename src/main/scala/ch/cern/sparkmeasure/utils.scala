@@ -1,8 +1,12 @@
 package ch.cern.sparkmeasure
 
 import scala.collection.mutable.ListBuffer
-import java.io.{FileInputStream, ObjectInputStream, ObjectStreamClass}
+import java.io._
 import java.nio.file.Paths
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 
 /**
  * The object Utils contains some helper code for the sparkMeasure package
@@ -12,6 +16,9 @@ import java.nio.file.Paths
  */
 
 object Utils {
+
+  val objectMapper = new ObjectMapper with ScalaObjectMapper
+  objectMapper.registerModule(DefaultScalaModule)
 
   /** boilerplate code for pretty printing, formatDuration code borrowed from Spark UIUtils */
   def formatDuration(milliseconds: Long): String = {
@@ -87,12 +94,23 @@ object Utils {
     }
   }
 
-  def readSerialized[T](stageMetricsFileName: String): ListBuffer[T] = {
-
-    val fullPath = Paths.get(stageMetricsFileName).toString
+  def readSerialized[T](metricsFileName: String): ListBuffer[T] = {
+    val fullPath = Paths.get(metricsFileName).toString
     val ois = new ObjectInputStreamWithCustomClassLoader(new FileInputStream(fullPath))
-    val result = ois.readObject().asInstanceOf[ListBuffer[T]]
-    result
+    try {
+      ois.readObject().asInstanceOf[ListBuffer[T]]
+    } finally {
+      ois.close()
+    }
+  }
+
+  def writeSerialized(fullPath: String, metricsData: Any): Unit = {
+    val os = new ObjectOutputStream(new FileOutputStream(fullPath))
+    try {
+      os.writeObject(metricsData)
+    } finally {
+      os.close()
+    }
   }
 
   def readSerializedStageMetrics(stageMetricsFileName: String): ListBuffer[StageVals] = {
@@ -103,4 +121,32 @@ object Utils {
     readSerialized[TaskVals](stageMetricsFileName)
   }
 
+  def writeSerializedJSON(fullPath: String, metricsData: AnyRef): Unit = {
+    val os = new FileOutputStream(fullPath)
+    try {
+      objectMapper.writeValue(os, metricsData)
+    } finally {
+      os.close()
+    }
+  }
+
+  def readSerializedStageMetricsJSON(stageMetricsFileName: String): List[StageVals] = {
+    val fullPath = Paths.get(stageMetricsFileName).toString
+    val is = new FileInputStream(fullPath)
+    try {
+      objectMapper.readValue[List[StageVals]](is)
+    } finally {
+      is.close()
+    }
+  }
+
+  def readSerializedTaskMetricsJSON(taskMetricsFileName: String): List[TaskVals] = {
+    val fullPath = Paths.get(taskMetricsFileName).toString
+    val is = new FileInputStream(fullPath)
+    try {
+      objectMapper.readValue[List[TaskVals]](is)
+    } finally {
+      is.close()
+    }
+  }
 }
