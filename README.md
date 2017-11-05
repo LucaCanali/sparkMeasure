@@ -1,31 +1,34 @@
 # sparkMeasure
 
-**sparkMeasure is a tool for performance investigations of Apache Spark workloads.**  
-It simplifies the collection and analysis of Spark performance metrics.
-It is intended also as proof-of-concept code on how to use Spark listeners for custom metrics collection. 
- * Developed and tested for Spark 2.1.0 and 2.1.1, 2.2.0
-    * Latest development version 0.12-SNAPSHOT, last modified July 2017
- * Created and maintained by: Luca.Canali@cern.ch
-    * Additional credits to: Viktor Khristenko 
-   
- * https://mvnrepository.com/artifact/ch.cern.sparkmeasure - sparkMeasure on Maven Central   
- * [Link to the accompanying blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
-   
+**sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads**  
+It simplifies the collection and analysis of Spark performance metrics.  
+It is also intended also as proof-of-concept code on how to use Spark Listeners for custom Spark metrics collection. 
+ * Created and maintained by: Luca.Canali@cern.ch + additional credits to: Viktor.Khristenko@cern.ch 
+ * Developed and tested for Spark 2.1.x and 2.2.x
+ * Build with `sbt package`
+   - Latest development version 0.12-SNAPSHOT, last modified November 2017
+   - sparkMeasure on Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
+ * Related info:
+   - [Link to a blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+   - [Get started note](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_Performace_Tool_sparkMeasure.md)
+   - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
     
-**Where sparkMeasure can be useful:**
- * Performance investigations: Measure and analyze performance interactively from spark-shell (Scala), pyspark (Python) or Jupyter notebooks
- * Inside your code: add instrumentation calls in your code to use sparkMeasure custom Listeners and/or use the
- classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and optionally saving metrics data
- * Instrument code that you cannot change: use sparkMeasure in the "Flight Recorde"r mode, this records the performance metrics automatically and saves data for later processing
+**Use sparkMeasure for:**
+ * Performance troubleshooting: measure and analyze performance interactively from spark-shell (Scala), pyspark (Python) or Jupyter notebooks.
+ * Code instrumentation: add calls in your code to deploy sparkMeasure custom Listeners and/or use the
+ classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and optionally saving metrics data.
+ * Measure workloads that you cannot change: use sparkMeasure in the "Flight Recorder" mode, this records the performance metrics automatically and saves data for later processing.
 
 **Main concepts underlying sparkMeasure:**  
-* The tool is based on the Spark Listener interface, that is used as source for Spark workload metrics data.     
-* Metrics are collected at the granularity or stage and task (configurable)
-* Metrics are flattened and collected into a ListBuffer of a case class.   
+* The tool is based on the Spark Listener interface. Listeners transport Spark executor task metrics data from the executor to the driver.
+  They are a standard part of Spark instrumentation, used by the Spark Web UI for example.     
+* Metrics can be collected using sparkMeasure at the granularity of stage complettion and/or task completion 
+ (configurable by the tool user)
+* Metrics are flattened and collected into local memory structures (ListBuffer of a case class).   
 * Data is then transformed into a Spark DataFrame for analysis.  
 * Data can be saved for offline analysis
 
-**How to use:** use sbt to compile are package the jar, or use the package on Maven Central. Example:     
+**How to use:** use sbt to package the jar from source, or use the jar available on Maven Central. Example:     
 ```scala
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
 ```
@@ -37,10 +40,48 @@ spark-submit/pyspark/spark-shell --jars spark-measure_2.11-0.12-SNAPSHOT.jar
 **Examples**
  
 1. Measure metrics at the Stage level (example in Scala):
-```scala
+```
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
+
 val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 ```
+
+
+The output should look like this:
+```
+Scheduling mode = FIFO
+Spark Context default degree of parallelism = 8
+Aggregated Spark stage metrics:
+numStages => 3
+sum(numTasks) => 17
+elapsedTime => 9103 (9 s)
+sum(stageDuration) => 9027 (9 s)
+sum(executorRunTime) => 69238 (1.2 min)
+sum(executorCpuTime) => 68004 (1.1 min)
+sum(executorDeserializeTime) => 1031 (1 s)
+sum(executorDeserializeCpuTime) => 151 (0.2 s)
+sum(resultSerializationTime) => 5 (5 ms)
+sum(jvmGCTime) => 64 (64 ms)
+sum(shuffleFetchWaitTime) => 0 (0 ms)
+sum(shuffleWriteTime) => 26 (26 ms)
+max(resultSize) => 17934 (17.0 KB)
+sum(numUpdatedBlockStatuses) => 0
+sum(diskBytesSpilled) => 0 (0 Bytes)
+sum(memoryBytesSpilled) => 0 (0 Bytes)
+max(peakExecutionMemory) => 0
+sum(recordsRead) => 2000
+sum(bytesRead) => 0 (0 Bytes)
+sum(recordsWritten) => 0
+sum(bytesWritten) => 0 (0 Bytes)
+sum(shuffleTotalBytesRead) => 472 (472 Bytes)
+sum(shuffleTotalBlocksFetched) => 8
+sum(shuffleLocalBlocksFetched) => 8
+sum(shuffleRemoteBlocksFetched) => 0
+sum(shuffleBytesWritten) => 472 (472 Bytes)
+sum(shuffleRecordsWritten) => 8
+```
+
 
 2. This is an alternative way to collect and print metrics (Scala):
 ```scala
@@ -223,5 +264,5 @@ val stageMetricsDF = stageVals.toDF
    * Following [SPARK PR 18249](https://github.com/apache/spark/pull/18249/files) add support for the newly introduced 
    remoteBytesReadToDisk Task Metric (I believe this is for Spark 2.3, to be checked).
    * Following [SPARK PR 18162](https://github.com/apache/spark/pull/18162) TaskMetrics._updatedBlockStatuses is off by 
-   default, so maybe can be taken out of the list of metrics collected by sparkMetric
+   default, so maybe can be taken out of the list of metrics collected by sparkMetric.
    
