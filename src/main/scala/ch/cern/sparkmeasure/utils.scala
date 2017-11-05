@@ -4,6 +4,7 @@ import scala.collection.mutable.ListBuffer
 import java.io._
 import java.nio.file.Paths
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
@@ -19,6 +20,8 @@ object Utils {
 
   val objectMapper = new ObjectMapper with ScalaObjectMapper
   objectMapper.registerModule(DefaultScalaModule)
+  val objectWriter = objectMapper.writer(new DefaultPrettyPrinter())
+
 
   /** boilerplate code for pretty printing, formatDuration code borrowed from Spark UIUtils */
   def formatDuration(milliseconds: Long): String = {
@@ -124,7 +127,7 @@ object Utils {
   def writeSerializedJSON(fullPath: String, metricsData: AnyRef): Unit = {
     val os = new FileOutputStream(fullPath)
     try {
-      objectMapper.writeValue(os, metricsData)
+      objectWriter.writeValue(os, metricsData)
     } finally {
       os.close()
     }
