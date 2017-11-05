@@ -2,9 +2,9 @@ package ch.cern.sparkmeasure
 
 import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import scala.collection.mutable.ListBuffer
-import org.apache.log4j.LogManager
+
+import org.slf4j.LoggerFactory
 
 /**
  * Spark Measure package: proof-of-concept tool for measuring Spark performance metrics
@@ -106,7 +106,7 @@ class StageInfoRecorderListener extends SparkListener {
 
 case class StageMetrics(sparkSession: SparkSession) {
 
-  lazy val logger = LogManager.getLogger("StageMetrics")
+  lazy val logger = LoggerFactory.getLogger(getClass)
 
   /** This inserts the custom Spark Listener into the live Spark Context */
   val listenerStage = new StageInfoRecorderListener
@@ -169,7 +169,7 @@ case class StageMetrics(sparkSession: SparkSession) {
             else
               value
           // trim the prefix internal.metrics as it is just noise in this context
-          println(Utils.preattyPrintValues(name.substring(prefixLength), printVal))
+          println(Utils.prettyPrintValues(name.substring(prefixLength), printVal))
         }
       }
 
@@ -186,7 +186,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       foreach {
         case((accId: String, name: String, value: Long)) =>
           // remove the suffix (min, med, max) where present in the metric name as it is just noise in this context
-          println("%5s".format(accId) + ", " + Utils.preattyPrintValues(name.replace(" (min, med, max)",""), value))
+          println("%5s".format(accId) + ", " + Utils.prettyPrintValues(name.replace(" (min, med, max)",""), value))
       }
   }
 
@@ -215,7 +215,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     (cols zip aggregateValues)
       .foreach {
         case((n:String, v:Long)) =>
-          println(Utils.preattyPrintValues(n, v))
+          println(Utils.prettyPrintValues(n, v))
       }
   }
 

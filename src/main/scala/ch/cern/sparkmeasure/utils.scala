@@ -61,7 +61,7 @@ object Utils {
     }
   }
 
-  def preattyPrintValues(metric: String, value: Long): String = {
+  def prettyPrintValues(metric: String, value: Long): String = {
     val name = metric.toLowerCase()
     val basicValue = value.toString
     val optionalValueWithUnits = {
