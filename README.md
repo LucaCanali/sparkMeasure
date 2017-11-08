@@ -230,13 +230,16 @@ serialization and deserialization time, HDFS I/O metrics, etc
 **Additional info on Flight Recorder Mode:**
 
 To use in flight recorder mode add one or both of the following to the spark-submit/spark-shell/pyspark command line:
- * --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
- * --conf class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListener
+* For recording stage metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics</code>
+* For recording task-level metrics: <code>--conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics</code>
 
-The flight recorder mode writes the collected metrics serializaed into a file in the driver's filesystem. 
+The flight recorder mode writes the collected metrics serialized into a file in the driver's filesystem. 
 Optionally add one or both of the following configuration parameters to determine the path of the output file  
- * --conf spark.executorEnv.stageMetricsFileName"=<file path> (default is "/tmp/stageMetrics.serialized")
- * --conf spark.executorEnv.taskMetricsFileName"=<file path> (default is "/tmp/taskMetrics.serialized")
+ * `--conf spark.executorEnv.stageMetricsFileName=<file path>` (the default is "/tmp/stageMetrics.serialized")
+ * `--conf spark.executorEnv.taskMetricsFileName=<file path>` (the default is "/tmp/taskMetrics.serialized")
+ 
+Optionally use JSON to serialize the metrics collected in Flight Recorded mode:
+ * --conf `--conf spark.executorEnv.taskMetricsFormat="json"` (the default is "java")
  
 **Additional info on Utils:**
 
