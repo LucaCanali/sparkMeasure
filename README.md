@@ -1,7 +1,7 @@
 # sparkMeasure
 
 [![Build Status](https://travis-ci.org/LucaCanali/sparkMeasure.svg?branch=master)](https://travis-ci.org/LucaCanali/sparkMeasure)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/LucaCanali/sparkMeasure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/LucaCanali/sparkMeasure)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11)
 
 **sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads**  
 It simplifies the collection and analysis of Spark performance metrics.  
