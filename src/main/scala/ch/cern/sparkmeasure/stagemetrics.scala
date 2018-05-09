@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
  *
  */
 
-case class StageVals (jobId: Int, stageId: Int, name: String,
+case class StageVals (jobId: Int, jobGroup:String, stageId: Int, name: String,
                  submissionTime: Long, completionTime: Long, stageDuration: Long, numTasks: Int,
                  executorRunTime: Long, executorCpuTime: Long,
                  executorDeserializeTime: Long, executorDeserializeCpuTime: Long,
@@ -57,9 +57,14 @@ class StageInfoRecorderListener extends SparkListener {
   val stageMetricsData: ListBuffer[StageVals] = ListBuffer.empty[StageVals]
   val accumulablesMetricsData: ListBuffer[StageAccumulablesInfo] = ListBuffer.empty[StageAccumulablesInfo]
   val StageIdtoJobId: collection.mutable.HashMap[Int, Int] = collection.mutable.HashMap.empty[Int, Int]
+  val StageIdtoJobGroup: collection.mutable.HashMap[Int, String] = collection.mutable.HashMap.empty[Int, String]
 
   override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
     jobStart.stageIds.foreach(stageId => StageIdtoJobId += (stageId -> jobStart.jobId))
+    val group = jobStart.properties.getProperty("spark.jobGroup.id")
+    if (group != null) {
+      jobStart.stageIds.foreach(stageId => StageIdtoJobGroup += (stageId -> group))
+    } 
   }
 
   /**
@@ -70,7 +75,11 @@ class StageInfoRecorderListener extends SparkListener {
     val stageInfo = stageCompleted.stageInfo
     val taskMetrics = stageInfo.taskMetrics
     val jobId = StageIdtoJobId(stageInfo.stageId)
-    val currentStage = StageVals(jobId, stageInfo.stageId, stageInfo.name,
+    val group = if (StageIdtoJobGroup.contains(stageInfo.stageId)) {
+          StageIdtoJobGroup(stageInfo.stageId)  
+        }
+        else { null }
+    val currentStage = StageVals(jobId, group, stageInfo.stageId, stageInfo.name,
       stageInfo.submissionTime.getOrElse(0L), stageInfo.completionTime.getOrElse(0L),
       stageInfo.completionTime.getOrElse(0L) - stageInfo.submissionTime.getOrElse(0L),
       stageInfo.numTasks, taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
