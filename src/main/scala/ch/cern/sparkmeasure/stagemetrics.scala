@@ -201,7 +201,8 @@ case class StageMetrics(sparkSession: SparkSession) {
 
 
   /** Custom aggreagations and post-processing of the metrics data */
-  def printReport(): Unit = {
+  def report(): String = {
+    var result = List[String]()
     createStageMetricsDF("PerfStageMetrics")
     val aggregateDF = sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
       s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
@@ -214,18 +215,24 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"from PerfStageMetrics " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
 
-    println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
-    println(s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
-    println("Aggregated Spark stage metrics:")
+    result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
+    result = result :+ (s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    result = result :+ ("Aggregated Spark stage metrics:")
 
     /** Print a summary of the stage metrics. */
     val aggregateValues = aggregateDF.take(1)(0).toSeq
     val cols = aggregateDF.columns
-    (cols zip aggregateValues)
-      .foreach {
+    result = result :+ ((cols zip aggregateValues)
+      .map{
         case((n:String, v:Long)) =>
-          println(Utils.prettyPrintValues(n, v))
-      }
+          Utils.prettyPrintValues(n, v)
+      }).mkString("\n")
+
+    return result.mkString("\n")
+  }
+
+  def printReport(): Unit = {
+    println(report)
   }
 
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
