@@ -37,7 +37,7 @@ import scala.collection.mutable.ListBuffer
  *
  */
 
-case class TaskVals(jobId: Int, stageId: Int, index: Long, launchTime: Long, finishTime: Long,
+case class TaskVals(jobId: Int, jobGroup:String, stageId: Int, index: Long, launchTime: Long, finishTime: Long,
                 duration: Long, schedulerDelay: Long, executorId: String, host: String, taskLocality: Int,
                 speculative: Boolean, gettingResultTime: Long, successful: Boolean,
                 executorRunTime: Long, executorCpuTime: Long,
@@ -57,6 +57,7 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
   val taskMetricsData: ListBuffer[TaskVals] = ListBuffer.empty[TaskVals]
   val accumulablesMetricsData: ListBuffer[TaskAccumulablesInfo] = ListBuffer.empty[TaskAccumulablesInfo]
   val StageIdtoJobId: collection.mutable.HashMap[Int, Int] = collection.mutable.HashMap.empty[Int, Int]
+  val StageIdtoJobGroup: collection.mutable.HashMap[Int, String] = collection.mutable.HashMap.empty[Int, String]
 
   def encodeTaskLocality(taskLocality: TaskLocality.TaskLocality): Int = {
     taskLocality match {
@@ -70,6 +71,10 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
 
   override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
     jobStart.stageIds.foreach(stageId => StageIdtoJobId += (stageId -> jobStart.jobId))
+    val group = jobStart.properties.getProperty("spark.jobGroup.id")
+    if (group != null) {
+      jobStart.stageIds.foreach(stageId => StageIdtoJobGroup += (stageId -> group))
+    }
   }
 
   /**
@@ -85,7 +90,11 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
     }
     val duration = taskInfo.finishTime - taskInfo.launchTime
     val jobId = StageIdtoJobId(taskEnd.stageId)
-    val currentTask = TaskVals(jobId, taskEnd.stageId, taskInfo.taskId, taskInfo.launchTime,
+    val group = if (StageIdtoJobGroup.contains(taskEnd.stageId)) {
+          StageIdtoJobGroup(taskEnd.stageId)
+        }
+        else { null }
+    val currentTask = TaskVals(jobId, group, taskEnd.stageId, taskInfo.taskId, taskInfo.launchTime,
       taskInfo.finishTime, duration,
       math.max(0L, duration - taskMetrics.executorRunTime - taskMetrics.executorDeserializeTime -
         taskMetrics.resultSerializationTime - gettingResultTime),
@@ -192,7 +201,8 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     resultDF
   }
 
-  def printReport(): Unit = {
+  def report(): String = {
+    var result = List[String]()
 
     createTaskMetricsDF("PerfTaskMetrics")
     val aggregateDF = sparkSession.sql(s"select count(*) numtasks, " +
@@ -207,20 +217,25 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
       s"from PerfTaskMetrics " +
       s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
 
-    println(s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
-    println(s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
-    println("Aggregated Spark task metrics:")
+    result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
+    result = result :+ (s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    result = result :+ ("Aggregated Spark task metrics:")
 
     /** Print a summary of the task metrics. */
     val aggregateValues = aggregateDF.take(1)(0).toSeq
     val cols = aggregateDF.columns
-    (cols zip aggregateValues)
-      .foreach {
+    result = result :+ ((cols zip aggregateValues)
+      .map {
         case((n:String, v:Long)) =>
-          println(Utils.prettyPrintValues(n, v))
-      }
+          Utils.prettyPrintValues(n, v)
+      }).mkString("\n")
+
+    return(result.mkString("\n"))
   }
 
+  def printReport(): Unit = {
+    println(report)
+  }
 
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
   def runAndMeasure[T](f: => T): T = {
