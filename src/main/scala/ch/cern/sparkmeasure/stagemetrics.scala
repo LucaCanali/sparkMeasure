@@ -202,7 +202,7 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   /** Custom aggreagations and post-processing of the metrics data */
   def report(): String = {
-    var result = List[String]()
+    var result = ListBuffer[String]()
     createStageMetricsDF("PerfStageMetrics")
     val aggregateDF = sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
       s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
