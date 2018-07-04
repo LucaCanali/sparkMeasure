@@ -10,9 +10,9 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 isSnapshot := true
 
 spIgnoreProvided := true
-sparkVersion := "2.1.1"
+sparkVersion := "2.3.1"
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.1.1"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.3.1"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.5"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.3" % "test"
