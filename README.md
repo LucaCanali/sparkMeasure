@@ -7,7 +7,7 @@
 It simplifies the collection and analysis of Spark performance metrics.  
 It is also intended also as proof-of-concept code on how to use Spark Listeners for custom Spark metrics collection. 
  * Created and maintained by: Luca.Canali@cern.ch + additional credits to: Viktor.Khristenko@cern.ch 
- * Developed and tested for Spark 2.1.x and 2.2.x
+ * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
  * Build with `sbt package`
    - Latest development version 0.12-SNAPSHOT, last modified November 2017
    - sparkMeasure on Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
