@@ -8,7 +8,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class UtilsTest extends FlatSpec with Matchers {
 
-  val stageVals0 = StageVals(jobId = 1, stageId = 2, name = "stageVal",
+  val stageVals0 = StageVals(jobId = 1, jobGroup = "test", stageId= 2, name = "stageVal",
     submissionTime = 10, completionTime = 11, stageDuration = 12, numTasks = 13,
     executorRunTime = 14, executorCpuTime = 15,
     executorDeserializeTime = 16, executorDeserializeCpuTime = 17,
@@ -20,7 +20,7 @@ class UtilsTest extends FlatSpec with Matchers {
     shuffleBytesWritten = 46, shuffleRecordsWritten = 47
   )
 
-  val taskVals0 = TaskVals(jobId = 1, stageId = 2, index = 3, launchTime = 4, finishTime = 5,
+  val taskVals0 = TaskVals(jobId = 1, jobGroup = "test", stageId = 2, index = 3, launchTime = 4, finishTime = 5,
     duration = 10, schedulerDelay = 11, executorId = "exec0", host = "host0", taskLocality = 12,
     speculative = false, gettingResultTime = 12, successful = true,
     executorRunTime = 14, executorCpuTime = 15,
