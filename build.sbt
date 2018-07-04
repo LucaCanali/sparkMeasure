@@ -2,7 +2,7 @@ name := "spark-measure"
 
 version := "0.12-SNAPSHOT"
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.11.12"
     
 resolvers += Resolver.mavenLocal
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
