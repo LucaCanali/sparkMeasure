@@ -3,7 +3,6 @@ package ch.cern.sparkmeasure
 import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import scala.collection.mutable.ListBuffer
-
 import org.slf4j.LoggerFactory
 
 /**
@@ -125,7 +124,9 @@ case class StageMetrics(sparkSession: SparkSession) {
   var beginSnapshot: Long = 0L
   var endSnapshot: Long = 0L
 
-  def begin(): Long = {
+  def begin(clearData: Boolean = true): Long = {
+    if (clearData)
+     listenerStage.stageMetricsData.clear()    // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
     beginSnapshot
   }

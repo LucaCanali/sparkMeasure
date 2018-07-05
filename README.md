@@ -9,7 +9,7 @@ It is also intended also as proof-of-concept code on how to use Spark Listeners 
  * Created and maintained by: Luca.Canali@cern.ch + additional credits to: Viktor.Khristenko@cern.ch 
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
  * Build with `sbt package`
-   - Latest development version 0.12-SNAPSHOT, last modified November 2017
+   - Latest development version 0.12-SNAPSHOT, last modified July 2018
    - sparkMeasure on Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
  * Related info:
    - [Link to a blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
@@ -35,9 +35,9 @@ It is also intended also as proof-of-concept code on how to use Spark Listeners 
 ```scala
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
 ```
-or use the jar as in :
+or just use the jar (it is only needed in the driver) as in:
 ```scala
-spark-submit/pyspark/spark-shell --jars spark-measure_2.11-0.12-SNAPSHOT.jar
+spark-submit/pyspark/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.12-SNAPSHOT.jar
 ```
 
 **Examples**
