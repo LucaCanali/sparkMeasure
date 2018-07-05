@@ -124,7 +124,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   var beginSnapshot: Long = 0L
   var endSnapshot: Long = 0L
 
-  def begin(clearData): Long = {
+  def begin(): Long = {
     listenerStage.stageMetricsData.clear()    // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
     beginSnapshot
