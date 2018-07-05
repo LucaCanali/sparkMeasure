@@ -152,7 +152,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     resultDF
   }
 
-  /** for internal metrics summ all the values, for the accumulables compute max value for eax accId and name */
+  /** for internal metrics sum all the values, for the accumulables compute max value for eax accId and name */
   def printAccumulables(): Unit = {
     import sparkSession.implicits._
 
@@ -200,7 +200,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
 
-  /** Custom aggreagations and post-processing of the metrics data */
+  /** Custom aggregations and post-processing of metrics data */
   def report(): String = {
     var result = ListBuffer[String]()
     createStageMetricsDF("PerfStageMetrics")
