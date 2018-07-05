@@ -148,9 +148,8 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
   var beginSnapshot: Long = 0L
   var endSnapshot: Long = 0L
 
-  def begin(clearData: Boolean = true): Long = {
-    if (clearData)
-      listenerTask.taskMetricsData.clear()    // clear previous data to reduce memory footprint
+  def begin(): Long = {
+    listenerTask.taskMetricsData.clear()    // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
     beginSnapshot
   }
