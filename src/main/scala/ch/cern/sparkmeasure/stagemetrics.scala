@@ -235,6 +235,46 @@ case class StageMetrics(sparkSession: SparkSession) {
     println(report)
   }
 
+  /**
+   * Send the metrics to Prometheus.
+   * serverIPnPort: String with prometheus pushgateway address, format is hostIP:Port,
+   * metricsJob: job name,
+   * labelName: metrics label name, default is sparkSession.sparkContext.appName,
+   * labelValue: metrics label value, default is sparkSession.sparkContext.applicationId
+   */
+  def sendReport(serverIPnPort: String,
+                 metricsJob: String,
+                 labelName: String = sparkSession.sparkContext.appName,
+                 labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
+
+    createStageMetricsDF("PerfStageMetrics")
+    val aggregateDF = sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
+      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
+      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
+      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
+      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
+      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
+      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
+      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
+      s"from PerfStageMetrics " +
+      s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
+
+    /** Prepare a summary of the stage metrics for Prometheus. */
+    val pushGateway = PushGateway(serverIPnPort, metricsJob)
+    var str_metrics = s""
+    val aggregateValues = aggregateDF.take(1)(0).toSeq
+    val cols = aggregateDF.columns
+    (cols zip aggregateValues)
+      .foreach {
+        case((n:String, v:Long)) =>
+          str_metrics += pushGateway.validateMetric(n.toLowerCase()) + s" " + v.toString + s"\n"
+      }
+
+    /** Send stage metrics to Prometheus. */
+    val metricsType = s"stage"
+    pushGateway.post(str_metrics, metricsType, labelName, labelValue)
+  }
+
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
   def runAndMeasure[T](f: => T): T = {
     this.begin()
