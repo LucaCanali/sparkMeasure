@@ -16,7 +16,8 @@ sparkComponents += "sql"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.1" % "test"
+//libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.1" % "test"
+libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.6.0" % "test"
 
 organization := "ch.cern.sparkmeasure"
 
