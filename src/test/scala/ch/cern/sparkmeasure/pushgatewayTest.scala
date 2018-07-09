@@ -23,7 +23,6 @@ class PushGatewayTest extends FlatSpec with Matchers {
   } else {
 
     /** Run wiremock server on local machine with the port */
-//    val ip_port = 5555
     val wireMockServer = new WireMockServer(ip_port)
 
 
@@ -92,18 +91,5 @@ class PushGatewayTest extends FlatSpec with Matchers {
 
     wireMockServer.stop()
   }
-
-
-//  it should "throw NoSuchElementException if an empty stack is popped" in {
-
-//    val emptyStack = new Stack[String]
-//    assertThrows[NoSuchElementException] {
-//      emptyStack.pop()
-//    }
-
-//    an [NoSuchElementException] should be thrownBy {
-//        /** Send task metrics to Prometheus. */
-//    }
-//  }
 
 }
