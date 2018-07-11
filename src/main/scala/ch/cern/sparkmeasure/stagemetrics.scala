@@ -242,7 +242,7 @@ case class StageMetrics(sparkSession: SparkSession) {
    * labelName: metrics label name, default is sparkSession.sparkContext.appName,
    * labelValue: metrics label value, default is sparkSession.sparkContext.applicationId
    */
-  def sendReport(serverIPnPort: String,
+  def sendReportPrometheus(serverIPnPort: String,
                  metricsJob: String,
                  labelName: String = sparkSession.sparkContext.appName,
                  labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
