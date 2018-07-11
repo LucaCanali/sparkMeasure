@@ -6,7 +6,9 @@
 **sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads**  
 It simplifies the collection and analysis of Spark performance metrics.  
 It is also intended also as proof-of-concept code on how to use Spark Listeners for custom Spark metrics collection. 
- * Created and maintained by: Luca.Canali@cern.ch + additional credits to: Viktor.Khristenko@cern.ch 
+ * Created and maintained by: Luca.Canali@cern.ch 
+   * credits for original prototype to: Viktor.Khristenko@cern.ch
+   * thanks to contributors who have submitted PRs 
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
  * Build with `sbt package`
    - Latest development version 0.12-SNAPSHOT, last modified July 2018

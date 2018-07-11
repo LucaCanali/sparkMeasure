@@ -167,6 +167,54 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     resultDF
   }
 
+  def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
+    import sparkSession.implicits._
+    val resultDF = listenerTask.taskMetricsData.toDF
+    resultDF.createOrReplaceTempView(nameTempView)
+    logger.warn(s"Stage metrics data refreshed into temp view $nameTempView")
+    resultDF
+  }
+
+  def aggregateTaskMetrics(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
+    sparkSession.sql(s"select count(*) numtasks, " +
+      s"max(finishTime) - min(launchTime) as elapsedTime, sum(duration), sum(schedulerDelay), sum(executorRunTime), " +
+      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
+      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
+      s"sum(gettingResultTime), " +
+      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
+      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
+      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
+      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
+      s"from $nameTempView " +
+      s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
+  }
+
+  def report(): String = {
+    var result = ListBuffer[String]()
+    val nameTempView = "PerfTaskMetrics"
+    createTaskMetricsDF(nameTempView)
+    val aggregateDF = aggregateTaskMetrics(nameTempView)
+
+    result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
+    result = result :+ (s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    result = result :+ ("Aggregated Spark task metrics:")
+
+    /** Print a summary of the task metrics. */
+    val aggregateValues = aggregateDF.take(1)(0).toSeq
+    val cols = aggregateDF.columns
+    result = result :+ ((cols zip aggregateValues)
+      .map {
+        case ((n: String, v: Long)) =>
+          Utils.prettyPrintValues(n, v)
+      }).mkString("\n")
+
+    return (result.mkString("\n"))
+  }
+
+  def printReport(): Unit = {
+    println(report())
+  }
+
   def printAccumulables(): Unit = {
     val accumulableTaskMetrics = "AccumulablesTaskMetrics"
     val aggregatedAccumulables = "AggregatedAccumulables"
@@ -191,50 +239,6 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     otherAccumulablesDf.show(200, false)
   }
 
-  def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
-    import sparkSession.implicits._
-    val resultDF = listenerTask.taskMetricsData.toDF
-    resultDF.createOrReplaceTempView(nameTempView)
-    logger.warn(s"Stage metrics data refreshed into temp view $nameTempView")
-    resultDF
-  }
-
-  def report(): String = {
-    var result = ListBuffer[String]()
-
-    createTaskMetricsDF("PerfTaskMetrics")
-    val aggregateDF = sparkSession.sql(s"select count(*) numtasks, " +
-      s"max(finishTime) - min(launchTime) as elapsedTime, sum(duration), sum(schedulerDelay), sum(executorRunTime), " +
-      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
-      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
-      s"sum(gettingResultTime), " +
-      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
-      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
-      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
-      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
-      s"from PerfTaskMetrics " +
-      s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
-
-    result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
-    result = result :+ (s"Spark Contex default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
-    result = result :+ ("Aggregated Spark task metrics:")
-
-    /** Print a summary of the task metrics. */
-    val aggregateValues = aggregateDF.take(1)(0).toSeq
-    val cols = aggregateDF.columns
-    result = result :+ ((cols zip aggregateValues)
-      .map {
-        case ((n: String, v: Long)) =>
-          Utils.prettyPrintValues(n, v)
-      }).mkString("\n")
-
-    return (result.mkString("\n"))
-  }
-
-  def printReport(): Unit = {
-    println(report)
-  }
-
   /**
    * Send the metrics to Prometheus.
    * serverIPnPort: String with prometheus pushgateway address, format is hostIP:Port,
@@ -247,18 +251,9 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
                  labelName: String = sparkSession.sparkContext.appName,
                  labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
 
-    createTaskMetricsDF("PerfTaskMetrics")
-    val aggregateDF = sparkSession.sql(s"select count(*) numtasks, " +
-      s"max(finishTime) - min(launchTime) as elapsedTime, sum(duration), sum(schedulerDelay), sum(executorRunTime), " +
-      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
-      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
-      s"sum(gettingResultTime), " +
-      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
-      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
-      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
-      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
-      s"from PerfTaskMetrics " +
-      s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
+    val nameTempView = "PerfTaskMetrics"
+    createTaskMetricsDF(nameTempView)
+    val aggregateDF = aggregateTaskMetrics(nameTempView)
 
     /** Prepare a summary of the task metrics for Prometheus. */
     val pushGateway = PushGateway(serverIPnPort, metricsJob)
