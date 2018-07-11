@@ -152,6 +152,47 @@ case class StageMetrics(sparkSession: SparkSession) {
     resultDF
   }
 
+  def aggregateStageMetrics(nameTempView: String = "PerfStageMetrics"): DataFrame = {
+    sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
+      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
+      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
+      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
+      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
+      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
+      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
+      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
+      s"from $nameTempView " +
+      s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
+
+  }
+
+  /** Custom aggregations and post-processing of metrics data */
+  def report(): String = {
+    val nameTempView = "PerfStageMetrics"
+    createStageMetricsDF(nameTempView)
+    val aggregateDF = aggregateStageMetrics(nameTempView)
+    var result = ListBuffer[String]()
+
+    result = result :+ s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}"
+    result = result :+ s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}"
+    result = result :+ "Aggregated Spark stage metrics:"
+
+    /** Print a summary of the stage metrics. */
+    val aggregateValues = aggregateDF.take(1)(0).toSeq
+    val cols = aggregateDF.columns
+    result = result :+ ((cols zip aggregateValues)
+      .map{
+        case((n:String, v:Long)) =>
+          Utils.prettyPrintValues(n, v)
+      }).mkString("\n")
+
+    result.mkString("\n")
+  }
+
+  def printReport(): Unit = {
+    println(report())
+  }
+
   /** for internal metrics sum all the values, for the accumulables compute max value for eax accId and name */
   def printAccumulables(): Unit = {
     import sparkSession.implicits._
@@ -199,42 +240,6 @@ case class StageMetrics(sparkSession: SparkSession) {
       }
   }
 
-
-  /** Custom aggregations and post-processing of metrics data */
-  def report(): String = {
-    var result = ListBuffer[String]()
-    createStageMetricsDF("PerfStageMetrics")
-    val aggregateDF = sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
-      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
-      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
-      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
-      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
-      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
-      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
-      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
-      s"from PerfStageMetrics " +
-      s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
-
-    result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
-    result = result :+ (s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
-    result = result :+ ("Aggregated Spark stage metrics:")
-
-    /** Print a summary of the stage metrics. */
-    val aggregateValues = aggregateDF.take(1)(0).toSeq
-    val cols = aggregateDF.columns
-    result = result :+ ((cols zip aggregateValues)
-      .map{
-        case((n:String, v:Long)) =>
-          Utils.prettyPrintValues(n, v)
-      }).mkString("\n")
-
-    return result.mkString("\n")
-  }
-
-  def printReport(): Unit = {
-    println(report)
-  }
-
   /**
    * Send the metrics to Prometheus.
    * serverIPnPort: String with prometheus pushgateway address, format is hostIP:Port,
@@ -247,17 +252,9 @@ case class StageMetrics(sparkSession: SparkSession) {
                  labelName: String = sparkSession.sparkContext.appName,
                  labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
 
-    createStageMetricsDF("PerfStageMetrics")
-    val aggregateDF = sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
-      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
-      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
-      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
-      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
-      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
-      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
-      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
-      s"from PerfStageMetrics " +
-      s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
+    val nameTempView = "PerfStageMetrics"
+    createStageMetricsDF(nameTempView)
+    val aggregateDF = aggregateStageMetrics(nameTempView)
 
     /** Prepare a summary of the stage metrics for Prometheus. */
     val pushGateway = PushGateway(serverIPnPort, metricsJob)
