@@ -5,33 +5,37 @@
 
 **sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads**  
 It simplifies the collection and analysis of Spark performance metrics.  
-It is also intended also as proof-of-concept code on how to use Spark Listeners for custom Spark metrics collection. 
+It is also intended also as proof-of-concept code on how to use Spark listeners for custom 
+Spark executors task metrics data collection. 
  * Created and maintained by: Luca.Canali@cern.ch 
-   * credits for original prototype to: Viktor.Khristenko@cern.ch
+   * credits for work on original prototype to: Viktor.Khristenko@cern.ch
    * thanks to contributors who have submitted PRs 
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
- * Build with `sbt package`
-   - Latest development version 0.12-SNAPSHOT, last modified July 2018
-   - sparkMeasure on Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
+ * Usage: 
+   - build with `sbt package`. Latest development version 0.12-SNAPSHOT, last modified July 2018
+   - or use sparkMeasure from Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
  * Related info:
    - [Link to a blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
    - [Get started note](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_Performace_Tool_sparkMeasure.md)
    - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
     
-**Use sparkMeasure for:**
- * Performance troubleshooting: measure and analyze performance interactively from spark-shell (Scala), pyspark (Python) or Jupyter notebooks.
- * Code instrumentation: add calls in your code to deploy sparkMeasure custom Listeners and/or use the
- classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and optionally saving metrics data.
- * Measure workloads that you cannot change: use sparkMeasure in the "Flight Recorder" mode, this records the performance metrics automatically and saves data for later processing.
+**One tool, multiple usage models**
+ * Interactive: measure and analyze performance from shell or notebooks: using spark-shell (Scala), pyspark (Python) or Jupyter notebooks.
+ * Code instrumentation: add calls in your code to deploy sparkMeasure custom Spark listeners and/or use the
+ classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and saving metrics data.
+ * "Flight Recorder" mode: this records all performance metrics automatically and saves data for later processing.
 
-**Main concepts underlying sparkMeasure:**  
+**Main concepts underlying sparkMeasure**  
 * The tool is based on the Spark Listener interface. Listeners transport Spark executor task metrics data from the executor to the driver.
   They are a standard part of Spark instrumentation, used by the Spark Web UI for example.     
-* Metrics can be collected using sparkMeasure at the granularity of stage complettion and/or task completion 
- (configurable by the tool user)
-* Metrics are flattened and collected into local memory structures (ListBuffer of a case class).   
+* Metrics can be collected using sparkMeasure at the granularity of stage completion and/or task completion 
+ (configurable)
+* Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).   
 * Data is then transformed into a Spark DataFrame for analysis.  
 * Data can be saved for offline analysis
+
+**Architecture diagram**  
+[TODO]
 
 **How to use:** use sbt to package the jar from source, or use the jar available on Maven Central. Example:     
 ```scala
