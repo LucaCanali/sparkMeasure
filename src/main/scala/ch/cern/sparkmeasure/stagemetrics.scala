@@ -193,18 +193,20 @@ case class StageMetrics(sparkSession: SparkSession) {
     println(report())
   }
 
-  /** for internal metrics sum all the values, for the accumulables compute max value for eax accId and name */
-  def printAccumulables(): Unit = {
+  /** for internal metrics sum all the values, for the accumulables compute max value for each accId and name */
+  def reportAccumulables(): String = {
     import sparkSession.implicits._
 
+    var result = ListBuffer[String]()
     createAccumulablesDF("AccumulablesStageMetrics")
+
     val internalMetricsDf = sparkSession.sql(s"select name, sum(value) " +
       s"from AccumulablesStageMetrics " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot " +
       s"and name like 'internal.metrics%' " +
       s"group by name order by name")
-    println("\nAggregated Spark accumulables of type internal.metric. Sum of values grouped by metric name")
-    println("Name => sum(value) [group by name]\n")
+    result = result :+ "\nAggregated Spark accumulables of type internal.metric. Sum of values grouped by metric name"
+    result = result :+ "Name => sum(value) [group by name]\n"
 
     val prefixLength = "internal.metrics.".size  // 17
     internalMetricsDf.as[(String,Long)].
@@ -228,16 +230,22 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot " +
       s"and name not like 'internal.metrics%'" +
       s"group by accId, name order by accId, name")
-    println("\nSQL Metrics and other non-internal metrics. Values grouped per accumulatorId and metric name.")
-    println("Accid, Name => max(value) [group by accId, name]\n")
+    result = result :+ "\nSQL Metrics and other non-internal metrics. Values grouped per accumulatorId and metric name."
+    result = result :+ "Accid, Name => max(value) [group by accId, name]\n"
 
     otherAccumulablesDf.as[(String, String,Long)].
       collect.
       foreach {
         case((accId: String, name: String, value: Long)) =>
           // remove the suffix (min, med, max) where present in the metric name as it is just noise in this context
-          println("%5s".format(accId) + ", " + Utils.prettyPrintValues(name.replace(" (min, med, max)",""), value))
+          result = result :+ "%5s".format(accId) + ", " + Utils.prettyPrintValues(name.replace(" (min, med, max)",""), value)
       }
+
+    result.mkString("\n")
+  }
+
+  def printAccumulables(): Unit = {
+    print(reportAccumulables())
   }
 
   /**
