@@ -14,6 +14,8 @@ Use this as a reference for future development
    * TODO: Flight recorder mode, task metrics, find ways to write metrics out to output files incrementally, 
      rather than using the current approach of buffering everything in memory and writing at the end? 
      The current approach has ovious scalability issues.
+   * TODO: write more tests
+   * TODO: add code/exceptions to  handle error conditions that can arise in sparkMeasure code
    * Following [SPARK PR 18162](https://github.com/apache/spark/pull/18162) TaskMetrics._updatedBlockStatuses 
      is off by default.  
      TODO (maybe): remove _updatedBlockStatuses from the list of metrics collected by spakMeasure

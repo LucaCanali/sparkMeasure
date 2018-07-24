@@ -10,15 +10,19 @@ stagemetrics.begin()
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
 stagemetrics.end()
 stagemetrics.print_report()
+# optionally 
+stagemetrics.print_accumulables()
 ```
 
-2. Sae as example 1, but with a shortcut/workaround to run code and measure it with one command line:
+2. Similar to example 1, but with a shortcut/workaround to run code and measure it with one command line:
  ```python
- from sparkmeasure import StageMetrics
- stagemetrics = StageMetrics(spark)
+from sparkmeasure import StageMetrics
+stagemetrics = StageMetrics(spark)
 
 stagemetrics.runandmeasure(locals(),
   'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
+# optionally 
+stagemetrics.print_accumulables()
  ```
 
 ---
