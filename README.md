@@ -8,15 +8,14 @@ It simplifies the collection and analysis of Spark performance metrics.
 It is also intended as a working example of how to use Spark listeners for collecting and processing 
 Spark executors task metrics data.
  * Created and maintained by: Luca.Canali@cern.ch 
-   * credits for work on original prototype to Viktor.Khristenko@cern.ch
-   * thanks to contributors who have submitted PRs 
+   * \+ credits to Viktor.Khristenko@cern.ch + thanks to contributors who have submitted PRs
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
- * Usage: 
-   - build with `sbt package`. Latest development version 0.12-SNAPSHOT, last modified July 2018
+   * Latest development version 0.12-SNAPSHOT, last modified July 2018
+ * Build/ download: 
+   - build with `sbt package`. 
    - or use sparkMeasure from Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
  * Related info:
-   - [Link to a blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
-   - [Get started note](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_Performace_Tool_sparkMeasure.md)
+   - [Link to 2017 blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
    - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
     
 **Multiple usage models**
@@ -26,11 +25,14 @@ Spark executors task metrics data.
  * "Flight Recorder" mode: this records all performance metrics automatically and saves data for later processing.
 
 **Docs:**
-  - Scala shell and notebooks
-  - Python shell and Jupyter notebooks
+  - [Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)
+  - [Python shell and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)
   - Instrument Scala code
   - Instrument Python code
   - Flight Recorder mode
+
+**Architecture diagram**  
+[TODO]
 
 **Main concepts underlying sparkMeasure**  
 * The tool is based on the Spark Listener interface. Listeners transport Spark executor task metrics data from the executor to the driver.
@@ -41,8 +43,6 @@ Spark executors task metrics data.
 * Data is then transformed into a Spark DataFrame for analysis.  
 * Data can be saved for offline analysis
 
-**Architecture diagram**  
-[TODO]
 
 **FAQ:**   
   - Why should I care about instrumentation?
@@ -52,18 +52,11 @@ Spark executors task metrics data.
   - When should I use stage metrics and when whould I use task metrics?
   - Where can I save/sink the collected metrics?
   - How can I process metrics data?
-  - How to I contribute to sparkMeasure?
+  - How can I contribute to sparkMeasure?
 
-**How to use:** use sbt to package the jar from source, or use the jar available on Maven Central. Example:     
-```scala
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
-```
-or just use the jar (it is only needed in the driver) as in:
-```scala
-spark-submit/pyspark/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.12-SNAPSHOT.jar
-```
 
-**TLDR; one basic example of sparkMeasure usage**
+
+**A basic example of sparkMeasure usage**
  
 1. Measure metrics at the Stage level (example in Scala):
 ```
