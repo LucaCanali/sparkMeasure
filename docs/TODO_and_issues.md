@@ -13,12 +13,14 @@ Use this as a reference for future development
      remoteBytesReadToDisk Task Metric (this is relevant for Spark 2.3.x and above).     
    * TODO: Flight recorder mode, task metrics, find ways to write metrics out to output files incrementally, 
      rather than using the current approach of buffering everything in memory and writing at the end? 
-     The current approach has ovious scalability issues.
-   * TODO: write more tests
+     The current approach has obvious scalability issues.
+   * TODO: write more tests to be executed by travis CI
    * TODO: add code/exceptions to  handle error conditions that can arise in sparkMeasure code
-   * Following [SPARK PR 18162](https://github.com/apache/spark/pull/18162) TaskMetrics._updatedBlockStatuses 
-     is off by default.  
-     TODO (maybe): remove _updatedBlockStatuses from the list of metrics collected by spakMeasure
+   * TODO (maybe): add additional sinks for the collected metrics and aggregations besides prometheus,
+     two possible candidates are Kafka and InfluxDB
+   * TODO (maybe): remove _updatedBlockStatuses from the list of metrics collected by spakMeasure
+     This follows [SPARK PR 18162](https://github.com/apache/spark/pull/18162) 
+     TaskMetrics._updatedBlockStatuses is off by default.
    * TODO (maybe) implement in sparmMeasure APIS removeSparkListener method, to allow stopping data collection 
      from sparkMeasure. (note this is only possible from Spark version 2.2 and above)
    * gatherAccumulables=true for taskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean) 

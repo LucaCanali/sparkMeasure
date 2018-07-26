@@ -20,8 +20,11 @@ class TaskMetrics:
     def end(self):
         self.taskmetrics.end()
 
+    def report(self):
+        return self.taskmetrics.report()
+
     def print_report(self):
-        print(self.taskmetrics.report())
+        print(self.report())
 
     def print_accumulables(self):
         none # not yet implemented
@@ -31,3 +34,9 @@ class TaskMetrics:
         exec codetorun in env
         self.end()
         self.print_report()
+
+    def create_taskmetrics_DF(self, viewname):
+        self.taskmetrics.createStageMetricsDF(viewname)
+
+    def save_data(self, df, filepathandname, fileformat):
+        df.repartition(1).write.format(fileformat).save(filepathandname)

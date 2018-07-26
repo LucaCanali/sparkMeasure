@@ -26,7 +26,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
 
     // or just use the jar (it is only needed in the driver) as in:
-    spark-submit/pyspark/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.12-SNAPSHOT.jar
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.12-SNAPSHOT.jar
    ```
 
 ### Collect and print stage metrics
@@ -90,9 +90,9 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     ```
 
 ### Task metrics
-This type of metrics collection granularity is more performance-heavy, as data from each task is 
-collected before aggregation.
-It should only be used if you need data with this finer granularity, for example because you want
+
+Collecting Spark task metrics at the granularity of each task completion has additional overhead
+compare to collecting at the stage completion level, therefore this option should only be used if you need data with this finer granularity, for example because you want
 to study skew effects, otherwise consider using stagemetrics aggregation as preferred choice.
 
 - The API for collecting data at task level is similar to the stage metrics case.
@@ -105,10 +105,37 @@ to study skew effects, otherwise consider using stagemetrics aggregation as pref
 
 ### Exporting metrics data for archiving and/or further analysis
 
-- Example on how to export all task metrics data in json format
+One simple use case is to make use of the data collected and reported by stagemetrics and taskmetrics 
+printReport methods for immediate troubleshooting and workload analysis.  
+You also have options to save metrics aggregated as in the printReport output.  
+Another option is to export the metrics to an external system, such as [Prometheus Pushgateway](prometheus.md) 
+  
+- Example on how to export raw Stage Metrics metrics data in json format
     ```scala
-    df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
+    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+    stageMetrics.runAndMeasure( ...your workload here ... )
+  
+    val df = stageMetrics.createStageMetricsDF("PerfStageMetrics")
+    df.show()
+    stageMetrics.saveData(df.orderBy("jobId", "stageId"), "/tmp/stagemetrics_test1")
+
+    val accumulablesDF = stagemetrics.createAccumulablesDF("AccumulablesStageMetrics")
+    stageMetrics.saveData(accumulablesDF, "/tmp/stagemetrics_accumulables_test1")
+    ```
+
+- Example, save aggregated metrics (as found in the printReport output) in json format
+
+    ```scala
+    val df = stageMetrics.createStageMetricsDF("PerfStageMetrics")
+    val aggregatedDF = stageMetrics.aggregateStageMetrics("PerfStageMetrics")
+    aggregatedDF.show()
+    stageMetrics.saveData(aggregatedDF, "/tmp/stagemetrics_report_test2")
+    ```
+
+- Example on how to export raw Task Metrics data in json format
+    ```scala
+    val df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
     spark.sql("select * from PerfTaskMetrics").show()
     df.show()
-    taskMetrics.saveData(df, "taskmetrics_test1", "json")
+    taskMetrics.saveData(df.orderBy("jobId", "stageId", "index"), "<path>/taskmetrics_test3")
     ```

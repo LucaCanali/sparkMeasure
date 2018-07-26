@@ -285,7 +285,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
 
   /** helper method to save data, we expect to have moderate amounts of data so collapsing to 1 partition seems OK */
   def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") = {
-    df.orderBy("jobId", "stageId", "index").repartition(1).write.format(fileFormat).save(fileName)
+    df.repartition(1).write.format(fileFormat).save(fileName)
     logger.warn(s"Task metric data saved into $fileName using format=$fileFormat")
   }
 

@@ -221,7 +221,7 @@ case class StageMetrics(sparkSession: SparkSession) {
             else
               value
           // trim the prefix internal.metrics as it is just noise in this context
-          println(Utils.prettyPrintValues(name.substring(prefixLength), printVal))
+          result = result :+ Utils.prettyPrintValues(name.substring(prefixLength), printVal)
         }
       }
 
@@ -294,7 +294,7 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   /** Helper method to save data, we expect to have small amounts of data so collapsing to 1 partition seems OK */
   def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") = {
-    df.orderBy("jobId", "stageId").repartition(1).write.format(fileFormat).save(fileName)
+    df.repartition(1).write.format(fileFormat).save(fileName)
     logger.warn(s"Stage metric data saved into $fileName using format=$fileFormat")
   }
 

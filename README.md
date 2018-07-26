@@ -14,17 +14,18 @@ Spark executors task metrics data.
  * Build/ download: 
    - build with `sbt package`. 
    - or use sparkMeasure from Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
+   - to install Python wrapper APIs, `cd python; pip install .`
  * Related info:
    - [Link to 2017 blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
    - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
     
-**Multiple usage models**
+**Use for interactive and batch workloads**
  * Interactive: measure and analyze performance from shell or notebooks: using spark-shell (Scala), pyspark (Python) or Jupyter notebooks.
  * Code instrumentation: add calls in your code to deploy sparkMeasure custom Spark listeners and/or use the
  classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and saving metrics data.
  * "Flight Recorder" mode: this records all performance metrics automatically and saves data for later processing.
 
-**Docs:**
+**Docs with examples:**
   - [Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)
   - [Python shell and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)
   - Instrument Scala code
@@ -45,15 +46,18 @@ Spark executors task metrics data.
 
 
 **FAQ:**   
-  - Why should I care about instrumentation?
+  - Why measuring performance with workload metrics instrumentation rather than just using time?
+    - Measuring elapsed time of your job gives you a measure related to the specific execution of your job.
+      With workload metrics you can (attempt to) go further in understanding the behavior of your job:
+      as in doing root cause analysis, bottleneck identification, resource usage measurement 
   - What are Sparks tasks metrics and what can I use them for?
   - What are accumulables?
   - What are known limitations and gotchas?
-  - When should I use stage metrics and when whould I use task metrics?
-  - Where can I save/sink the collected metrics?
+  - When should I use stage metrics and when should I use task metrics?
+  - How can I save/sink the collected metrics?
   - How can I process metrics data?
   - How can I contribute to sparkMeasure?
-
+    - See the [TODO_and_issues list](docs/TODO_and_issues.md), send PRs or open issues on Github.
 
 
 **A basic example of sparkMeasure usage**
