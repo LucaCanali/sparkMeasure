@@ -10,7 +10,7 @@ Spark executors task metrics data.
  * Created and maintained by: Luca.Canali@cern.ch 
    * \+ credits to Viktor.Khristenko@cern.ch + thanks to contributors who have submitted PRs
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
-   * Latest development version 0.12-SNAPSHOT, last modified July 2018
+   * Latest development version 0.14-SNAPSHOT, last modified July 2018
  * Build/ download: 
    - build with `sbt package`. 
    - or use sparkMeasure from Maven Central: [https://mvnrepository.com/artifact/ch.cern.sparkmeasure]    
@@ -64,7 +64,7 @@ Spark executors task metrics data.
  
 1. Measure metrics at the Stage level (example in Scala):
 ```
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
 val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)

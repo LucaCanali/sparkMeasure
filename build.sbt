@@ -1,6 +1,6 @@
 name := "spark-measure"
 
-version := "0.12-SNAPSHOT"
+version := "0.14-SNAPSHOT"
 
 scalaVersion := "2.11.12"
     
@@ -19,10 +19,16 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 //libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.1" % "test"
 libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.6.0" % "test"
 
-organization := "ch.cern.sparkmeasure"
-
-// publishing to Maven
+// publishing to Sonatype Nexus repository and Maven
 publishMavenStyle := true
+
+organization := "ch.cern.sparkmeasure"
+description := "sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads"
+developers := List(Developer(
+  "LucaCanali", "Luca Canali", "Luca.Canali@cern.ch",
+  url("https://github.com/LucaCanali")
+))
+homepage := Some(url("https://github.com/LucaCanali/sparkMeasure"))
 
 publishTo := Some(
   if (isSnapshot.value)
@@ -31,7 +37,6 @@ publishTo := Some(
     Opts.resolver.sonatypeStaging
 )
 
-homepage := Some(url("https://github.com/LucaCanali/sparkMeasure"))
 scmInfo := Some(
   ScmInfo(
     url("https://github.com/LucaCanali/sparkMeasure"),

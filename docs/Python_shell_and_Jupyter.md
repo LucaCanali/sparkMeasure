@@ -18,7 +18,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 3.
  - Deploy sparkMeasure from Maven Central (the alternative, see 3b below, is to build a jar from master)
     ```python
-    bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.11
+    bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
     ```
  - Optionally build sparkMeasure jar (the alternative is to use a released varsion available on Maven Central).
     ```python
