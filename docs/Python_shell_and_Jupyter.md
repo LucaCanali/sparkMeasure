@@ -7,20 +7,20 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 ### Deployment and installation
 
 - Use PyPi to install the Python wrapper and take the jar from Maven central: 
-    ```python
+    ```
     pip install sparkmeasure
     bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
     ```
  - If you want to build from the latest development version:
-    ```python
+    ```
     git clone https://github.com/lucacanali/sparkmeasure
     cd sparkmeasure
     sbt package
     ls -l target/scala-2.11/spark-measure*.jar  # note location of the compiled and packaged jar
  
-   # Install the Python wrapper package
-   cd python
-   pip install .
+    # Install the Python wrapper package
+    cd python
+    pip install .
     
     # Run as in one of these examples:
     bin/pyspark --jars path>/spark-measure_2.11-0.12-SNAPSHOT.jar
