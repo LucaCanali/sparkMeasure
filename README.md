@@ -25,10 +25,11 @@ Spark executors task metrics data.
  * "Flight Recorder" mode: this records all performance metrics automatically and saves data for later processing.
 
 ### Documentation with examples
+
   - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
   - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
   - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
-  - Instrument Python code
+  - **[Instrument Python code](docs/Instrument_Python_code.md)**
   - Flight Recorder mode
 
 ### Architecture diagram  
@@ -64,7 +65,7 @@ Spark executors task metrics data.
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
 val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
-stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
+stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
 ```
 
 The output should look like this:
