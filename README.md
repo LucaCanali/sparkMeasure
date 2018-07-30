@@ -24,10 +24,10 @@ Spark executors task metrics data.
  classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and saving metrics data.
  * "Flight Recorder" mode: this records all performance metrics automatically and saves data for later processing.
 
-###Docs with examples
-  - [Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)
-  - [PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)
-  - [Instrument Scala code](docs/Instrument_Scala_code.md)
+### Documentation with examples
+  - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
+  - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
+  - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
   - Instrument Python code
   - Flight Recorder mode
 
