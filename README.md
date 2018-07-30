@@ -27,7 +27,7 @@ Spark executors task metrics data.
 ###Docs with examples
   - [Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)
   - [PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)
-  - Instrument Scala code
+  - [Instrument Scala code](docs/Instrument_Scala_code.md)
   - Instrument Python code
   - Flight Recorder mode
 

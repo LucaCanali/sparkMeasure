@@ -1,4 +1,4 @@
-## Python: sparkMeasure on PySpark
+# sparkMeasure on PySpark
 
 Notes on how to use sparkMeasure to collect Spark workload metrics when using PySpark from command line 
 or from a Jupyter notebook.  
