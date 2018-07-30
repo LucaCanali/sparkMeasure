@@ -41,26 +41,45 @@ Spark executors task metrics data.
 * Metrics can be collected using sparkMeasure at the granularity of stage completion and/or task completion 
  (configurable)
 * Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).   
-* Data is then transformed into a Spark DataFrame for analysis.  
-* Data can be saved for offline analysis
+* Metrics data are transformed into Spark DataFrame for archival and to generate reports.  
+* Metrics data and reports can be saved for offline analysis.
 
 ### FAQ:   
   - Why measuring performance with workload metrics instrumentation rather than just using time?
-    - Measuring elapsed time of your job gives you a measure related to the specific execution of your job.
-      With workload metrics you can (attempt to) go further in understanding the behavior of your job:
-      as in doing root cause analysis, bottleneck identification, resource usage measurement 
+    - Measuring elapsed time, treats your workload as "a black box" and most often does not allow you
+     to understand the root cause of the performance. 
+     With workload metrics you can (attempt to) go further in understanding and root cause analysis,
+     bottleneck identification, resource usage measurement. 
   - What are Apache Spark tasks metrics and what can I use them for?
+     - Apache Spark measures several details of each task execution, including run time, CPU time,
+     information on garbage collection time, shuffle metrics and on task I/O. 
+     See [taskMetrics class](https://github.com/apache/spark/blob/master/core/src/main/scala/org/apache/spark/executor/TaskMetrics.scala)
   - What are accumulables?
+     - Metrics are first collected into accumulators. some metrics values are only available in 
+     these structures (notably SQL Metrics, such as "scan time")
   - What are known limitations and gotchas?
+     - The currently available metrics are quite useful but the do not allow to fully perform 
+     workload time profiling and in general do not yet offer a full monitoring platform.
+     Metrics are collected on the driver, which can be quickly become a bottleneck.
   - When should I use stage metrics and when should I use task metrics?
+     - Use stage metrics whenever possible as they are much more lightweight. Collect metrics at
+     the task granularity if you need the extra information, for example if you want to study 
+     effects of skew, long tails and task stragglers.
   - How can I save/sink the collected metrics?
+     - You can print metrics data and reports to standard output or save them to files (local or n HDFS).
+     Additionally you can sink metrics to external systems (such as Prometheus) 
   - How can I process metrics data?
-  - How can I contribute to sparkMeasure?
-    - See the [TODO_and_issues list](docs/TODO_and_issues.md), send PRs or open issues on Github.
+     - You can use Spark to read the saved metrics data and perform further post-processing and analysis.
+     See the examples directory.
+  - Can I contribute to sparkMeasure?
+    - SparkMeasure has already profited from PR contributions.
+    See the [TODO_and_issues list](docs/TODO_and_issues.md) if you need ideas on what to contribute.
 
-### A simple example of sparkMeasure usage
+### Two simple examples of sparkMeasure usage
  
-1. Measure metrics at the Stage level (example in Scala):
+1. Link to an [example Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+
+2. An example using Scala REPL:
 ```
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
