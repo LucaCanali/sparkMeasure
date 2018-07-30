@@ -1,5 +1,6 @@
 """sparkmeasure is a tool for performance troubleshooting of Apache Spark workloads.
-It simplifies the collection and analysis of Spark task metrics.
+It simplifies the collection and analysis of Spark task metrics data.
+See details at https://github.com/LucaCanali/sparkMeasure
 """
 
 from __future__ import print_function

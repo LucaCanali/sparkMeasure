@@ -3,9 +3,20 @@
 Notes on how to use sparkMeasure to collect Spark workload metrics when Scala shell or a Scala notebook.
 See also [README](../README.md) for an introduction to sparkMeasure and its architecture.
 
+ 
+### Run sparkMeasure using the packaged version from Maven Central 
+
+- The alternative, see paragraph above, is to build a jar from master.
+    ```scala
+    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
+
+    // or just download and use the jar (it is only needed in the driver) as in:
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.13.jar
+   ```
+
 ### Download and build sparkMeasure (optional)
 
- - Optionally build sparkMeasure jar (the alternative is to use a released varsion available on Maven Central).
+ - If you want to build from the latest development version:
     ```scala
     git clone https://github.com/lucacanali/sparkmeasure
     cd sparkmeasure
@@ -18,18 +29,8 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     # alternative, set classpath for the driver (it is only needed in the driver)
     bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14-SNAPSHOT.jar
     ```
-  
-### Deploy sparkMeasure from Maven Central 
 
-- The alternative, see paragraph above, is to build a jar from master.
-    ```scala
-    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
-
-    // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.13.jar
-   ```
-
-### Collect and print stage metrics
+### Example: collect and print stage metrics with sparkMeasure
  
 1. Measure metrics at the Stage level, a basic exaple:
     ```
@@ -89,7 +90,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     stageMetrics.printAccumulables()
     ```
 
-### Task metrics
+### Collecting metrics at finer granularity: use Task metrics
 
 Collecting Spark task metrics at the granularity of each task completion has additional overhead
 compare to collecting at the stage completion level, therefore this option should only be used if you need data with this finer granularity, for example because you want

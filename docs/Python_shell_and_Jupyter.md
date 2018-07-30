@@ -4,28 +4,24 @@ Notes on how to use sparkMeasure to collect Spark workload metrics when using Py
 or from a Jupyter notebook.  
 See also [README](../README.md) for an introduction to sparkMeasure and its architecture.
 
-### Download and build sparkMeasure
+### Deployment and installation
 
-1. Download the github repo
+- Use PyPi to install the Python wrapper and take the jar from Maven central: 
     ```python
-    git clone https://github.com/lucacanali/sparkmeasure
-    ```
-2. Install the Python wrapper package
-    ```python
-    cd sparkmeasure/python
-    pip install .
-    ```
-3.
- - Deploy sparkMeasure from Maven Central (the alternative, see 3b below, is to build a jar from master)
-    ```python
+    pip install sparkmeasure
     bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
     ```
- - Optionally build sparkMeasure jar (the alternative is to use a released varsion available on Maven Central).
+ - If you want to build from the latest development version:
     ```python
-    cd <sparkmeasure home dir>
+    git clone https://github.com/lucacanali/sparkmeasure
+    cd sparkmeasure
     sbt package
-    ls -l target/scala-2.11/spark-measure*.jar  # location of the compiled jar
+    ls -l target/scala-2.11/spark-measure*.jar  # note location of the compiled and packaged jar
  
+   # Install the Python wrapper package
+   cd python
+   pip install .
+    
     # Run as in one of these examples:
     bin/pyspark --jars path>/spark-measure_2.11-0.12-SNAPSHOT.jar
     
@@ -34,7 +30,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     ```
    
    
-### Collect and print Stage metrics
+### PySpark example
 1. How to collect and print Spark task stage metrics using sparkMeasure, example in Python:
     ```python
     from sparkmeasure import StageMetrics
@@ -81,7 +77,7 @@ def sparkmeasure(line, cell=None):
     stagemetrics.print_report()
 ```
 
-### Collecting metrics at finer granularity: Task metrics
+### Collecting metrics at finer granularity: use Task metrics
 
 Collecting Spark task metrics at the granularity of each task completion has additional overhead
 compare to collecting at the stage completion level, therefore this option should only be used if you need data with this finer granularity, for example because you want
