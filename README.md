@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/LucaCanali/sparkMeasure.svg?branch=master)](https://travis-ci.org/LucaCanali/sparkMeasure)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11)
 
-###SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads  
+### SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads  
 It simplifies the collection and analysis of Spark performance metrics. 
 It is also intended as a working example of how to use Spark listeners for collecting and processing 
 Spark executors task metrics data.
@@ -18,7 +18,7 @@ Spark executors task metrics data.
    - [Link to 2017 blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
    - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
     
-###Use for interactive and batch workloads
+### Use for interactive and batch workloads
  * Interactive: measure and analyze performance from shell or notebooks: using spark-shell (Scala), pyspark (Python) or Jupyter notebooks.
  * Code instrumentation: add calls in your code to deploy sparkMeasure custom Spark listeners and/or use the
  classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and saving metrics data.
@@ -31,10 +31,10 @@ Spark executors task metrics data.
   - Instrument Python code
   - Flight Recorder mode
 
-###Architecture diagram  
+### Architecture diagram  
 [TODO]
 
-###Main concepts underlying sparkMeasure  
+### Main concepts underlying sparkMeasure  
 * The tool is based on the Spark Listener interface. Listeners transport Spark executor task metrics data from the executor to the driver.
   They are a standard part of Spark instrumentation, used by the Spark Web UI for example.     
 * Metrics can be collected using sparkMeasure at the granularity of stage completion and/or task completion 
@@ -43,7 +43,7 @@ Spark executors task metrics data.
 * Data is then transformed into a Spark DataFrame for analysis.  
 * Data can be saved for offline analysis
 
-###FAQ:   
+### FAQ:   
   - Why measuring performance with workload metrics instrumentation rather than just using time?
     - Measuring elapsed time of your job gives you a measure related to the specific execution of your job.
       With workload metrics you can (attempt to) go further in understanding the behavior of your job:
@@ -57,7 +57,7 @@ Spark executors task metrics data.
   - How can I contribute to sparkMeasure?
     - See the [TODO_and_issues list](docs/TODO_and_issues.md), send PRs or open issues on Github.
 
-###A simple example of sparkMeasure usage
+### A simple example of sparkMeasure usage
  
 1. Measure metrics at the Stage level (example in Scala):
 ```
