@@ -30,7 +30,7 @@ Spark executors task metrics data.
   - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
   - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
   - **[Instrument Python code](docs/Instrument_Python_code.md)**
-  - Flight Recorder mode
+  - **[Flight Recorder mode](docs/Flight_recorder_mode.md)
 
 ### Architecture diagram  
 [TODO]
