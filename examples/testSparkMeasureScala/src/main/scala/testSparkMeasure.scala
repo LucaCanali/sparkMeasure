@@ -38,5 +38,7 @@ object testSparkMeasure {
     //stageMetrics.printReport()
     //stageMetrics.printAccumulables()
     //savedata as detailed above..
+
+    spark.stop()
   }
 }
