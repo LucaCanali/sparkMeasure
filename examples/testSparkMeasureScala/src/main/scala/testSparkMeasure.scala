@@ -39,6 +39,15 @@ object testSparkMeasure {
     //stageMetrics.printAccumulables()
     //savedata as detailed above..
 
+    // If you want to collect data at task completion level granularity, use taskMetrics as in
+    // val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
+    // taskMetrics.runAndMeasure {
+    //    spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
+    // }
+    // taskMetrics.printReport()
+    // val df = taskMetrics.createTaskMetricsDF("PerfTaskMetrics")
+    // taskMetrics.saveData(df.orderBy("jobId", "stageId", "index"), "<path>/taskmetrics_test3")
+
     spark.stop()
   }
 }

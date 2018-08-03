@@ -61,3 +61,6 @@ How to run the example:
     aggregatedDF = stagemetrics.aggregate_stagemetrics_DF("PerfStageMetrics")
     stagemetrics.save_data(aggregatedDF, "/tmp/stagemetrics_report_test2")
 ```
+
+Note: if you want to collect metrics at the task execution level, you can use TaskMetrics instead of StamgeMetrics.
+The details are discussed in the [examples for Python shell and notebook](docs/Python_shell_and_Jupyter.md).

@@ -20,6 +20,8 @@
    metrics into a DataFrame and creates a temporary view, useful for data analytics
    * def createAccumulablesDF(nameTempView: String = "AccumulablesStageMetrics"): DataFrame -> converts the accumulables aggregated
    at stage level in a ListBuffer into a DataFrame and temporary view
+   * def report(): String -> returns a string with the report of the metrics in "PerfStageMetrics" between the timestamps: beginSnapshot and
+   endSnapshot
    * def printReport(): Unit -> prints a report of the metrics in "PerfStageMetrics" between the timestamps: beginSnapshot and
    endSnapshot
    * def printAccumulables(): Unit -> prints the accumulables metrics divided in 2 groups: internal metrics (which are
@@ -45,6 +47,8 @@ serialization and deserialization time, HDFS I/O metrics, etc
       the Spark Context (ListenerBus) and other other methods for analysis. When you instantiate this class you start collecting 
       task-level metrics data.
    * def begin() and def end() methods -> use them at mark beginning and end of data collection if you plan to use printReport()
+   * def report(): String -> returns a string with the report of the metrics in "PerfStageMetrics" between the timestamps: beginSnapshot and
+   endSnapshot
    * def printReport(): Unit -> prints a report of the metrics in "TaskStageMetrics" between the timestamps: beginSnapshot and
    endSnapshot
    * def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame ->  converts the ListBuffer with stage 
@@ -72,6 +76,12 @@ Optionally add one or both of the following configuration parameters to determin
  
 Optionally use JSON to serialize the metrics collected in Flight Recorded mode:
  * --conf `--conf spark.executorEnv.taskMetricsFormat="json"` (the default is "java")
+
+**Python API:**
+
+See:
+ - [stagemetrics.py](python/sparkmeasure/stagemetrics.py)
+ - [taskmetrics.py](python/sparkmeasure/taskmetrics.py)
  
 **Additional info on Utils:**
 

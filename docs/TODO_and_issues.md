@@ -1,11 +1,12 @@
 ## A list of TODO tasks, ideas and known issues of sparkMeasure
 
-Use this as a reference for future development
+Use this list as a reference for future development. 
+If you plan to contribute to sparkMeasure development, please start by reviewing this list.
 
 
 **Known issues and TODO list**
-   * Task/stage failures and other errors are mostly not handled by the code in this version, this puts the effort
-     on the user to validate the output. This needs to be fixed in a future version.
+   * TODO: Measure and report Task/stage failures and other errors are not handled well by the code in this version, this puts the effort
+     on the user to validate the output.
    * We can expected more task metrics being added in future versions. Current code is not version aware and does
      not offer and easy way to handle additional metrics only for newer versions without breaking backward compatibility.  
      TODO: implement Spark version awareness and custom list of metrics in sparkMeasure  

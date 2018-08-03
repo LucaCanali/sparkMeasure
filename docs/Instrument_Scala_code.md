@@ -29,21 +29,20 @@ Use this for example for performance troubleshooting, application instrumentatio
     bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14-SNAPSHOT.jar ...
     ```
  
- ### Example code 
+### Example code 
  
- You can find an example of how to instrument a Scala application running Apache Spark jobs at this link:  
- [link to example application](../examples/testSparkMeasureScala)
+You can find an example of how to instrument a Scala application running Apache Spark jobs at this link:  
+[link to example application](../examples/testSparkMeasureScala)
  
- How to run the example:
+How to run the example:
  ```
 # build the jar
 sbt package
 
 bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13 --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.11-0.1.jar
  ```
-
  
- Some relevant snippet of code are:
+Some relevant snippet of code are:
  ```scala
      val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
      stageMetrics.runAndMeasure {
@@ -60,4 +59,17 @@ bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure
      val aggregatedDF = stageMetrics.aggregateStageMetrics("PerfStageMetrics")
      stageMetrics.saveData(aggregatedDF, "/tmp/stagemetrics_report_test2")
 ```
-      
+
+### Task metrics
+Collecting Spark task metrics at the granularity of each task completion has additional overhead
+compare to collecting at the stage completion level, therefore this option should only be used if you need data with this finer granularity, for example because you want
+to study skew effects, otherwise consider using stagemetrics aggregation as preferred choice.
+
+- The API for collecting data at task level is similar to the stage metrics case.
+  An example:
+    ```scala
+    val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
+    taskMetrics.runAndMeasure {
+      spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
+    }
+    ```
