@@ -109,9 +109,11 @@ Spark executors task metrics data.
 
 ### Two simple examples of sparkMeasure usage
  
-1. Link to an [example Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+1. Link to an [example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
 
-2. An example using Scala REPL:
+2. An example Scala notebook on Databricks' platform
+
+3. An example using Scala REPL:
 ```
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
