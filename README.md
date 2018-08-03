@@ -47,6 +47,54 @@ Spark executors task metrics data.
 * Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
 * Metrics data and reports can be saved for offline analysis.
 
+### Getting-started examples of sparkMeasure usage
+ 
+1. Link to an [example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+
+2. An [example Scala notebook on Databricks' platform](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)
+
+3. An example using Scala REPL:
+```
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
+
+val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
+```
+
+The output should look like this:
+```
+Scheduling mode = FIFO
+Spark Context default degree of parallelism = 8
+Aggregated Spark stage metrics:
+numStages => 3
+sum(numTasks) => 17
+elapsedTime => 9103 (9 s)
+sum(stageDuration) => 9027 (9 s)
+sum(executorRunTime) => 69238 (1.2 min)
+sum(executorCpuTime) => 68004 (1.1 min)
+sum(executorDeserializeTime) => 1031 (1 s)
+sum(executorDeserializeCpuTime) => 151 (0.2 s)
+sum(resultSerializationTime) => 5 (5 ms)
+sum(jvmGCTime) => 64 (64 ms)
+sum(shuffleFetchWaitTime) => 0 (0 ms)
+sum(shuffleWriteTime) => 26 (26 ms)
+max(resultSize) => 17934 (17.0 KB)
+sum(numUpdatedBlockStatuses) => 0
+sum(diskBytesSpilled) => 0 (0 Bytes)
+sum(memoryBytesSpilled) => 0 (0 Bytes)
+max(peakExecutionMemory) => 0
+sum(recordsRead) => 2000
+sum(bytesRead) => 0 (0 Bytes)
+sum(recordsWritten) => 0
+sum(bytesWritten) => 0 (0 Bytes)
+sum(shuffleTotalBytesRead) => 472 (472 Bytes)
+sum(shuffleTotalBlocksFetched) => 8
+sum(shuffleLocalBlocksFetched) => 8
+sum(shuffleRemoteBlocksFetched) => 0
+sum(shuffleBytesWritten) => 472 (472 Bytes)
+sum(shuffleRecordsWritten) => 8
+```
+
 ### FAQ:   
   - Why measuring performance with workload metrics instrumentation rather than just using time?
     - Measuring elapsed time, treats your workload as "a black box" and most often does not allow you
@@ -107,51 +155,4 @@ Spark executors task metrics data.
     See the [TODO_and_issues list](docs/TODO_and_issues.md) for a list of known issues and ideas on what 
     you can contribute.
 
-### Two simple examples of sparkMeasure usage
- 
-1. Link to an [example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
-
-2. An [example Scala notebook on Databricks' platform](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)
-
-3. An example using Scala REPL:
-```
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
-
-val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
-stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
-```
-
-The output should look like this:
-```
-Scheduling mode = FIFO
-Spark Context default degree of parallelism = 8
-Aggregated Spark stage metrics:
-numStages => 3
-sum(numTasks) => 17
-elapsedTime => 9103 (9 s)
-sum(stageDuration) => 9027 (9 s)
-sum(executorRunTime) => 69238 (1.2 min)
-sum(executorCpuTime) => 68004 (1.1 min)
-sum(executorDeserializeTime) => 1031 (1 s)
-sum(executorDeserializeCpuTime) => 151 (0.2 s)
-sum(resultSerializationTime) => 5 (5 ms)
-sum(jvmGCTime) => 64 (64 ms)
-sum(shuffleFetchWaitTime) => 0 (0 ms)
-sum(shuffleWriteTime) => 26 (26 ms)
-max(resultSize) => 17934 (17.0 KB)
-sum(numUpdatedBlockStatuses) => 0
-sum(diskBytesSpilled) => 0 (0 Bytes)
-sum(memoryBytesSpilled) => 0 (0 Bytes)
-max(peakExecutionMemory) => 0
-sum(recordsRead) => 2000
-sum(bytesRead) => 0 (0 Bytes)
-sum(recordsWritten) => 0
-sum(bytesWritten) => 0 (0 Bytes)
-sum(shuffleTotalBytesRead) => 472 (472 Bytes)
-sum(shuffleTotalBlocksFetched) => 8
-sum(shuffleLocalBlocksFetched) => 8
-sum(shuffleRemoteBlocksFetched) => 0
-sum(shuffleBytesWritten) => 472 (472 Bytes)
-sum(shuffleRecordsWritten) => 8
-```
   
