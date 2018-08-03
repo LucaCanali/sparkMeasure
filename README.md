@@ -47,13 +47,15 @@ Spark executors task metrics data.
 * Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
 * Metrics data and reports can be saved for offline analysis.
 
-### Getting-started examples of sparkMeasure usage
+### Getting started examples of sparkMeasure usage
  
 1. Link to an [example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
 
-2. An [example Scala notebook on Databricks' platform](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)
-
-3. An example using Scala REPL:
+2. Example notebooks on the Databricks platform (community edition):
+[example Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html),
+[example Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)
+  
+3. An example using Scala REPL/spark-shell:
 ```
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
