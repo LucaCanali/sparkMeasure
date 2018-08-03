@@ -111,7 +111,7 @@ Spark executors task metrics data.
  
 1. Link to an [example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
 
-2. An []example Scala notebook on Databricks' platform](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)
+2. An [example Scala notebook on Databricks' platform](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)
 
 3. An example using Scala REPL:
 ```
