@@ -7,6 +7,8 @@ If you plan to contribute to sparkMeasure development, please start by reviewing
 **Known issues and TODO list**
    * TODO: Measure and report Task/stage failures and other errors are not handled well by the code in this version, this puts the effort
      on the user to validate the output.
+   * TODO: Task metrics values collected by sparkMeasure are only for successfully executed tasks. Note that 
+     resources used by failed tasks are not collected in the current version. Can this be improved?
    * We can expected more task metrics being added in future versions. Current code is not version aware and does
      not offer and easy way to handle additional metrics only for newer versions without breaking backward compatibility.  
      TODO: implement Spark version awareness and custom list of metrics in sparkMeasure  

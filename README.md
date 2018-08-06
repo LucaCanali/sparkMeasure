@@ -128,20 +128,25 @@ sum(shuffleRecordsWritten) => 8
         - limitations: sparkMeasure does not collect all the data available in the EventLog, sparkMeasure
         buffers data in the driver memory, [see also the TODO and issues doc](docs/TODO_and_issues.md)
 
-  - What are accumulables?
-     - Metrics are first collected into accumulators that are sent from the executors to the driver.
-     Many metrics of interest are exposed via [[TaskMetrics]] others are only available in StageInfo/TaskInfo
-     accumulables (notably SQL Metrics, such as "scan time")
-
   - What are known limitations and gotchas?
-     - The currently available metrics are quite useful but the do not allow to fully perform 
-     workload time profiling and in general do not yet offer a full monitoring platform.
-     Metrics are collected on the driver, which can be quickly become a bottleneck.
+     - The currently available Spark task metrics can give you precious quantitative information on 
+     resources used by the executors, however there do not allow to fully perform time-based analysis of
+     the workload performance, notably they do not expose the time spent doing I/O or network traffic.
+     -  Metrics are collected on the driver, which can be quickly become a bottleneck. This is true
+     in general for ListenerBus instrumentation, in addition sparkMeasure in the current version buffers
+     all data in the driver memory.
+     - Task metrics values collected by sparkMeasure are only for successfully executed tasks. Note that 
+     resources used by failed tasks are not collected in the current version.
 
   - When should I use stage metrics and when should I use task metrics?
      - Use stage metrics whenever possible as they are much more lightweight. Collect metrics at
      the task granularity if you need the extra information, for example if you want to study 
      effects of skew, long tails and task stragglers.
+
+  - What are accumulables?
+     - Metrics are first collected into accumulators that are sent from the executors to the driver.
+     Many metrics of interest are exposed via [[TaskMetrics]] others are only available in StageInfo/TaskInfo
+     accumulables (notably SQL Metrics, such as "scan time")
 
   - How can I save/sink the collected metrics?
      - You can print metrics data and reports to standard output or save them to files (local or on HDFS).
