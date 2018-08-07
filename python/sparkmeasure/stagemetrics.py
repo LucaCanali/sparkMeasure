@@ -34,17 +34,17 @@ class StageMetrics:
 
     def runandmeasure(self, env, codetorun):
         self.begin()
-        exec codetorun in env
+        exec(codetorun, env)
         self.end()
         self.print_report()
 
-    def create_stagemetrics_DF(self, viewname):
+    def create_stagemetrics_DF(self, viewname="PerfStageMetrics"):
         df = self.stagemetrics.createStageMetricsDF(viewname)
         # convert the returned Java object to a Python Dataframe
         from pyspark.sql.dataframe import DataFrame
         return DataFrame(df, self.sparksession)
 
-    def aggregate_stagemetrics_DF(self, viewname):
+    def aggregate_stagemetrics_DF(self, viewname="PerfStageMetrics"):
         df = self.stagemetrics.aggregateStageMetrics(viewname)
         # convert the returned Java object to a Python Dataframe
         from pyspark.sql.dataframe import DataFrame

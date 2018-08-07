@@ -32,12 +32,18 @@ class TaskMetrics:
 
     def runandmeasure(self, env, codetorun):
         self.begin()
-        exec codetorun in env
+        exec(codetorun, env)
         self.end()
         self.print_report()
 
-    def create_taskmetrics_DF(self, viewname):
-        self.taskmetrics.createStageMetricsDF(viewname)
+    def create_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
+        self.taskmetrics.createTaskMetricsDF(viewname)
+
+    def aggregate_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
+        df = self.taskmetrics.aggregateTaskMetrics(viewname)
+        # convert the returned Java object to a Python Dataframe
+        from pyspark.sql.dataframe import DataFrame
+        return DataFrame(df, self.sparksession)
 
     def save_data(self, df, filepathandname, fileformat):
         df.repartition(1).write.format(fileformat).save(filepathandname)

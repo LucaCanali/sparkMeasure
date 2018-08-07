@@ -19,7 +19,7 @@ Spark executors task metrics data.
    - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
     
 ### Use for interactive and batch workloads
- * Interactive: measure and analyze performance from shell or notebooks: using spark-shell (Scala), pyspark (Python) or Jupyter notebooks.
+ * Interactive: measure and analyze performance from shell or notebooks: using spark-shell (Scala), PySpark (Python) or Jupyter notebooks.
  * Code instrumentation: add calls in your code to deploy sparkMeasure custom Spark listeners and/or use the
  classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and saving metrics data.
  * "Flight Recorder" mode: this records all performance metrics automatically and saves data for later processing.

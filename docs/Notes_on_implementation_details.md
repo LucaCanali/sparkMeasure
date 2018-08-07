@@ -24,6 +24,8 @@
    endSnapshot
    * def printReport(): Unit -> prints a report of the metrics in "PerfStageMetrics" between the timestamps: beginSnapshot and
    endSnapshot
+   * def aggregateStageMetrics(nameTempView: String = "PerfStageMetrics"): DataFrame -> returns the dataframe with aggregated 
+   metrics values, it is used downstream to print the metrics report(), you can also use this to export your data in this DF format.
    * def printAccumulables(): Unit -> prints the accumulables metrics divided in 2 groups: internal metrics (which are
    basically the same as TaskMetrics) and the rest (typically metrics generated custom by parts of the SQL execution engine)
    * def runAndMeasure[T](f: => T): T -> a handy extension to do 3 actions: runs the Spark workload, measure its metrics
@@ -53,6 +55,8 @@ serialization and deserialization time, HDFS I/O metrics, etc
    endSnapshot
    * def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame ->  converts the ListBuffer with stage 
      metrics into a DataFrame and creates a temporary view, useful for data analytics
+   * def aggregateTaskMetrics(nameTempView: String = "PerfStageMetrics"): DataFrame -> returns the dataframe with aggregated 
+   metrics values, it is used downstream to print the metrics report(), you can also use this to export your data in this DF format.
    * def runAndMeasure[T](f: => T): T -> a handy extension to do 3 actions: runs the Spark workload, measure its metrics
    and print the report. You can see this as an extension of spark.time() command     
    * def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") -> helper method to save metrics data collected 
