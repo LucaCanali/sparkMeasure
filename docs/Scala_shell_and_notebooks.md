@@ -16,7 +16,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 
 ### Download and build sparkMeasure (optional)
 
- - If you want to build from the latest development version:
+ - If you prefer to build from the latest development version:
     ```scala
     git clone https://github.com/lucacanali/sparkmeasure
     cd sparkmeasure

@@ -11,7 +11,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     pip install sparkmeasure
     bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
     ```
- - If you want to build from the latest development version:
+ - If you prefer to build from the latest development version:
     ```
     git clone https://github.com/lucacanali/sparkmeasure
     cd sparkmeasure
@@ -23,10 +23,10 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     pip install .
     
     # Run as in one of these examples:
-    bin/pyspark --jars path>/spark-measure_2.11-0.12-SNAPSHOT.jar
+    bin/pyspark --jars path>/spark-measure_2.11-0.14-SNAPSHOT.jar
     
     #alternative:
-    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.12-SNAPSHOT.jar
+    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14-SNAPSHOT.jar
     ```
    
    
