@@ -37,7 +37,10 @@ class TaskMetrics:
         self.print_report()
 
     def create_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
-        self.taskmetrics.createTaskMetricsDF(viewname)
+        df = self.taskmetrics.createTaskMetricsDF(viewname)
+        # convert the returned Java object to a Python Dataframe
+        from pyspark.sql.dataframe import DataFrame
+        return DataFrame(df, self.sparksession)
 
     def aggregate_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
         df = self.taskmetrics.aggregateTaskMetrics(viewname)
