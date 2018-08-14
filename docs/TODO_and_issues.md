@@ -26,9 +26,11 @@ If you plan to contribute to sparkMeasure development, please start by reviewing
      TaskMetrics._updatedBlockStatuses is off by default.
    * TODO (maybe) implement in sparmMeasure APIS removeSparkListener method, to allow stopping data collection 
      from sparkMeasure. (note this is only possible from Spark version 2.2 and above)
+   * TODO (maybe) add additional sink for the flight recorder mode, in particular add HDFS sink 
+   (currently metrics are written to the local filesystem of the driver)
    * gatherAccumulables=true for taskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean) 
      currently only works on Spark 2.1.x and breaks from Spark 2.2.1. This is a consequence of
       [SPARK PR 17596](https://github.com/apache/spark/pull/17596).  
       TODO (maybe): restore the functionality of measuring task accumulables for Spark 2.2.x
-   * TODO (maybe): ost-processing of metrics data in scala, rather than Spark SQL? 
+   * TODO (maybe): post-processing of metrics data in scala, rather than Spark SQL? 
      The advantage would be not to "pollute" the execution environment with additional SQL jobs as is the case now.

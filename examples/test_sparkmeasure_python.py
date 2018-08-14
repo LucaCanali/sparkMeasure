@@ -30,7 +30,7 @@ def run_my_workload(spark):
 
 
 if __name__ == "__main__":
-    # crate spark session
+    # create spark session
     spark = SparkSession \
         .builder \
         .appName("Test sparkmeasure instrumentation of Python/PySpark code") \

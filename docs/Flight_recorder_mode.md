@@ -51,3 +51,7 @@ the Spark History Server.
 See also this note with a few tips on how to read event log files(https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_EventLog.md)  
 
 - For metrics analysis see also notes at  [Notes_on_metrics_analysis.md](Notes_on_metrics_analysis.md) for a few examples.
+
+- If you are deploying applications using cluster mode, note that the serialized metrics
+ are written by the driver and therefore the path is local to the driver process.
+ You could use a network filesystem mounted on the driver/cluster for convenience. 
