@@ -4,16 +4,14 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11)
 
 ### sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads  
-It simplifies the collection and analysis of Spark performance metrics. 
-It is also intended as a working example of how to use Spark listeners for collecting and processing 
+It simplifies the collection and analysis of Spark performance metrics. It is also intended as a working example of how to use Spark listeners for collecting and processing 
 Spark executors task metrics data.
- * Created and maintained by: Luca.Canali@cern.ch 
+ * Created and maintained by Luca.Canali@cern.ch 
    * \+ credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
-   * Latest development version: 0.14-SNAPSHOT, last modified August 2018
- * Build/deploy: 
-   - build with `sbt package` or use [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure)    
-   - to install the Python wrapper APIs, `pip install sparkmeasure`
+ * Build and deploy: 
+   - Deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
+   - For PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
  * Related info:
    - [Link to 2017 blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
    - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
@@ -39,7 +37,9 @@ Spark executors task metrics data.
 ![sparkMeasure architecture diagram](docs/sparkMeasure_architecture_diagram.png)
 
 ### Main concepts underlying sparkMeasure  
-* The tool is based on the Spark Listener interface. Listeners transport Spark executor task metrics data from the executor to the driver.
+* The tool is based on the Spark Listener interface. Listeners transport Spark executor 
+  [Task Metrics](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_TaskMetrics.md)
+  data from the executor to the driver.
   They are a standard part of Spark instrumentation, used by the Spark Web UI and History Server for example.     
 * Metrics can be collected using sparkMeasure at the granularity of stage completion and/or task completion 
  (configurable)
@@ -107,7 +107,8 @@ sum(shuffleRecordsWritten) => 8
   - What are Apache Spark tasks metrics and what can I use them for?
      - Apache Spark measures several details of each task execution, including run time, CPU time,
      information on garbage collection time, shuffle metrics and on task I/O. 
-     See [taskMetrics class](https://github.com/apache/spark/blob/master/core/src/main/scala/org/apache/spark/executor/TaskMetrics.scala)
+     See also this short description of the 
+     [Spark Task Metrics](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_TaskMetrics.md)
 
   - How is sparkMeasure different from Web UI/Spark History Server and EventLog?
      - sparkMeasure uses the same ListenerBus infrastructure used to collect data for the Web UI and Spark EventLog.
