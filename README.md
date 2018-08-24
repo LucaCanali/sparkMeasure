@@ -13,8 +13,10 @@ Spark executors task metrics data.
    - Deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
    - For PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
  * Related info:
-   - [Link to 2017 blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
-   - [Presentation at Spark Summit Europe 2017](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
+   - Presentation at Spark Summit Europe 2017: 
+   ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
+   - [2018 blog post on sparkMeasure](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
+   [2017 blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
     
 ### Use for interactive and batch workloads
  * Interactive: measure and analyze performance from shell or notebooks: using spark-shell (Scala), PySpark (Python) or Jupyter notebooks.
@@ -138,6 +140,9 @@ sum(shuffleRecordsWritten) => 8
      all data in the driver memory.
      - Task metrics values collected by sparkMeasure are only for successfully executed tasks. Note that 
      resources used by failed tasks are not collected in the current version.
+     - Task metrics are collected by Spark executors running on the JVM, resources utilized outside the
+      JVM are currently not directly accounted for (notably the resources used when running Python code
+       inside the python.daemon in the case of PySpark).
 
   - When should I use stage metrics and when should I use task metrics?
      - Use stage metrics whenever possible as they are much more lightweight. Collect metrics at
