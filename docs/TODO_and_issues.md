@@ -19,6 +19,8 @@ If you plan to contribute to sparkMeasure development, please start by reviewing
      The current approach has obvious scalability issues.
    * TODO: write more tests to be executed by travis CI
    * TODO: add code/exceptions to  handle error conditions that can arise in sparkMeasure code
+   * TODO: add more statistics related to job execution, for example report start/min/max.number of executors
+     the job had, which is useful in the case of yarn with spark dynamic allocation
    * TODO (maybe): add additional sinks for the collected metrics and aggregations besides prometheus,
      two possible candidates are Kafka and InfluxDB
    * TODO (maybe): remove _updatedBlockStatuses from the list of metrics collected by spakMeasure
