@@ -4,7 +4,7 @@ One of the key features of sparkMeasure is that it makes data easily accessible 
 This is achieved by exporting the collected data into Spark DataFrames where they can be queries with Spark APIs and/or SQL.
 In addition the metrics can be used for plotting and other visualizations, for example using Jupyter notebooks.
 
-Example of analysis of Task Metrics using a Jupyter notebook at: [SparkTaskMetricsAnalysisExample.ipynb](examples/SparkTaskMetricsAnalysisExample.ipynb)
+Example of analysis of Task Metrics using a Jupyter notebook at: [SparkTaskMetricsAnalysisExample.ipynb](../examples/SparkTaskMetricsAnalysisExample.ipynb)
 
 Additional example code:
 ```scala
