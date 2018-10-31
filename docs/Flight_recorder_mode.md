@@ -13,7 +13,7 @@ To record metrics at the stage execution level granularity add these conf to spa
    ```
 Additional parameters are:
    ```
-   --conf spark.executorEnv.stageMetricsFileName"<outputfile_path_and_name>" (default is "/tmp/stageMetrics.serialized")
+   --conf spark.executorEnv.stageMetricsFileName="<outputfile_path_and_name>" (default is "/tmp/stageMetrics.serialized")
    --conf spark.executorEnv.taskMetricsFormat="file format" ("java" or "json", default is "java")
    ```
 
