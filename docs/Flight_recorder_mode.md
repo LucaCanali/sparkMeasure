@@ -23,7 +23,7 @@ This can potentially generate large amounts of data in the driver.
 Consider using stage-level granularity first.
 
    ```
-   --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics</code>
+   --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics
    ```
 Additional parameters are:
    ```
