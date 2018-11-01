@@ -13,7 +13,7 @@ To record metrics at the stage execution level granularity add these conf to spa
    ```
 Additional parameters are:
    ```
-   --conf spark.executorEnv.stageMetricsFileName"<outputfile_path_and_name>" (default is "/tmp/stageMetrics.serialized")
+   --conf spark.executorEnv.stageMetricsFileName="<outputfile_path_and_name>" (default is "/tmp/stageMetrics.serialized")
    --conf spark.executorEnv.taskMetricsFormat="file format" ("java" or "json", default is "java")
    ```
 
@@ -23,7 +23,7 @@ This can potentially generate large amounts of data in the driver.
 Consider using stage-level granularity first.
 
    ```
-   --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics</code>
+   --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics
    ```
 Additional parameters are:
    ```
