@@ -63,7 +63,7 @@ class StageInfoRecorderListener extends SparkListener {
     val group = jobStart.properties.getProperty("spark.jobGroup.id")
     if (group != null) {
       jobStart.stageIds.foreach(stageId => StageIdtoJobGroup += (stageId -> group))
-    } 
+    }
   }
 
   /**
@@ -75,7 +75,7 @@ class StageInfoRecorderListener extends SparkListener {
     val taskMetrics = stageInfo.taskMetrics
     val jobId = StageIdtoJobId(stageInfo.stageId)
     val group = if (StageIdtoJobGroup.contains(stageInfo.stageId)) {
-          StageIdtoJobGroup(stageInfo.stageId)  
+          StageIdtoJobGroup(stageInfo.stageId)
         }
         else { null }
     val currentStage = StageVals(jobId, group, stageInfo.stageId, stageInfo.name,
@@ -175,16 +175,20 @@ case class StageMetrics(sparkSession: SparkSession) {
 
     result = result :+ s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}"
     result = result :+ s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}"
-    result = result :+ "Aggregated Spark stage metrics:"
 
     /** Print a summary of the stage metrics. */
     val aggregateValues = aggregateDF.take(1)(0).toSeq
-    val cols = aggregateDF.columns
-    result = result :+ ((cols zip aggregateValues)
-      .map{
-        case((n:String, v:Long)) =>
-          Utils.prettyPrintValues(n, v)
-      }).mkString("\n")
+    if (aggregateValues(1) != null) {
+      result = result :+ "Aggregated Spark stage metrics:"
+      val cols = aggregateDF.columns
+      result = result :+ ((cols zip aggregateValues)
+        .map{
+          case((n:String, v:Long)) =>
+            Utils.prettyPrintValues(n, v)
+        }).mkString("\n")
+    } else {
+      result = result :+ " no data to report "
+    }
 
     result.mkString("\n")
   }
