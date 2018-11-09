@@ -109,8 +109,8 @@ sum(shuffleRecordsWritten) => 8
   - What are Apache Spark tasks metrics and what can I use them for?
      - Apache Spark measures several details of each task execution, including run time, CPU time,
      information on garbage collection time, shuffle metrics and on task I/O. 
-     See also this short description of the 
-     [Spark Task Metrics](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_TaskMetrics.md)
+     See also Spark documentation for a description of the 
+     [Spark Task Metrics](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
 
   - How is sparkMeasure different from Web UI/Spark History Server and EventLog?
      - sparkMeasure uses the same ListenerBus infrastructure used to collect data for the Web UI and Spark EventLog.
