@@ -9,7 +9,7 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 isSnapshot := true
 
 spName := "spark-measure"
-sparkVersion := "2.3.1"
+sparkVersion := "2.4.0"
 sparkComponents += "sql"
 
 //libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.3.1"
