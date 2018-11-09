@@ -7,7 +7,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 ### Run sparkMeasure using the packaged version from Maven Central 
 
 - The alternative, see paragraph above, is to build a jar from master.
-    ```scala
+    ```
     bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
     // or just download and use the jar (it is only needed in the driver) as in:
@@ -17,14 +17,14 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 ### Download and build sparkMeasure (optional)
 
  - If you prefer to build from the latest development version:
-    ```scala
+    ```
     git clone https://github.com/lucacanali/sparkmeasure
     cd sparkmeasure
     sbt package
     ls -l target/scala-2.11/spark-measure*.jar  # location of the compiled jar
  
     # Run as in one of these examples:
-    bin/spark-shell --jars path>/spark-measure_2.11-0.14-SNAPSHOT.jar
+    bin/spark-shell --jars <path>/spark-measure_2.11-0.14-SNAPSHOT.jar
     
     # alternative, set classpath for the driver (it is only needed in the driver)
     bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14-SNAPSHOT.jar
