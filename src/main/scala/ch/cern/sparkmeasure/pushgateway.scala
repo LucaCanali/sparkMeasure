@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
  */
 case class PushGateway(serverIPnPort: String, metricsJob: String) {
 
-  lazy val logger = LoggerFactory.getLogger(getClass)
+  lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
   var urlJob = s"DefaultJob"
   try {

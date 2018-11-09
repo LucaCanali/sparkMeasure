@@ -138,7 +138,7 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
 
 case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean = false) {
 
-  lazy val logger = LoggerFactory.getLogger(getClass)
+  lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
   /** This inserts the custom Spark Listener into the live Spark Context */
   val listenerTask = new TaskInfoRecorderListener(gatherAccumulables)

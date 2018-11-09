@@ -114,7 +114,7 @@ class StageInfoRecorderListener extends SparkListener {
 
 case class StageMetrics(sparkSession: SparkSession) {
 
-  lazy val logger = LoggerFactory.getLogger(getClass)
+  lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
   /** This inserts the custom Spark Listener into the live Spark Context */
   val listenerStage = new StageInfoRecorderListener

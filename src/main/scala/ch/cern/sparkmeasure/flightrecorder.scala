@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory
 
 class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListener {
 
-  lazy val logger = LoggerFactory.getLogger(getClass)
+  lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
   val metricsFileName = conf.get("spark.executorEnv.stageMetricsFileName", "/tmp/stageMetrics.serialized")
   val metricsFormat = conf.get("spark.executorEnv.stageMetricsFormat", "java")
@@ -59,7 +59,7 @@ class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListe
 
 class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListener {
 
-  lazy val logger = LoggerFactory.getLogger(getClass)
+  lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
   val metricsFileName = conf.get("spark.executorEnv.taskMetricsFileName", "/tmp/taskMetrics.serialized")
   val metricsFormat = conf.get("spark.executorEnv.taskMetricsFormat", "java")
