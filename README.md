@@ -8,7 +8,7 @@ It simplifies the collection and analysis of Spark performance metrics. It is al
 Spark executors task metrics data.
  * Created and maintained by Luca.Canali@cern.ch 
    * \+ credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
- * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x
+ * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x, 2.4.x
  * Build and deploy: 
    - Deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
    - For PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
@@ -49,7 +49,7 @@ Spark executors task metrics data.
 * Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
 * Metrics data and reports can be saved for offline analysis.
 
-### Getting started examples of sparkMeasure usage
+### Getting started with sparkMeasure
  
 1. Link to an [example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
 
