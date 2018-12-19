@@ -204,8 +204,8 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     val cols = aggregateDF.columns
     result = result :+ ((cols zip aggregateValues)
       .map {
-        case ((n: String, v: Long)) =>
-          Utils.prettyPrintValues(n, v)
+        case ((n: String, v: Long)) => Utils.prettyPrintValues(n, v)
+        case ((n: String, null)) => n + " => null"
       }).mkString("\n")
 
     return (result.mkString("\n"))
