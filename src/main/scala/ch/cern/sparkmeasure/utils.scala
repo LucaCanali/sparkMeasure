@@ -133,6 +133,10 @@ object Utils {
     }
   }
 
+  def writeToStringSerializedJSON(metricsData: AnyRef): String = {
+    objectWriter.writeValueAsString(metricsData)
+  }
+
   def readSerializedStageMetricsJSON(stageMetricsFileName: String): List[StageVals] = {
     val fullPath = Paths.get(stageMetricsFileName).toString
     val is = new FileInputStream(fullPath)
