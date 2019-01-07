@@ -202,13 +202,14 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     /** Print a summary of the task metrics. */
     val aggregateValues = aggregateDF.take(1)(0).toSeq
     val cols = aggregateDF.columns
-    result = result :+ ((cols zip aggregateValues)
+    result = result :+ (cols zip aggregateValues)
       .map {
-        case ((n: String, v: Long)) => Utils.prettyPrintValues(n, v)
-        case ((n: String, null)) => n + " => null"
-      }).mkString("\n")
+        case(n: String, v: Long) => Utils.prettyPrintValues(n, v)
+        case(n: String, null) => n + " => null"
+        case(_,_) => ""
+      }.mkString("\n")
 
-    return (result.mkString("\n"))
+    result.mkString("\n")
   }
 
   def printReport(): Unit = {
@@ -262,7 +263,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     val cols = aggregateDF.columns
     (cols zip aggregateValues)
       .foreach {
-        case((n:String, v:Long)) =>
+        case(n:String, v:Long) =>
           str_metrics += pushGateway.validateMetric(n.toLowerCase()) + s" " + v.toString + s"\n"
       }
 

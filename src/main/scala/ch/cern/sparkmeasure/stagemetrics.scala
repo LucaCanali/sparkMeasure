@@ -181,11 +181,12 @@ case class StageMetrics(sparkSession: SparkSession) {
     if (aggregateValues(1) != null) {
       result = result :+ "Aggregated Spark stage metrics:"
       val cols = aggregateDF.columns
-      result = result :+ ((cols zip aggregateValues)
+      result = result :+ (cols zip aggregateValues)
         .map{
-          case((n:String, v:Long)) =>
-            Utils.prettyPrintValues(n, v)
-        }).mkString("\n")
+          case(n:String, v:Long) => Utils.prettyPrintValues(n, v)
+          case(n: String, null) => n + " => null"
+          case(_,_) => ""
+        }.mkString("\n")
     } else {
       result = result :+ " no data to report "
     }
@@ -216,9 +217,9 @@ case class StageMetrics(sparkSession: SparkSession) {
     internalMetricsDf.as[(String,Long)].
       collect.
       foreach {
-        case ((name: String, value: Long)) => {
+        case (name: String, value: Long) => {
           // executorCpuTime, executorDeserializeCpuTime and shuffle.write.writeTime are in nanoseconds,
-          // this piece of code armonizes the values to milliseconds
+          // this piece of code harmonizes the values to milliseconds
           val printVal =
             if (name.contains("CpuTime") || name.contains("shuffle.write.writeTime"))
               (value / 1e6).toLong
@@ -240,7 +241,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     otherAccumulablesDf.as[(String, String,Long)].
       collect.
       foreach {
-        case((accId: String, name: String, value: Long)) =>
+        case(accId: String, name: String, value: Long) =>
           // remove the suffix (min, med, max) where present in the metric name as it is just noise in this context
           result = result :+ "%5s".format(accId) + ", " + Utils.prettyPrintValues(name.replace(" (min, med, max)",""), value)
       }
