@@ -12,20 +12,20 @@ Spark executors task metrics data.
  * Build and deploy: 
    - Deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
    - For PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
- * Related info:
+ * Additional info:
    - Presentation at Spark Summit Europe 2017: 
    ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
-   - [2018 blog post on sparkMeasure](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
-   [2017 blog post on sparkMeasure](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+   - Blog posts on sparkMeasure: [2018 blog post](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
+   [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
     
-### Use for interactive and batch workloads
- * Interactive: measure and analyze performance from shell or notebooks: using spark-shell (Scala), PySpark (Python) or Jupyter notebooks.
- * Code instrumentation: add calls in your code to deploy sparkMeasure custom Spark listeners and/or use the
+### One tool for multiple uses: instrument interactive and batch workloads
+ * **Interactive**: measure and analyze performance from shell or notebooks: using spark-shell (Scala), PySpark (Python) or Jupyter notebooks.
+ * **Code instrumentation**: add calls in your code to deploy sparkMeasure custom Spark listeners and/or use the
  classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and saving metrics data.
- * "Flight Recorder" mode: this records all performance metrics automatically and saves data for later processing.
+ * **"Flight Recorder" mode**: this records all performance metrics automatically and saves data for later processing.
 
 ### Documentation and examples
-
+See the [docs](docs) and [examples](examples) directories. Here are some pointers:
   - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
   - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
   - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
@@ -49,15 +49,15 @@ Spark executors task metrics data.
 * Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
 * Metrics data and reports can be saved for offline analysis.
 
-### Getting started with sparkMeasure
+### Getting started with sparkMeasure by example
  
-1. Link to an [example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+1. [Example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
 
-2. Example notebooks on the Databricks platform (community edition):
+2. Databricks platform (community edition):
 [example Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html),
 [example Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)
   
-3. An example using Scala REPL/spark-shell:
+3. Scala REPL/spark-shell:
 ```
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
@@ -164,8 +164,6 @@ sum(shuffleRecordsWritten) => 8
      See the also [Notes on metrics analysis](docs/Notes_on_metrics_analysis.md).
 
   - How can I contribute to sparkMeasure?
-    - SparkMeasure has already profited from PR contributions. Additional contributions are welcome. 
+    - SparkMeasure has already profited from users submitting PR contributions. Additional contributions are welcome. 
     See the [TODO_and_issues list](docs/TODO_and_issues.md) for a list of known issues and ideas on what 
-    you can contribute.
-
-  
+    you can contribute.  

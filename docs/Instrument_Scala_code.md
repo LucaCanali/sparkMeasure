@@ -42,6 +42,8 @@ sbt package
 bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13 --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.11-0.1.jar
  ```
  
+### Stagemetrics
+An example of how to collecti task metrics aggregated at the stage execution level.
 Some relevant snippet of code are:
  ```scala
      val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
