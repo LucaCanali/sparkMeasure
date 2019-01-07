@@ -3,7 +3,8 @@ name := "spark-measure"
 version := "0.14-SNAPSHOT"
 
 scalaVersion := "2.11.12"
-    
+crossScalaVersions := Seq("2.11.12", "2.12.8")
+
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 isSnapshot := true
@@ -12,7 +13,7 @@ spName := "spark-measure"
 sparkVersion := "2.4.0"
 sparkComponents += "sql"
 
-//libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.3.1"
+//libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.0"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"

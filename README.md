@@ -9,6 +9,7 @@ Spark executors task metrics data.
  * Created and maintained by Luca.Canali@cern.ch 
    * \+ credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x, 2.4.x
+   * Experimental support for Spark-3.0.0-SNAPSHOT and scala 2.12 (build from source with sbt "+ package")
  * Build and deploy: 
    - Deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
    - For PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
@@ -99,7 +100,7 @@ sum(shuffleBytesWritten) => 472 (472 Bytes)
 sum(shuffleRecordsWritten) => 8
 ```
 
-### FAQ:   
+### FAQ:  
   - Why measuring performance with workload metrics instrumentation rather than just using time?
     - Measuring elapsed time, treats your workload as "a black box" and most often does not allow you
      to understand the root cause of the performance. 
