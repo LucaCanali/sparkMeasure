@@ -265,6 +265,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
       .foreach {
         case(n:String, v:Long) =>
           str_metrics += pushGateway.validateMetric(n.toLowerCase()) + s" " + v.toString + s"\n"
+        case(_,_) => // We should no get here, in case add code to handle this
       }
 
     /** Send task metrics to Prometheus. */

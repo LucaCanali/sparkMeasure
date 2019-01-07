@@ -228,6 +228,7 @@ case class StageMetrics(sparkSession: SparkSession) {
           // trim the prefix internal.metrics as it is just noise in this context
           result = result :+ Utils.prettyPrintValues(name.substring(prefixLength), printVal)
         }
+        case(_,_) => ""
       }
 
     val otherAccumulablesDf = sparkSession.sql(s"select accId, name, max(value) as endValue " +
@@ -278,6 +279,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       .foreach {
         case((n:String, v:Long)) =>
           str_metrics += pushGateway.validateMetric(n.toLowerCase()) + s" " + v.toString + s"\n"
+        case(_,_) => // We should no get here, in case add code to handle this
       }
 
     /** Send stage metrics to Prometheus. */
