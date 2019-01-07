@@ -277,7 +277,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     val cols = aggregateDF.columns
     (cols zip aggregateValues)
       .foreach {
-        case((n:String, v:Long)) =>
+        case(n:String, v:Long) =>
           str_metrics += pushGateway.validateMetric(n.toLowerCase()) + s" " + v.toString + s"\n"
         case(_,_) => // We should no get here, in case add code to handle this
       }
