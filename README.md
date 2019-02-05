@@ -9,15 +9,16 @@ Spark executors task metrics data.
  * Created and maintained by Luca.Canali@cern.ch 
    * \+ credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x, 2.4.x
-   * Experimental support for Spark-3.0.0-SNAPSHOT and scala 2.12 (build from source with sbt "+ package")
+   * experimental support for Spark-3.0.0-SNAPSHOT and scala 2.12 
  * Build and deploy: 
-   - Deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
-   - For PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
+   - deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
+   - note: build from source for all scala versions using `sbt +package`
+   - for PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
  * Additional info:
-   - Presentation at Spark Summit Europe 2017: 
+   - presentation at Spark Summit Europe 2017: 
    ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
-   - Blog posts on sparkMeasure: [2018 blog post](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
-   [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+   - blog posts on sparkMeasure: [2018](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads) blog post,
+   [2017](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting) blog post
     
 ### One tool for multiple uses: instrument interactive and batch workloads
  * **Interactive**: measure and analyze performance from shell or notebooks: using spark-shell (Scala), PySpark (Python) or Jupyter notebooks.
@@ -52,13 +53,15 @@ See the [docs](docs) and [examples](examples) directories. Here are some pointer
 
 ### Getting started with sparkMeasure by example
  
-1. [Example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+1. [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="40"> Run in Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
-2. Databricks platform (community edition):
-[example Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html),
-[example Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)
+2. Databricks platform (community edition):  
+[<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40"> example Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)  
+[<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40">example Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)  
+
+3. [Example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
   
-3. Scala REPL/spark-shell:
+4. Scala REPL/spark-shell:
 ```
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
