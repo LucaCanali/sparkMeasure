@@ -12,7 +12,7 @@ Spark executors task metrics data.
    * experimental support for Spark-3.0.0-SNAPSHOT and scala 2.12 
  * Build and deploy: 
    - deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
-   - note: build from source for all scala versions using `sbt +package`
+   - note: build for all supported scala versions using `sbt +package`
    - for PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
  * Additional info:
    - presentation at Spark Summit Europe 2017: 
