@@ -51,17 +51,19 @@ See the [docs](docs) and [examples](examples) directories. Here are some pointer
 * Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
 * Metrics data and reports can be saved for offline analysis.
 
-### Getting started with sparkMeasure by example
+### Getting started with sparkMeasure, by example
  
-1. [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="40"> Run in Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
+- Databricks platform (community edition):  
+[<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40"> Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)  
+[<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40"> Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)  
 
-2. Databricks platform (community edition):  
-[<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40"> example Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)  
-[<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40">example Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)  
+- [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="40"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
-3. [Example Python_Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+- [Jupyter notebook hosted on Azure Notebooks](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
+
+- [Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
   
-4. Scala REPL/spark-shell:
+- Scala REPL/spark-shell:
 ```
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
