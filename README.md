@@ -59,7 +59,7 @@ See the [docs](docs) and [examples](examples) directories. Here are some pointer
 
 - [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="40"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
-- [Jupyter notebook hosted on Azure Notebooks](https://sparkmeasure-lucacanali.notebooks.azure.com/j/notebooks/SparkMeasure_Jupyter_Azure_Example.ipynb)
+- [Jupyter notebook hosted on Azure Notebooks](https://notebooks.azure.com/LucaCanali/projects/sparkmeasure/html/SparkMeasure_Jupyter_Azure_Example.ipynb)
 
 - [Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
   
