@@ -12,13 +12,12 @@ isSnapshot := true
 spName := "spark-measure"
 sparkVersion := "2.4.3"
 sparkComponents += "sql"
-
 //libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.3"
-libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1"
-libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
-//libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.1" % "test"
-libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.6.0" % "test"
+
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.9"
+libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.26"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.7" % "test"
+libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.23.2" % "test"
 
 // publishing to Sonatype Nexus repository and Maven
 publishMavenStyle := true
