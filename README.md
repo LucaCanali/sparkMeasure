@@ -3,53 +3,43 @@
 [![Build Status](https://travis-ci.org/LucaCanali/sparkMeasure.svg?branch=master)](https://travis-ci.org/LucaCanali/sparkMeasure)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11)
 
-### sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads  
-It simplifies the collection and analysis of Spark performance metrics. It is also intended as a working example of how to use Spark listeners for collecting and processing 
+### SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads  
+SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
+It is also intended as a working example of how to use Spark Listeners for collecting and processing 
 Spark executors task metrics data.
- * Created and maintained by Luca.Canali@cern.ch 
+ * Main author + contact: Luca.Canali@cern.ch 
    * \+ credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
- * Developed and tested for Spark 2.1.x, 2.2.x, 2.3.x, 2.4.x
-   * experimental support for Spark-3.0.0-SNAPSHOT and scala 2.12 
- * Build and deploy: 
-   - deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) or build with `sbt package`     
-   - note: build for all supported scala versions using `sbt +package`
-   - for PySpark: in addition install the Python wrapper APIs, `pip install sparkmeasure`
- * Additional info:
-   - presentation at Spark Summit Europe 2017: 
-   ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
-   - blog posts on sparkMeasure: [2018](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads) blog post,
-   [2017](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting) blog post
+ * Compatibility: use with Spark 2.1.x and higher. Compiles with Scala 2.11 and 2.12
+ * How to use: 
+   - deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) 
+     - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13` 
+   - PySpark user, install also Python wrapper APIs: `pip install sparkmeasure`
+   - note: build with `sbt` for all supported Scala versions using `sbt +package`
     
-### One tool for multiple uses: instrument interactive and batch workloads
- * **Interactive**: measure and analyze performance from shell or notebooks: using spark-shell (Scala), PySpark (Python) or Jupyter notebooks.
- * **Code instrumentation**: add calls in your code to deploy sparkMeasure custom Spark listeners and/or use the
- classes StageMetrics/TaskMetrics and related APIs for collecting, analyzing and saving metrics data.
- * **"Flight Recorder" mode**: this records all performance metrics automatically and saves data for later processing.
+### One tool for multiple uses: interactive and batch workloads
+ * **Interactive**: measure and analyze performance how your Spark jobs when using the shell or notebooks.
+SparkMeasure runs with  from `spark-shell` (Scala), `pyspark` (Python) and/or from `jupyter-notebook` with 
+Python and Scala kernels.
+ * **Code instrumentation**: instrument your code with calls to sparkMeasure APIs for collecting, saving,
+ and analyzing Spark jobs' metrics data.
+ * **"Flight Recorder" mode**: this mode records all performance metrics automatically and saves data at the
+ end of the job. Use dor performance troubleshooting, long-term performance characterization and CI.
 
 ### Documentation and examples
-See the [docs](docs) and [examples](examples) directories. Here are some pointers:
-  - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
-  - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
-  - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
-  - **[Instrument Python code](docs/Instrument_Python_code.md)**
-  - **[Flight Recorder mode](docs/Flight_recorder_mode.md)**
+A list of [docs](docs) and [examples](examples):
+  - SparkMesure for **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
+  - SparkMesure for **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
+  - How-to **[instrument Scala code](docs/Instrument_Scala_code.md)**
+  - How-to **[instrument Python code](docs/Instrument_Python_code.md)**
+  - sparkMeasure in **[Flight Recorder mode](docs/Flight_recorder_mode.md)**
   - [Notes on implementation and APIs](docs/Notes_on_implementation_details.md)
   - [Notes on metrics analysis](docs/Notes_on_metrics_analysis.md)
   - [TODO list and known issues](docs/TODO_and_issues.md)
-  
-### Architecture diagram  
-![sparkMeasure architecture diagram](docs/sparkMeasure_architecture_diagram.png)
-
-### Main concepts underlying sparkMeasure  
-* The tool is based on the Spark Listener interface. Listeners transport Spark executor 
-  [Task Metrics](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_TaskMetrics.md)
-  data from the executor to the driver.
-  They are a standard part of Spark instrumentation, used by the Spark Web UI and History Server for example.     
-* Metrics can be collected using sparkMeasure at the granularity of stage completion and/or task completion 
- (configurable)
-* Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).   
-* Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
-* Metrics data and reports can be saved for offline analysis.
+ * Additional info:
+   - presentation at Spark Summit Europe 2017: 
+   ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
+   - Blogs:  [2018 blog post](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
+   [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
 
 ### Getting started with sparkMeasure, by example
  
@@ -57,13 +47,13 @@ See the [docs](docs) and [examples](examples) directories. Here are some pointer
 
 - [<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40"> Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)  
 
-- [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="40"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
+- [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="50"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
-- [Jupyter notebook hosted on Microsoft Azure Notebooks](https://notebooks.azure.com/LucaCanali/projects/sparkmeasure/html/SparkMeasure_Jupyter_Azure_Example.ipynb)
+- [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Microsoft_Azure_Logo.svg/200px-Microsoft_Azure_Logo.svg.png" height="30"> Jupyter notebook hosted on Microsoft Azure Notebooks](https://notebooks.azure.com/LucaCanali/projects/sparkmeasure/html/SparkMeasure_Jupyter_Azure_Example.ipynb)
 
-- [Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+- [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
   
-- Scala REPL/spark-shell:
+- CLI: Scala REPL/spark-shell
 ```
 bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
 
@@ -104,6 +94,21 @@ sum(shuffleRemoteBlocksFetched) => 0
 sum(shuffleBytesWritten) => 472 (472 Bytes)
 sum(shuffleRecordsWritten) => 8
 ```
+  
+### Architecture diagram  
+![sparkMeasure architecture diagram](docs/sparkMeasure_architecture_diagram.png)
+
+### Main concepts underlying sparkMeasure  
+* The tool is based on the Spark Listener interface. Listeners transport Spark executor 
+  [Task Metrics](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_TaskMetrics.md)
+  data from the executor to the driver.
+  They are a standard part of Spark instrumentation, used by the Spark Web UI and History Server for example.     
+* Metrics can be collected using sparkMeasure at the granularity of stage completion and/or task completion 
+ (configurable)
+* Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).   
+* Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
+* Metrics data and reports can be saved for offline analysis.
+
 
 ### FAQ:  
   - Why measuring performance with workload metrics instrumentation rather than just using time?
