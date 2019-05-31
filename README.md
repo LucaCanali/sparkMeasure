@@ -51,7 +51,7 @@ A list of [docs](docs) and [examples](examples):
 
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Microsoft_Azure_Logo.svg/200px-Microsoft_Azure_Logo.svg.png" height="30"> Jupyter notebook hosted on Microsoft Azure Notebooks](https://notebooks.azure.com/LucaCanali/projects/sparkmeasure/html/SparkMeasure_Jupyter_Azure_Example.ipynb)
 
-- [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
+- [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyter_Python_getting_started.ipynb)
   
 - CLI: Scala REPL/spark-shell
 ```
