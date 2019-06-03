@@ -1,41 +1,26 @@
 package ch.cern.sparkmeasure
 
 import org.apache.spark.scheduler._
-import org.apache.spark.sql.{DataFrame, SparkSession }
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 import scala.collection.mutable.ListBuffer
 
 /**
-  * Spark Measure package: proof-of-concept tool for measuring Spark performance metrics
-  *   This is based on using Spark Listeners as data source and collecting metrics in a ListBuffer
-  *   The list buffer is then transformed into a DataFrame for analysis
-  *
   *  Stage Metrics: collects and aggregates metrics at the end of each stage
   *  Task Metrics: collects data at task granularity
   *
-  * Use modes:
-  *   Interactive mode from the REPL
-  *   Flight recorder mode: records data and saves it for later processing
-  *
-  * Supported languages:
-  *   The tool is written in Scala, but it can be used both from Scala and Python
-  *
-  * Example usage for stage metrics:
-  * val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
-  * stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
-  *
-  * for task metrics:
+  * Example usage for task metrics:
   * val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
-  * spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
-  * val df = taskMetrics.createTaskMetricsDF()
+  * taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
   *
-  * To use in flight recorder mode add:
-  * --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
-  *
-  * Created by Luca.Canali@cern.ch, March 2017
+  * The tool is based on using Spark Listeners as data source and collecting metrics in a ListBuffer of
+  * a case class that encapsulates Spark task metrics.
+  * The List Buffer is then transformed into a DataFrame for ease of reporting and analysis.
   *
   */
 
+// Contains the list of task metrics and other measurements of interest at the Task level, as a case class
+// Note, remoteBytesReadToDisk is not there for backward compatibility, as it has been introduced in Spark 2.3.0
 case class TaskVals(jobId: Int, jobGroup: String, stageId: Int, index: Long, launchTime: Long, finishTime: Long,
                     duration: Long, schedulerDelay: Long, executorId: String, host: String, taskLocality: Int,
                     speculative: Boolean, gettingResultTime: Long, successful: Boolean,
@@ -48,6 +33,7 @@ case class TaskVals(jobId: Int, jobGroup: String, stageId: Int, index: Long, lau
                     shuffleLocalBlocksFetched: Long, shuffleRemoteBlocksFetched: Long, shuffleWriteTime: Long,
                     shuffleBytesWritten: Long, shuffleRecordsWritten: Long)
 
+// Accumulators contain task metrics and other metrics, such as SQL metrics, this case class is used to process them
 case class TaskAccumulablesInfo(jobId: Int, stageId: Int, taskId: Long, submissionTime: Long, finishTime: Long,
                                 accId: Long, name: String, value: Long)
 

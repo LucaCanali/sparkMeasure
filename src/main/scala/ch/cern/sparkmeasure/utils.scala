@@ -1,27 +1,14 @@
 package ch.cern.sparkmeasure
 
-import scala.collection.mutable.ListBuffer
-import java.io._
-import java.nio.file.Paths
-
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import org.slf4j.Logger
+import org.apache.spark.SparkConf
 
 /**
  * The object Utils contains some helper code for the sparkMeasure package
  * The methods formatDuration and formatBytes are used for printing stage metrics reports
- * The methods readSerializedStageMetrics and readSerializedTaskMetrics are used to read data serialized into files by
- * "flight recorder" mode
  */
 
 object Utils {
-
-  val objectMapper = new ObjectMapper with ScalaObjectMapper
-  objectMapper.registerModule(DefaultScalaModule)
-  val objectWriter = objectMapper.writer(new DefaultPrettyPrinter())
-
 
   /** boilerplate code for pretty printing, formatDuration code borrowed from Spark UIUtils */
   def formatDuration(milliseconds: Long): String = {
@@ -86,74 +73,36 @@ object Utils {
     metric + " => " + basicValue + optionalValueWithUnits
   }
 
-  class ObjectInputStreamWithCustomClassLoader(fileInputStream: FileInputStream) extends ObjectInputStream(fileInputStream) {
-    override def resolveClass(desc: ObjectStreamClass): Class[_] = {
-      try {
-        Class.forName(desc.getName, false, getClass.getClassLoader)
-      }
-      catch {
-        case ex: ClassNotFoundException => super.resolveClass(desc)
-      }
+  // handle metrics format parameter
+  def parseMetricsFormat(conf: SparkConf, logger: Logger, defaultFormat:String) : String = {
+    // handle metrics format parameter
+    val metricsFormat = conf.get("spark.sparkmeasure.outputFormat", defaultFormat)
+    metricsFormat match {
+      case "json" | "java" | "json_to_hadoop" =>
+        logger.info(s"Using $metricsFormat as serialization format.")
+      case _ => logger.warn(s"Invalid serialization format: $metricsFormat." +
+        " Configure with: spark.sparkmeasure.outputFormat=json|javaser|json_to_hadoop")
     }
+    metricsFormat
   }
 
-  def readSerialized[T](metricsFileName: String): ListBuffer[T] = {
-    val fullPath = Paths.get(metricsFileName).toString
-    val ois = new ObjectInputStreamWithCustomClassLoader(new FileInputStream(fullPath))
-    try {
-      ois.readObject().asInstanceOf[ListBuffer[T]]
-    } finally {
-      ois.close()
+  def parsePrintToStdout(conf: SparkConf, logger: Logger, defaultVal:Boolean) : Boolean = {
+    val printToStdout = conf.getBoolean("spark.sparkmeasure.printToStdout", defaultVal)
+    if (printToStdout == true) {
+      logger.info(s"Will print metrics output to stdout in JSON format")
     }
+    printToStdout
   }
 
-  def writeSerialized(fullPath: String, metricsData: Any): Unit = {
-    val os = new ObjectOutputStream(new FileOutputStream(fullPath))
-    try {
-      os.writeObject(metricsData)
-    } finally {
-      os.close()
+  // handle metrics file name parameter except if writing to string / stdout
+  def parseMetricsFilename(conf: SparkConf, logger: Logger, defaultFileName:String) : String = {
+    val metricsFileName = conf.get("spark.sparkmeasure.outputFilename", defaultFileName)
+    if (metricsFileName.isEmpty) {
+      logger.warn("No output file will be written. If you want to write the output to a file, " +
+        "configure with spark.sparkmeasure.outputFilename=<output file>")
+    } else {
+      logger.info(s"Writing output to $metricsFileName")
     }
-  }
-
-  def readSerializedStageMetrics(stageMetricsFileName: String): ListBuffer[StageVals] = {
-    readSerialized[StageVals](stageMetricsFileName)
-  }
-
-  def readSerializedTaskMetrics(stageMetricsFileName: String): ListBuffer[TaskVals] = {
-    readSerialized[TaskVals](stageMetricsFileName)
-  }
-
-  def writeSerializedJSON(fullPath: String, metricsData: AnyRef): Unit = {
-    val os = new FileOutputStream(fullPath)
-    try {
-      objectWriter.writeValue(os, metricsData)
-    } finally {
-      os.close()
-    }
-  }
-
-  def writeToStringSerializedJSON(metricsData: AnyRef): String = {
-    objectWriter.writeValueAsString(metricsData)
-  }
-
-  def readSerializedStageMetricsJSON(stageMetricsFileName: String): List[StageVals] = {
-    val fullPath = Paths.get(stageMetricsFileName).toString
-    val is = new FileInputStream(fullPath)
-    try {
-      objectMapper.readValue[List[StageVals]](is)
-    } finally {
-      is.close()
-    }
-  }
-
-  def readSerializedTaskMetricsJSON(taskMetricsFileName: String): List[TaskVals] = {
-    val fullPath = Paths.get(taskMetricsFileName).toString
-    val is = new FileInputStream(fullPath)
-    try {
-      objectMapper.readValue[List[TaskVals]](is)
-    } finally {
-      is.close()
-    }
+    metricsFileName
   }
 }

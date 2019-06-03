@@ -6,36 +6,21 @@ import scala.collection.mutable.ListBuffer
 import org.slf4j.LoggerFactory
 
 /**
- * Spark Measure package: proof-of-concept tool for measuring Spark performance metrics
- *   This is based on using Spark Listeners as data source and collecting metrics in a ListBuffer
- *   The list buffer is then transformed into a DataFrame for analysis
- *
  *  Stage Metrics: collects and aggregates metrics at the end of each stage
  *  Task Metrics: collects data at task granularity
- *
- * Use modes:
- *   Interactive mode from the REPL
- *   Flight recorder mode: records data and saves it for later processing
- *
- * Supported languages:
- *   The tool is written in Scala, but it can be used both from Scala and Python
  *
  * Example usage for stage metrics:
  * val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
  * stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
  *
- * for task metrics:
- * val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
- * spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
- * val df = taskMetrics.createTaskMetricsDF()
- *
- * To use in flight recorder mode add:
- * --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
- *
- * Created by Luca.Canali@cern.ch, March 2017
+ * The tool is based on using Spark Listeners as data source and collecting metrics in a ListBuffer of
+ * a case class that encapsulates Spark task metrics.
+ * The List Buffer is then transformed into a DataFrame for ease of reporting and analysis.
  *
  */
 
+// contains the list of task metrics and other measurements of interest at the Stage level, as a case class
+// Note, remoteBytesReadToDisk is not there for backward compatibility, as it has been introduced in Spark 2.3.0
 case class StageVals (jobId: Int, jobGroup:String, stageId: Int, name: String,
                  submissionTime: Long, completionTime: Long, stageDuration: Long, numTasks: Int,
                  executorRunTime: Long, executorCpuTime: Long,
@@ -48,6 +33,7 @@ case class StageVals (jobId: Int, jobGroup:String, stageId: Int, name: String,
                  shuffleBytesWritten: Long, shuffleRecordsWritten: Long
                 )
 
+// Accumulators contain task metrics and other metrics, such as SQL metrics, this case class is used to process them
 case class StageAccumulablesInfo (jobId: Int, stageId: Int, submissionTime: Long, completionTime: Long,
                                   accId: Long, name: String, value: Long)
 
@@ -68,7 +54,7 @@ class StageInfoRecorderListener extends SparkListener {
 
   /**
    * This methods fires at the end of the stage and collects metrics flattened into the stageMetricsData ListBuffer
-   * Note all times are in ms, cpu time and shufflewrite are originally in nanosec, thus in the code are divided by 1e6
+   * Note all times are in ms, cpu time and shuffle write time are originally in nanosec, thus in the code are divided by 1e6
    */
   override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
     val stageInfo = stageCompleted.stageInfo
