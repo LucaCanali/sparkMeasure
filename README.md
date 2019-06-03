@@ -8,7 +8,7 @@ SparkMeasure simplifies the collection and analysis of Spark performance metrics
 working example of how to use Spark Listeners for collecting Spark task metrics data.
  * Main author and contact: Luca.Canali@cern.ch + credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * Compatibility: use with Spark 2.1.x and higher. Compiles with Scala 2.11 and 2.12
- * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) 
+ * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure) 
      - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14` 
    - PySpark user, install also Python wrapper APIs: `pip install sparkmeasure`
    - note: build with `sbt` for all supported Scala versions using `sbt +package`
