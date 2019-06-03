@@ -9,7 +9,7 @@ working example of how to use Spark Listeners for collecting Spark task metrics 
  * Main author and contact: Luca.Canali@cern.ch + credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * Compatibility: use with Spark 2.1.x and higher. Compiles with Scala 2.11 and 2.12
  * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) 
-     - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13` 
+     - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14` 
    - PySpark user, install also Python wrapper APIs: `pip install sparkmeasure`
    - note: build with `sbt` for all supported Scala versions using `sbt +package`
     
@@ -52,7 +52,7 @@ A list of [docs](docs) and [examples](examples):
   
 - CLI: Scala REPL/spark-shell
 ```
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
 
 val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())

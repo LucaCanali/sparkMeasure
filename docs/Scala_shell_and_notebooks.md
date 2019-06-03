@@ -8,10 +8,10 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 
 - The alternative, see paragraph above, is to build a jar from master.
     ```
-    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
+    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
 
     // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.13.jar
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14.jar
    ```
 
 ### Download and build sparkMeasure (optional)
@@ -20,21 +20,21 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     ```
     git clone https://github.com/lucacanali/sparkmeasure
     cd sparkmeasure
-    sbt package
+    sbt +package
     ls -l target/scala-2.11/spark-measure*.jar  # location of the compiled jar
  
     # Run as in one of these examples:
-    bin/spark-shell --jars <path>/spark-measure_2.11-0.14-SNAPSHOT.jar
+    bin/spark-shell --jars <path>/spark-measure_2.11-0.15-SNAPSHOT.jar
     
     # alternative, set classpath for the driver (it is only needed in the driver)
-    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14-SNAPSHOT.jar
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.15-SNAPSHOT.jar
     ```
 
 ### Example: collect and print stage metrics with sparkMeasure
  
 1. Measure metrics at the Stage level, a basic exaple:
     ```
-    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13
+    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
     
     val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
     stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
