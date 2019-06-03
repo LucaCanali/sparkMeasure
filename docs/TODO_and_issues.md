@@ -28,9 +28,6 @@ If you plan to contribute to sparkMeasure development, please start by reviewing
      TaskMetrics._updatedBlockStatuses is off by default.
    * TODO (maybe) implement in sparkMeasure the removeSparkListener method, to allow stopping data collection 
      from sparkMeasure. (note this is only possible from Spark versions 2.2 and above)
-   * TODO (maybe) add additional sink for the flight recorder mode, in particular add HDFS support for
-     writing flight recorder metrics (currently metrics are written 
-     to the local filesystem of the driver)
    * gatherAccumulables=true for taskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean) 
      currently only works on Spark 2.1.x and breaks from Spark 2.2.1. This is a consequence of
       [SPARK PR 17596](https://github.com/apache/spark/pull/17596).  
