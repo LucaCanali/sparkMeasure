@@ -36,8 +36,8 @@ class UtilsTest extends FlatSpec with Matchers {
   it should "write and read back StageVal (Java Serialization)" in {
     val file = File.createTempFile("stageVal", ".tmp")
     try {
-      Utils.writeSerialized(file.getAbsolutePath, ListBuffer(stageVals0))
-      val stageVals = Utils.readSerializedStageMetrics(file.getAbsolutePath)
+      IOUtils.writeSerialized(file.getAbsolutePath, ListBuffer(stageVals0))
+      val stageVals = IOUtils.readSerializedStageMetrics(file.getAbsolutePath)
       stageVals should have length 1
       stageVals.head shouldEqual stageVals0
     } finally {
@@ -48,8 +48,8 @@ class UtilsTest extends FlatSpec with Matchers {
   it should "write and read back TaskVal (Java Serialization)" in {
     val file = File.createTempFile("taskVal", ".tmp")
     try {
-      Utils.writeSerialized(file.getAbsolutePath, ListBuffer(taskVals0))
-      val taskVals = Utils.readSerializedTaskMetrics(file.getAbsolutePath)
+      IOUtils.writeSerialized(file.getAbsolutePath, ListBuffer(taskVals0))
+      val taskVals = IOUtils.readSerializedTaskMetrics(file.getAbsolutePath)
       taskVals should have length 1
       taskVals.head shouldEqual taskVals0
     } finally {
@@ -60,8 +60,8 @@ class UtilsTest extends FlatSpec with Matchers {
   it should "write and read back StageVal JSON" in {
     val file = File.createTempFile("stageVal", ".json")
     try {
-      Utils.writeSerializedJSON(file.getAbsolutePath, ListBuffer(stageVals0))
-      val stageVals = Utils.readSerializedStageMetricsJSON(file.getAbsolutePath)
+      IOUtils.writeSerializedJSON(file.getAbsolutePath, ListBuffer(stageVals0))
+      val stageVals = IOUtils.readSerializedStageMetricsJSON(file.getAbsolutePath)
       stageVals should have length 1
       stageVals.head shouldEqual stageVals0
     } finally {
@@ -72,8 +72,8 @@ class UtilsTest extends FlatSpec with Matchers {
   it should "write and read back TaskVal JSON" in {
     val file = File.createTempFile("taskVal", ".json")
     try {
-      Utils.writeSerializedJSON(file.getAbsolutePath, ListBuffer(taskVals0))
-      val taskVals = Utils.readSerializedTaskMetricsJSON(file.getAbsolutePath)
+      IOUtils.writeSerializedJSON(file.getAbsolutePath, ListBuffer(taskVals0))
+      val taskVals = IOUtils.readSerializedTaskMetricsJSON(file.getAbsolutePath)
       taskVals should have length 1
       taskVals.head shouldEqual taskVals0
     } finally {
