@@ -4,14 +4,11 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.11)
 
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads  
-SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
-It is also intended as a working example of how to use Spark Listeners for collecting and processing 
-Spark executors task metrics data.
- * Main author + contact: Luca.Canali@cern.ch 
-   * \+ credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
+SparkMeasure simplifies the collection and analysis of Spark performance metrics. It is also intended as a
+working example of how to use Spark Listeners for collecting Spark task metrics data.
+ * Main author and contact: Luca.Canali@cern.ch + credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * Compatibility: use with Spark 2.1.x and higher. Compiles with Scala 2.11 and 2.12
- * How to use: 
-   - deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) 
+ * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure) 
      - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13` 
    - PySpark user, install also Python wrapper APIs: `pip install sparkmeasure`
    - note: build with `sbt` for all supported Scala versions using `sbt +package`
@@ -23,7 +20,7 @@ Python and Scala kernels.
  * **Code instrumentation**: instrument your code with calls to sparkMeasure APIs for collecting, saving,
  and analyzing Spark jobs' metrics data.
  * **"Flight Recorder" mode**: this mode records all performance metrics automatically and saves data at the
- end of the job. Use dor performance troubleshooting, long-term performance characterization and CI.
+ end of the job. Use for performance troubleshooting, resource usage characterization, and/or as part of CI/CD pipelines.
 
 ### Documentation and examples
 A list of [docs](docs) and [examples](examples):
