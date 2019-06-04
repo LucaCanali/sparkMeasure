@@ -13,14 +13,15 @@ working example of how to use Spark Listeners for collecting Spark task metrics 
    - PySpark user, install also Python wrapper APIs: `pip install sparkmeasure`
    - note: build with `sbt` for all supported Scala versions using `sbt +package`
     
-### One tool for multiple uses: interactive and batch workloads
- * **Interactive**: measure and analyze performance how your Spark jobs when using the shell or notebooks.
-SparkMeasure runs with  from `spark-shell` (Scala), `pyspark` (Python) and/or from `jupyter-notebook` with 
-Python and Scala kernels.
+### One tool for multiple uses: measure interactive and batch workloads
+ * **Interactive mode**: use sparkMeasure to collect and analyze resource usage and performance metrics
+of your Spark jobs when working in interactive mode: from `spark-shell` (Scala), `PySpark` (Python) and/or 
+from `jupyter-notebook` with Python and Scala kernels.
  * **Code instrumentation**: instrument your code with calls to sparkMeasure APIs for collecting, saving,
  and analyzing Spark jobs' metrics data.
- * **"Flight Recorder" mode**: this mode records all performance metrics automatically and saves data at the
- end of the job. Use for performance troubleshooting, resource usage characterization, and/or as part of CI/CD pipelines.
+ * **"Flight Recorder" mode**: this mode records Spark performance metrics transparently while your application runs,
+ without any need to change your code. Metrics can be saved and/or printed at the end of the application.
+ Use for performance troubleshooting, resource usage characterization, and/or as part of CI/CD pipelines.
 
 ### Documentation and examples
 A list of [docs](docs) and [examples](examples):
