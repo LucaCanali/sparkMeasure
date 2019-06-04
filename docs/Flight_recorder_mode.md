@@ -6,7 +6,6 @@ There are 2 different levels of granularity: stage aggregation, with FlightRecor
 raw task-level metrics with FlightRecorderTaskMetrics.
 The resulting data can be saved to a file and/or printed to stdout.
 
-
 ### Recording stage metrics in Flight Recorder mode
 To record metrics at the stage execution level granularity add these conf to spark-submit: 
    ```
@@ -38,17 +37,19 @@ bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure
 --class org.apache.spark.examples.SparkPi \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
 --conf spark.sparkmeasure.printToStdout=true \
---conf spark.sparkmeasure.stagemetricsFilename="/tmp/myout1_$(date +%s).json" \
+--conf spark.sparkmeasure.outputFilename="/tmp/myoutput_$(date +%s).json" \
 examples/jars/spark-examples_2.11-2.4.3.jar 10
 ```
 
-Example of how to Write output to HDFS:  
-(note: source the Hadoop environment)
+Example of how to write output to HDFS when running in cluster mode on YARN. Also prints metrics to stdout of the driver.  
+(note: source the Hadoop environment before running this)
 ```
-bin/spark-submit --master yarn --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
+bin/spark-submit --master yarn --deploy-mode cluster \
+--packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
+--conf spark.sparkmeasure.printToStdout=true \
 --conf spark.sparkmeasure.outputFormat=json_to_hadoop \
---conf spark.sparkmeasure.stagemetricsFilename="hdfs://myclustername/user/luca/test/myout1_$(date +%s).json" \
+--conf spark.sparkmeasure.outputFilename="hdfs://myclustername/user/luca/test/myoutput_$(date +%s).json" \
 examples/src/main/python/pi.py
 ```
 
@@ -57,7 +58,7 @@ Example, use spark-3.0.0 (snapshot from master), Kubernetes, Scala 2.12 and writ
 ```
 bin/spark-submit --master k8s://https://XXX.XXX.XXX.XXX --deploy-mode client --conf spark.executor.instances=3 \
 --conf spark.executor.cores=2 --executor-memory 6g --driver-memory 8g \
---conf spark.kubernetes.container.image=gitlab-registry.cern.ch/canali/testregistry1/spark:v3.0.0_20190529_hadoop32 \
+--conf spark.kubernetes.container.image=<registry-URL>/spark:v3.0.0_20190529_hadoop32 \
 --packages org.apache.hadoop:hadoop-aws:3.2.0,ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
 --conf spark.hadoop.fs.s3a.secret.key="YYY..." \
 --conf spark.hadoop.fs.s3a.access.key="ZZZ..." \
@@ -65,16 +66,19 @@ bin/spark-submit --master k8s://https://XXX.XXX.XXX.XXX --deploy-mode client --c
 --conf spark.hadoop.fs.s3a.impl="org.apache.hadoop.fs.s3a.S3AFileSystem" \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
 --conf spark.sparkmeasure.outputFormat=json_to_hadoop \
---conf spark.sparkmeasure.outputFilename="s3a://test/myout1_$(date +%s).json" \
+--conf spark.sparkmeasure.outputFilename="s3a://test/myoutput_$(date +%s).json" \
 --class org.apache.spark.examples.SparkPi \
 examples/jars/spark-examples_2.12-3.0.0-SNAPSHOT.jar 10
 ```
 
 
 ### Recording metrics at Task granularity in Flight Recorder mode
-To record metrics at the task execution level granularity add these conf to spark-submit.
+Use this to record metrics at the task execution level granularity.
 This can potentially generate large amounts of data in the driver. 
 Consider using stage-level granularity first.
+The usage is almost the same as for the stage metrics mode described above, just change 
+`FlightRecorderStageMetrics` with `FlightRecorderTaskMetrics`.  
+The configuration parameters applicable to Flight recorder mode for Task granularity are:  
 
    ```
    --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics
@@ -102,6 +106,20 @@ bin/spark-shell  --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
 val myMetrics = ch.cern.sparkmeasure.IOUtils.readSerializedStageMetricsJSON("/tmp/stageMetrics_flightRecorder")
 // use ch.cern.sparkmeasure.IOUtils.readSerializedStageMetrics("/tmp/stageMetrics.serialized") for java serialization
 myMetrics.toDF.show()
+```
+
+### IOUTils API
+The following methods of `IOUtils` are used to read and write serialized Task and stage metrics data:
+```scala
+  def writeSerializedJSON(fullPath: String, metricsData: AnyRef): Unit = 
+  def writeSerializedJSONToHadoop(fullPath: String, metricsData: AnyRef, conf: SparkConf): Unit 
+  def writeToStringSerializedJSON(metricsData: AnyRef): String
+  def writeSerialized(fullPath: String, metricsData: Any): Unit
+
+  def readSerializedStageMetricsJSON(stageMetricsFileName: String): List[StageVals]
+  def readSerializedStageMetrics(stageMetricsFileName: String): ListBuffer[StageVals]
+  def readSerializedTaskMetricsJSON(taskMetricsFileName: String): List[TaskVals]
+  def readSerializedTaskMetrics(stageMetricsFileName: String): ListBuffer[TaskVals]
 ```
 
 ### Notes
