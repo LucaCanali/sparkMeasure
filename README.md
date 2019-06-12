@@ -10,12 +10,12 @@ working example of how to use Spark Listeners for collecting Spark task metrics 
  * Compatibility: use with Spark 2.1.x and higher. Compiles with Scala 2.11 and 2.12
  * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure) 
      - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14` 
-   - PySpark user, install also Python wrapper APIs: `pip install sparkmeasure`
-   - note: build with `sbt` for all supported Scala versions using `sbt +package`
+   - PySpark users: in addition, install the Python wrapper APIs: `pip install sparkmeasure`
+   - How to build from maste: use `sbt +package`
     
 ### One tool for multiple uses: measure interactive and batch workloads
  * **Interactive mode**: use sparkMeasure to collect and analyze resource usage and performance metrics
-of your Spark jobs when working in interactive mode: from `spark-shell` (Scala), `PySpark` (Python) and/or 
+of your Spark jobs when working with shell or notebook environments, as `spark-shell` (Scala), `PySpark` (Python) and/or 
 from `jupyter-notebook` with Python and Scala kernels.
  * **Code instrumentation**: instrument your code with calls to sparkMeasure APIs for collecting, saving,
  and analyzing Spark jobs' metrics data.
@@ -34,7 +34,7 @@ A list of [docs](docs) and [examples](examples):
   - [Notes on metrics analysis](docs/Notes_on_metrics_analysis.md)
   - [TODO list and known issues](docs/TODO_and_issues.md)
  * Additional info:
-   - presentation at Spark Summit Europe 2017: 
+   - Presentation at Spark Summit Europe 2017: 
    ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
    - Blogs:  [2018 blog post](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
    [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
