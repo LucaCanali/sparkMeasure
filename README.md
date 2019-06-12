@@ -11,7 +11,7 @@ working example of how to use Spark Listeners for collecting Spark task metrics 
  * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure) 
      - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14` 
    - PySpark users: in addition, install the Python wrapper APIs: `pip install sparkmeasure`
-   - How to build from maste: use `sbt +package`
+   - How to build from master: use `sbt +package`
     
 ### One tool for multiple uses: measure interactive and batch workloads
  * **Interactive mode**: use sparkMeasure to collect and analyze resource usage and performance metrics
