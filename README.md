@@ -21,7 +21,7 @@ from `jupyter-notebook` with Python and Scala kernels.
  and analyzing Spark jobs' metrics data.
  * **"Flight Recorder" mode**: this mode records Spark performance metrics transparently while your application runs,
  without any need to change your code. Metrics can be saved and/or printed at the end of the application.
- Use for performance troubleshooting, resource usage characterization, and/or as part of CI/CD pipelines.
+ Use for performance troubleshooting, resource usage characterization, or as part of a CI/CD pipeline.
 
 ### Documentation and examples
 A list of [docs](docs) and [examples](examples):

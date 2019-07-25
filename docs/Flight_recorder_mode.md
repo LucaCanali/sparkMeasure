@@ -14,7 +14,7 @@ To record metrics at the stage execution level granularity add these conf to spa
    ```
 Additional parameters are:
    ```
-   --conf spark.sparkmeasure.outputFormat=<format> //valid values: javar,json,json_to_hadoop, the default is"json"
+   --conf spark.sparkmeasure.outputFormat=<format> //valid values: json,json_to_hadoop,java the default is"json"
    --conf spark.sparkmeasure.outputFilename=<output file> //default: "/tmp/stageMetrics_flightRecorder"
    --conf spark.sparkmeasure.printToStdout=<true|false> // default false. Set to true to print JSON serialized metrics
    ```
@@ -22,7 +22,7 @@ Additional parameters are:
   - `json` and `java` serialization formats, write to the driver local filesystem
   - `json_to_hadoop`, writes to JSON serialized metrics to  HDFS or to an Hadoop compliant filesystem, such as s3a
     
-###FlightRecorderStageMetrics examples ###
+### FlightRecorderStageMetrics examples ###
 Python, runs pi.py example and records metrics to `/tmp/stageMetrics_flightRecorder` in json format:
 ```
 bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
