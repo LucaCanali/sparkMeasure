@@ -113,6 +113,8 @@ sum(shuffleRecordsWritten) => 8
 * Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).   
 * Spark DataFrame and SQL are used to further process metrics data for example to generate reports.  
 * Metrics data and reports can be saved for offline analysis.
+* SparkMeasure in flight recorder mode with InfluxDB sink, does not buffer the metrics in the driver memory,
+it writes directly to InfluxDB.
 
 
 ### FAQ:  
@@ -137,12 +139,12 @@ sum(shuffleRecordsWritten) => 8
        - The EventLog is used by the Spark History server + other tools and programs can read and parse
         the EventLog file(s) for workload analysis and performance troubleshooting, see a [proof-of-concept example of reading the EventLog with Spark SQL](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_EventLog.md)  
      - There are key differences that motivate this development: 
-        - sparkmeasure can collect data at the stage completion-level, which is more lightweight than measuring
+        - sparkMeasure can collect data at the stage completion-level, which is more lightweight than measuring
         all the tasks, in case you only need to compute aggregated performance metrics. When needed, 
         sparkMeasure can also collect data at the task granularity level.
-        - sparkmeasure has an API that makes it simple to add instrumention/performance measurements
+        - sparkMeasure has an API that makes it simple to add instrumention/performance measurements
          in notebooks and application code. 
-        - sparkmeasure collects data in a flat structure, which makes it natural to use Spark SQL for 
+        - sparkMeasure collects data in a flat structure, which makes it natural to use Spark SQL for 
         workload data processing, which provides a simple and powerful interface
         - limitations: sparkMeasure does not collect all the data available in the EventLog, sparkMeasure
         buffers data in the driver memory, [see also the TODO and issues doc](docs/TODO_and_issues.md)
@@ -153,12 +155,14 @@ sum(shuffleRecordsWritten) => 8
      the workload performance, notably they do not expose the time spent doing I/O or network traffic.
      -  Metrics are collected on the driver, which can be quickly become a bottleneck. This is true
      in general for ListenerBus instrumentation, in addition sparkMeasure in the current version buffers
-     all data in the driver memory.
-     - Task metrics values collected by sparkMeasure are only for successfully executed tasks. Note that 
-     resources used by failed tasks are not collected in the current version.
+     all data in the driver memory. The notable exception is the Fligh recorder mode with InfluxDB sink,
+     in this case metrics are directly sent to InfluxDB.
+     - Task metrics values are collected by sparkMeasure only for successfully executed tasks. Note that 
+     resources used by failed tasks are not collected in the current version. The notable exception is
+     with the Flight recorder mode with InfluxDBSink.
      - Task metrics are collected by Spark executors running on the JVM, resources utilized outside the
       JVM are currently not directly accounted for (notably the resources used when running Python code
-       inside the python.daemon in the case of PySpark).
+      inside the python.daemon in the case of PySpark).
 
   - When should I use stage metrics and when should I use task metrics?
      - Use stage metrics whenever possible as they are much more lightweight. Collect metrics at
@@ -171,9 +175,10 @@ sum(shuffleRecordsWritten) => 8
      accumulables (notably SQL Metrics, such as "scan time")
 
   - How can I save/sink the collected metrics?
-     - You can print metrics data and reports to standard output or save them to files (local or on HDFS).
-     Additionally you can sink metrics to external systems (such as Prometheus, 
-     other sinks like InfluxDB or Kafka may be implemented in future versions). 
+     - You can print metrics data and reports to standard output or save them to files, using
+      a locally mounted filesystem or an Hadoop compliant filesystem (including HDFS).
+     Additionally you can sink metrics to external systems (such as Prometheus. 
+     The Flight Recorder mode can sink has the ther sinks like InfluxDB or Kafka may be implemented in future versions). 
 
   - How can I process metrics data?
      - You can use Spark to read the saved metrics data and perform further post-processing and analysis.
