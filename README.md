@@ -36,7 +36,7 @@ A list of [docs](docs) and [examples](examples):
     - **[Instrument Python code](docs/Instrument_Python_code.md)**
   - SparkMeasure in **Flight Recorder** mode:
     - **[Flight Recorder mode with file output](docs/Flight_recorder_mode.md)**
-    - **[Flight Recorder mode with DB write output](docs/Flight_record_DBwrite.md)**
+    - **[Flight Recorder mode with DB write output](docs/Flight_recorder_DBwrite.md)**
   - [Notes on implementation and APIs](docs/Notes_on_implementation_details.md)
   - [Notes on metrics analysis](docs/Notes_on_metrics_analysis.md)
   - [TODO list and known issues](docs/TODO_and_issues.md)
