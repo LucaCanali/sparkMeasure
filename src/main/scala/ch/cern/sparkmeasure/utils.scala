@@ -2,6 +2,7 @@ package ch.cern.sparkmeasure
 
 import org.slf4j.Logger
 import org.apache.spark.SparkConf
+import org.apache.spark.scheduler.TaskLocality
 
 /**
  * The object Utils contains some helper code for the sparkMeasure package
@@ -73,6 +74,17 @@ object Utils {
     metric + " => " + basicValue + optionalValueWithUnits
   }
 
+  def encodeTaskLocality(taskLocality: TaskLocality.TaskLocality): Int = {
+    taskLocality match {
+      case TaskLocality.PROCESS_LOCAL => 0
+      case TaskLocality.NODE_LOCAL => 1
+      case TaskLocality.RACK_LOCAL => 2
+      case TaskLocality.NO_PREF => 3
+      case TaskLocality.ANY => 4
+      case _ => -1 // Flag an unknown situation
+     }
+  }
+
   // handle metrics format parameter
   def parseMetricsFormat(conf: SparkConf, logger: Logger, defaultFormat:String) : String = {
     // handle metrics format parameter
@@ -105,4 +117,44 @@ object Utils {
     }
     metricsFileName
   }
+
+  def parseInfluxDBURL(conf: SparkConf, logger: Logger) : String = {
+    // handle InfluxDB URL
+    val influxdbURL = conf.get("spark.sparkmeasure.influxdbURL", "")
+    if (influxdbURL.isEmpty) {
+      logger.error("InfluxDB URL not found, this will make the listener fail.")
+      throw new RuntimeException
+    } else {
+      logger.info(s"Found URL for InfluxDB: $influxdbURL")
+    }
+    influxdbURL
+  }
+
+  def parseInfluxDBCredentials(conf: SparkConf, logger: Logger) : (String,String) = {
+    // handle InfluxDB username and password
+    val influxdbUsername = conf.get("spark.sparkmeasure.influxdbUsername", "")
+    val influxdbPassword = conf.get("spark.sparkmeasure.influxdbPassword", "")
+    if (influxdbUsername.isEmpty && influxdbPassword.isEmpty) {
+      logger.warn("Credentials for InfluxDB connection not found, using empty username and password, " +
+        "InfluxDB must be running with auth-enabled=false")
+    } else {
+      logger.info("Credentials for InfluxDB connection found")
+    }
+    (influxdbUsername, influxdbPassword)
+  }
+
+  def parseInfluxDBName(conf: SparkConf, logger: Logger) : String = {
+    // handle InfluxDB username and password
+    val influxdbName = conf.get("spark.sparkmeasure.influxdbName", "sparkmeasure")
+    logger.info(s"InfluxDB name: s$influxdbName")
+    influxdbName
+  }
+
+  def parseInfluxDBStagemetrics(conf: SparkConf, logger: Logger) : Boolean = {
+    // handle InfluxDB username and password
+    val influxdbStagemetrics = conf.getBoolean("spark.sparkmeasure.influxdbStagemetrics", false)
+    logger.info(s"Log also stagemetrics: ${influxdbStagemetrics.toString}")
+    influxdbStagemetrics
+  }
+
 }

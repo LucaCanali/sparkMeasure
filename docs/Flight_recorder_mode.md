@@ -1,10 +1,13 @@
-# SparkMeasure in Flight Recorder mode
+# SparkMeasure in Flight Recorder mode with file output
 
 Use sparkMeasure in flight recording mode to instrument Spark applications without touching their code.
 Flight recorder mode attaches a Spark Listener that collects the metrics while the application runs.
 There are 2 different levels of granularity: stage aggregation, with FlightRecorderStageMetrics and
-raw task-level metrics with FlightRecorderTaskMetrics.
-The resulting data can be saved to a file and/or printed to stdout.
+raw task-level metrics with FlightRecorderTaskMetrics.  
+The resulting data can be saved to a file, to a locally monuted filesystem or to a Hadoop-compliant filesystem.
+Metrics can also be printed to stdout.  
+Note: the option to sink metrics to a DB instance in near-real time is implemented with a similar, but
+different code, see [Flight Recorder mode with DB Write output](Flight_record_DBwrite.md)
 
 ### Recording stage metrics in Flight Recorder mode
 To record metrics at the stage execution level granularity add these conf to spark-submit: 
@@ -54,7 +57,7 @@ examples/src/main/python/pi.py
 ```
 
 Example, use spark-3.0.0 (snapshot from master), Kubernetes, Scala 2.12 and write output to S3:  
-(note: export KUBECONFI=... + setup Hadoop environment)
+(note: export KUBECONFIG=... + setup Hadoop environment)
 ```
 bin/spark-submit --master k8s://https://XXX.XXX.XXX.XXX --deploy-mode client --conf spark.executor.instances=3 \
 --conf spark.executor.cores=2 --executor-memory 6g --driver-memory 8g \

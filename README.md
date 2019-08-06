@@ -11,25 +11,32 @@ working example of how to use Spark Listeners for collecting Spark task metrics 
  * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure) 
      - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14` 
    - PySpark users: in addition, install the Python wrapper APIs: `pip install sparkmeasure`
-   - How to build from master: use `sbt +package`
+   - Bleeding edge: build from master using sbt: `sbt +package`
     
-### One tool for multiple uses: measure interactive and batch workloads
- * **Interactive mode**: use sparkMeasure to collect and analyze resource usage and performance metrics
-of your Spark jobs when working with shell or notebook environments, as `spark-shell` (Scala), `PySpark` (Python) and/or 
-from `jupyter-notebook` with Python and Scala kernels.
- * **Code instrumentation**: instrument your code with calls to sparkMeasure APIs for collecting, saving,
- and analyzing Spark jobs' metrics data.
- * **"Flight Recorder" mode**: this mode records Spark performance metrics transparently while your application runs,
- without any need to change your code. Metrics can be saved and/or printed at the end of the application.
- Use for performance troubleshooting, resource usage characterization, or as part of a CI/CD pipeline.
+### One tool for different use cases
+ * Use sparkMeasure for troubleshooting **interactive and batch** Spark workloads.
+ Use it also to collect metrics for long-term retention or as part of a **CI/CD** pipeline.
+  * **Interactive mode**: use sparkMeasure to collect and analyze Spark workload metrics real-time when 
+ working with shell or notebook environments, as `spark-shell` (Scala), `PySpark` (Python) and/or 
+from `jupyter-notebook`. Works with Python and Scala kernels.
+ * **Code instrumentation**: instrument your code with the sparkMeasure API, for collecting, saving,
+ and analyzing Spark workload metrics data, at your leisure.
+ * **"Flight Recorder" mode**: SparkMeasure will collect metrics transparently,
+ without any need for you to change your code. Metrics can be saved to a file 
+ (locally or to a Hadoop-compliant filesystem),
+ or you can opt to write metrics in near-realtime to an InfluxDB instance.
 
 ### Documentation and examples
 A list of [docs](docs) and [examples](examples):
-  - SparkMesure for **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
-  - SparkMesure for **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
-  - How-to **[instrument Scala code](docs/Instrument_Scala_code.md)**
-  - How-to **[instrument Python code](docs/Instrument_Python_code.md)**
-  - sparkMeasure in **[Flight Recorder mode](docs/Flight_recorder_mode.md)**
+  - SparkMesure for **shell and notebooks**:
+    - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
+    - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
+  - **Instrument your code:** with sparkMeasure API:
+    - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
+    - **[Instrument Python code](docs/Instrument_Python_code.md)**
+  - SparkMeasure in **Flight Recorder** mode:
+    - **[Flight Recorder mode with file output](docs/Flight_recorder_mode.md)**
+    - **[Flight Recorder mode with DB write output](docs/Flight_record_DBwrite.md)**
   - [Notes on implementation and APIs](docs/Notes_on_implementation_details.md)
   - [Notes on metrics analysis](docs/Notes_on_metrics_analysis.md)
   - [TODO list and known issues](docs/TODO_and_issues.md)

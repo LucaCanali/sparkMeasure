@@ -44,16 +44,6 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
   val StageIdtoJobId: collection.mutable.HashMap[Int, Int] = collection.mutable.HashMap.empty[Int, Int]
   val StageIdtoJobGroup: collection.mutable.HashMap[Int, String] = collection.mutable.HashMap.empty[Int, String]
 
-  def encodeTaskLocality(taskLocality: TaskLocality.TaskLocality): Int = {
-    taskLocality match {
-      case TaskLocality.PROCESS_LOCAL => 0
-      case TaskLocality.NODE_LOCAL => 1
-      case TaskLocality.RACK_LOCAL => 2
-      case TaskLocality.NO_PREF => 3
-      case TaskLocality.ANY => 4
-    }
-  }
-
   override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
     jobStart.stageIds.foreach(stageId => StageIdtoJobId += (stageId -> jobStart.jobId))
     val group = jobStart.properties.getProperty("spark.jobGroup.id")
@@ -83,7 +73,7 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
                                taskInfo.finishTime, duration,
                                math.max(0L, duration - taskMetrics.executorRunTime - taskMetrics.executorDeserializeTime -
         taskMetrics.resultSerializationTime - gettingResultTime),
-                               taskInfo.executorId, taskInfo.host, encodeTaskLocality(taskInfo.taskLocality),
+                               taskInfo.executorId, taskInfo.host, Utils.encodeTaskLocality(taskInfo.taskLocality),
                                taskInfo.speculative, gettingResultTime, taskInfo.successful,
                                taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
                                taskMetrics.executorDeserializeTime, taskMetrics.executorDeserializeCpuTime / 1000000,
