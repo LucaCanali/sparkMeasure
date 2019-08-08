@@ -12,7 +12,7 @@ different code, see [Flight Recorder mode with DB Write output](Flight_record_DB
 ### Recording stage metrics in Flight Recorder mode
 To record metrics at the stage execution level granularity add these conf to spark-submit: 
    ```
-   --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
+   --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
    --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
    ```
 Additional parameters are:
@@ -28,7 +28,7 @@ Additional parameters are:
 ### FlightRecorderStageMetrics examples ###
 Python, runs pi.py example and records metrics to `/tmp/stageMetrics_flightRecorder` in json format:
 ```
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics examples/src/main/python/pi.py
 ```
 
@@ -36,7 +36,7 @@ Scala example,
 - same example as above, in addition use a custom output filename
 - print metrics also to stdout
 ```
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 \
 --class org.apache.spark.examples.SparkPi \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
 --conf spark.sparkmeasure.printToStdout=true \
@@ -48,7 +48,7 @@ Example of how to write output to HDFS when running in cluster mode on YARN. Als
 (note: source the Hadoop environment before running this)
 ```
 bin/spark-submit --master yarn --deploy-mode cluster \
---packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
+--packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
 --conf spark.sparkmeasure.printToStdout=true \
 --conf spark.sparkmeasure.outputFormat=json_to_hadoop \
@@ -62,7 +62,7 @@ Example, use spark-3.0.0 (snapshot from master), Kubernetes, Scala 2.12 and writ
 bin/spark-submit --master k8s://https://XXX.XXX.XXX.XXX --deploy-mode client --conf spark.executor.instances=3 \
 --conf spark.executor.cores=2 --executor-memory 6g --driver-memory 8g \
 --conf spark.kubernetes.container.image=<registry-URL>/spark:v3.0.0_20190529_hadoop32 \
---packages org.apache.hadoop:hadoop-aws:3.2.0,ch.cern.sparkmeasure:spark-measure_2.11:0.14 \
+--packages org.apache.hadoop:hadoop-aws:3.2.0,ch.cern.sparkmeasure:spark-measure_2.12:0.15 \
 --conf spark.hadoop.fs.s3a.secret.key="YYY..." \
 --conf spark.hadoop.fs.s3a.access.key="ZZZ..." \
 --conf spark.hadoop.fs.s3a.endpoint="https://s3.cern.ch" \
@@ -104,7 +104,7 @@ To post-process the saved metrics you will need to deserialize objects saved by 
 This is an example of how to do that using the supplied helper object sparkmeasure.Utils
 
 ```
-bin/spark-shell  --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
+bin/spark-shell  --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
 
 val myMetrics = ch.cern.sparkmeasure.IOUtils.readSerializedStageMetricsJSON("/tmp/stageMetrics_flightRecorder")
 // use ch.cern.sparkmeasure.IOUtils.readSerializedStageMetrics("/tmp/stageMetrics.serialized") for java serialization

@@ -23,7 +23,10 @@ Configuration for InfluxDBSink is handled with Spark configuration parameters:
  spark.sparkmeasure.influxdbStagemetrics, boolean, default is false
  ```
 
-Current implementation depends on "influxdb.java", you may need to add the dependency in spark-submit:
+Current implementation depends on "influxdb.java". If you deploy sparkMeasure from maven central,
+the dependency is being taken care of.
+If you run sparkMeasure from a jar instead, you may need to add the dependency manually
+in spark-submit as in:
  - `--packages org.influxdb:influxdb-java:2.14`
  
 
@@ -38,10 +41,9 @@ Note:
 ## Example usage:
 
 ```
-bin/spark-shell --master local[*] --jars <path>/spark-measure_2.11-0.15-SNAPSHOT.jar \
+bin/spark-shell --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 \
 --conf spark.sparkmeasure.influxdbURL="http://myInfluxDB:8086" 
 --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink
---packages org.influxdb:influxdb-java:2.14 
 
 example, run a test query as:
 sql("select count(*) from range(1000) cross join range(1000) cross join range(100)").count

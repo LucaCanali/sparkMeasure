@@ -6,11 +6,11 @@
 ### Run sparkMeasure using the packaged version from Maven Central 
   
  - The alternative, see paragraph above, is to build a jar from master.
-      ```scala
-      bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 your_python_code.py
+      ```
+      bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 your_python_code.py
   
       // or just download and use the jar (it is only needed in the driver) as in:
-      bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14.jar ...
+      bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.15.jar ...
      ```
   
 ### Download and build sparkMeasure (optional)
@@ -26,10 +26,10 @@
       pip install .
    
       # Run as in one of these examples:
-      bin/spark-submit --jars path>/spark-measure_2.11-0.15-SNAPSHOT.jar ...
+      bin/spark-submit --jars path>/spark-measure_2.11-0.16-SNAPSHOT.jar ...
       
       # alternative, set classpath for the driver (sparkmeasure code runs only in the driver)
-      bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.15-SNAPSHOT.jar ...      ```
+      bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.16-SNAPSHOT.jar ...      ```
    
 ### Example code 
 
@@ -38,7 +38,7 @@ You can find an example of how to instrument a Scala application running Apache 
  
 How to run the example:
  ```
-./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 test_sparkmeasure_python.py
+./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 test_sparkmeasure_python.py
  ```
 
  Some relevant snippet of code are:

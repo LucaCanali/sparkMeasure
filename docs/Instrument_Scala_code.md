@@ -7,10 +7,10 @@ Use this for example for performance troubleshooting, application instrumentatio
 
 - The alternative, see paragraph above, is to build a jar from master.
     ```
-    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
+    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
 
     // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.14.jar ...
+    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.15.jar ...
    ```
 
 ### Download and build sparkMeasure (optional)
@@ -23,10 +23,10 @@ Use this for example for performance troubleshooting, application instrumentatio
     ls -l target/scala-2.11/spark-measure*.jar  # location of the compiled jar
  
     # Run as in one of these examples:
-    bin/spark-submit --jars path>/spark-measure_2.11-0.15-SNAPSHOT.jar
+    bin/spark-submit --jars path>/spark-measure_2.11-0.16-SNAPSHOT.jar
     
     # alternative, set classpath for the driver (it is only needed in the driver)
-    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.15-SNAPSHOT.jar ...
+    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.16-SNAPSHOT.jar ...
     ```
  
 ### Example code 
@@ -39,7 +39,7 @@ How to run the example:
 # build the jar
 sbt package
 
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14 --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.11-0.1.jar
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.11-0.1.jar
  ```
  
 ### Stagemetrics

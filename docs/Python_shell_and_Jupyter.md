@@ -9,7 +9,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 - Use PyPi to install the Python wrapper and take the jar from Maven central: 
     ```
     pip install sparkmeasure
-    bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.14
+    bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
     ```
  - If you prefer to build from the latest development version:
     ```
@@ -23,10 +23,10 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     pip install .
     
     # Run as in one of these examples:
-    bin/pyspark --jars path>/spark-measure_2.11-0.15-SNAPSHOT.jar
+    bin/pyspark --jars path>/spark-measure_2.11-0.16-SNAPSHOT.jar
     
     #alternative:
-    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.15-SNAPSHOT.jar
+    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.16-SNAPSHOT.jar
     ```
    
    
