@@ -9,5 +9,5 @@ How to run a test:
 # build the jar
 sbt package
 
-bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13 --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.11-0.1.jar
+bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15 --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.11-0.1.jar
 ```
