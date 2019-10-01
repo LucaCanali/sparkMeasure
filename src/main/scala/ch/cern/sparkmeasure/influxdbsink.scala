@@ -146,10 +146,13 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
       case e: SparkListenerSQLExecutionStart => {
         val startTime = e.time
         val queryId = e.executionId
+        val description = e.description
+        // val details = e.details
 
         val point = Point.measurement("queries_started")
           .tag("applicationId", appId)
           .time(startTime, TimeUnit.MILLISECONDS)
+          .addField("description", description)
           .addField("queryId", queryId)
           .build()
         database.write(point)
