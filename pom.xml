@@ -98,15 +98,6 @@
 		    <version>1.0.0</version>
 		</dependency>		
 		<!-- https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
-		<!-- com.github.tomakehurst repalced by org.wiremock  
-		<dependency>
-		    <groupId>com.github.tomakehurst</groupId>
-		    <artifactId>wiremock</artifactId>
-		    <version>2.23.2</version>
-		    <type>pom</type>
-		    <scope>test</scope>
-		</dependency>
-		-->
 	</dependencies>
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
