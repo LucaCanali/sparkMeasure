@@ -1,5 +1,12 @@
 package ch.cern.sparkmeasure
 
+//import java.lang.Long
+import java.util.Properties
+import java.util.LinkedHashMap
+import java.util.Map
+
+import collection.JavaConversions._
+
 import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import scala.collection.mutable.ListBuffer
@@ -139,21 +146,52 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
   def aggregateStageMetrics(nameTempView: String = "PerfStageMetrics"): DataFrame = {
-    sparkSession.sql(s"select count(*) numStages, sum(numTasks), " +
-      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration), sum(executorRunTime), " +
-      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
-      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
-      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
-      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
-      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
-      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
+    sparkSession.sql(s"select count(*) numStages, sum(numTasks) as numTasks, " +
+      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration) as stageDuration , " +
+      s"sum(executorRunTime) as executorRunTime, sum(executorCpuTime) as executorCpuTime, " +
+      s"sum(executorDeserializeTime) as executorDeserializeTime, sum(executorDeserializeCpuTime) as executorDeserializeCpuTime, " +
+      s"sum(resultSerializationTime) as resultSerializationTime, sum(jvmGCTime) as jvmGCTime, "+
+      s"sum(shuffleFetchWaitTime) as shuffleFetchWaitTime, sum(shuffleWriteTime) as shuffleWriteTime, " +
+      s"max(resultSize) as resultSize, sum(numUpdatedBlockStatuses) as numUpdatedBlockStatuses, " +
+      s"sum(diskBytesSpilled) as diskBytesSpilled, sum(memoryBytesSpilled) as memoryBytesSpilled, " +
+      s"max(peakExecutionMemory) as peakExecutionMemory, sum(recordsRead) as recordsRead, sum(bytesRead) as bytesRead, " +
+      s"sum(recordsWritten) as recordsWritten, sum(bytesWritten) as bytesWritten, "+
+      s"sum(shuffleTotalBytesRead) as shuffleTotalBytesRead, sum(shuffleTotalBlocksFetched) as shuffleTotalBlocksFetched, "+
+      s"sum(shuffleLocalBlocksFetched) as shuffleLocalBlocksFetched, sum(shuffleRemoteBlocksFetched) as shuffleRemoteBlocksFetched, "+
+      s"sum(shuffleBytesWritten) as shuffleBytesWritten, sum(shuffleRecordsWritten) as shuffleRecordsWritten " +
       s"from $nameTempView " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
 
   }
 
+    /** Custom aggregations and post-processing of metrics data */
+  def reportMap(): Map[String, String] = {
+    val nameTempView = "PerfStageMetrics"
+    createStageMetricsDF(nameTempView)
+    val aggregateDF = aggregateStageMetrics(nameTempView)
+
+    val resultMap = new LinkedHashMap[String, String]()
+    
+    resultMap.put("Scheduling mode", {sparkSession.sparkContext.getSchedulingMode.toString})
+    resultMap.put("Spark Context default degree of parallelism",{sparkSession.sparkContext.defaultParallelism.toString()})
+
+    /** Print a summary of the stage metrics. */
+    val aggregates = aggregateDF.take(1)(0).toSeq
+    val cols = aggregateDF.columns
+    (cols zip aggregates)
+      .foreach {
+        case(n:String, v:Long) =>
+          resultMap.put(n, v.toString)
+        case(n:String, v:String) => 
+          resultMap.put(n, v.toString)
+        case(n:String, null) =>
+            resultMap.put(n, s"no data returned")
+      }        
+    resultMap
+  }
+  
   /** Custom aggregations and post-processing of metrics data */
-  def report(): String = {
+ def report(): String = {
     val nameTempView = "PerfStageMetrics"
     createStageMetricsDF(nameTempView)
     val aggregateDF = aggregateStageMetrics(nameTempView)
@@ -290,5 +328,5 @@ case class StageMetrics(sparkSession: SparkSession) {
     df.repartition(1).write.format(fileFormat).save(fileName)
     logger.warn(s"Stage metric data saved into $fileName using format=$fileFormat")
   }
-
+  
 }
