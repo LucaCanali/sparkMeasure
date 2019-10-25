@@ -180,12 +180,10 @@ case class StageMetrics(sparkSession: SparkSession) {
     val cols = aggregateDF.columns
     (cols zip aggregates)
       .foreach {
-        case(n:String, v:Long) =>
-          resultMap.put(n, v.toString)
-        case(n:String, v:String) => 
-          resultMap.put(n, v.toString)
         case(n:String, null) =>
             resultMap.put(n, s"no data returned")
+        case(n,v) =>
+          resultMap.put(n.toString , v.toString)
       }        
     resultMap
   }
