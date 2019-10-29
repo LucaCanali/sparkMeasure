@@ -1,6 +1,6 @@
 package ch.cern.sparkmeasure
 
-import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart, SparkListenerEvent, SparkListenerJobEnd, SparkListenerJobStart, SparkListenerStageCompleted, SparkListenerStageSubmitted, SparkListenerTaskEnd, SparkListenerTaskStart, TaskLocality}
+import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart, SparkListenerEvent, SparkListenerExecutorAdded, SparkListenerJobEnd, SparkListenerJobStart, SparkListenerStageCompleted, SparkListenerStageSubmitted, SparkListenerTaskEnd, SparkListenerTaskStart, TaskLocality}
 import org.apache.spark.sql.execution.ui.{SparkListenerSQLExecutionEnd, SparkListenerSQLExecutionStart}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.SparkConf
@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory
  *
  *  Configuration for InfluxDBSink is handled with Spark conf parameters:
  *
- *  spark.sparkmeasure.influxdbURL, example value: http://mytestInfluxDB:8086
+ *  spark.sparkmeasure.influxdbURL = InfluxDB endpoint URL
+ *     example: --conf spark.sparkmeasure.influxdbURL="http://mytestInfluxDB:8086"
  *  spark.sparkmeasure.influxdbUsername (can be empty)
  *  spark.sparkmeasure.influxdbPassword (can be empty)
  *  spark.sparkmeasure.influxdbName, defaults to "sparkmeasure"
@@ -58,7 +59,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
     influxDB.createDatabase(dbName)
   }
   val database = influxDB.setDatabase(dbName)
-  logger.info((s"using INfluxDB database $dbName"))
+  logger.info((s"using InfluxDB database $dbName"))
 
   val logStageMetrics = Utils.parseInfluxDBStagemetrics(conf, logger)
 
@@ -70,6 +71,20 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
   appId = SparkSession.getActiveSession match {
     case Some(sparkSession) => sparkSession.sparkContext.applicationId
     case _ => "noAppId"
+  }
+
+  override def onExecutorAdded(executorAdded: SparkListenerExecutorAdded): Unit = {
+    val executorId = executorAdded.executorId
+    val executorInfo = executorAdded.executorInfo
+    val startTime = executorAdded.time
+    val point = Point.measurement("executors_started")
+      .tag("applicationId", appId)
+      .addField("executorId", executorId)
+      .addField("executorHost", executorInfo.executorHost)
+      .addField("totalCores", executorInfo.totalCores)
+      .time(startTime, TimeUnit.MILLISECONDS)
+      .build()
+    database.write(point)
   }
 
   override def onStageSubmitted(stageSubmitted: SparkListenerStageSubmitted): Unit = {

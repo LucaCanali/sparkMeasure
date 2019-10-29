@@ -59,6 +59,7 @@ Connect to InfluxDB shell and explore the metrics data collected:
 name: measurements
 name
 ----
+executors_started
 jobs_ended
 jobs_started
 queries_ended
@@ -72,6 +73,7 @@ tasks_started
 > show series
 key
 ---
+executors_started,applicationId=application_1562699646005_9843
 jobs_ended,applicationId=application_1562699646005_9843
 jobs_started,applicationId=application_1562699646005_9843
 queries_ended,applicationId=application_1562699646005_9843
@@ -94,6 +96,12 @@ time                applicationId                  queryId
 ----                -------------                  -------
 1565093900688000000 application_1562699646005_9843 0
 1565093903288000000 application_1562699646005_9843 1
+
+> select * from /executors/
+name: executors_started
+time                applicationId                   executorHost      executorId totalCores
+----                -------------                   ------------      ---------- ----------
+1565093900688000000 application_1562699646005_9843  host12345.cern.ch 1          2
 ```
 
 Notes:
