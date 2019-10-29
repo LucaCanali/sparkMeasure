@@ -48,6 +48,24 @@ bin/spark-shell --master local[*] --packages ch.cern.sparkmeasure:spark-measure_
 example, run a test query as:
 sql("select count(*) from range(1000) cross join range(1000) cross join range(100)").count
 ```
+## Use cases
+
+InfluxDBSInk: The original use case to develop this feature is to extend the Spark performance dashboard
+with annotations for queries, jobs and stages.  
+See also [how to build a Spark monitoring dashboard with InfluxDB and Grafana](http://db-blog.web.cern.ch/blog/luca-canali/2019-02-performance-dashboard-apache-spark) 
+Add annotations to the Grafana dashboard using InfluxDB: 
+ - define an InfluxDB source
+ - define the annotation queries, for example for queries: `select queryId from queries_started where $timeFilter and applicationId =~ /$ApplicationId/` 
+
+Add info on how to link executorId and executorHost to the Spark Grafana dashboard (see link above):
+- use the `executor_started` table collected by the InfluxDBSink. 
+This would allow for example to add a Grafana table to the dashboard with data on executorID and executorHost (note, currently InfluxDB SQL does not allow joins).
+
+InfluxDBSinkExtended: This can be used to build a performance dashboard with full task execution details.
+It can also be used for performance analysis using data in InfluxDB series and Influx SQL-like language for querying.
+However beware of the impact
+of collecting all tasks metrics if the number of tasks is significant.
+
 
 ## Metrics collected by InfluxDBSink
 
@@ -108,18 +126,6 @@ Notes:
  - Stage_metrics data will only be populated if you set `--conf spark.sparkmeasure.influxdbStagemetrics=true`
  - Task metrics for `task_metrics`, `tasks_ended` and `tasks_started` will only be populated if you use InfluxDBExtended class instead of InfluxDbSink
 
-TODO: document all metrics and fields logged. Stop gap: see source code for influxdbsink.scala.
+##TODO:
+- document all metrics and fields logged. Stop gap: see source code for influxdbsink.scala.
   
-## Use cases
-
-InfluxDBSInk: The original use case to develop this feature is to extend the Spark performance dashboard
-with annotations for queries, jobs and stages.  
-Link on [how to build a Spark monitoring dashboard with InfluxDB and Grafana](http://db-blog.web.cern.ch/blog/luca-canali/2019-02-performance-dashboard-apache-spark) 
-Annotations in Grafana using InfluxDB: 
- - define an InfluxDB source
- - define the annotation queries, for example for queries: `select queryId from queries_started where $timeFilter and applicationId =~ /$ApplicationId/` 
-
-InfluxDBSinkExtended: This can be used to build a performance dashboard with full task execution details.
-It can also be used for performance analysis using data in InfluxDB series and Influx SQL-like language for querying.
-However beware of the impact
-of collecting all tasks metrics if the number of tasks is significant.
