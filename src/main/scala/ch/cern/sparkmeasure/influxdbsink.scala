@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 class InfluxDBSink(conf: SparkConf) extends SparkListener {
 
   lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
-  logger.warn(s"Custom monitoring listener with InfluxDB sink initializing, now attempting to connect to InfluxDB")
+  logger.warn("Custom monitoring listener with InfluxDB sink initializing. Now attempting to connect to InfluxDB")
 
   // Initialize InfluxDB connection
   val url = Utils.parseInfluxDBURL(conf, logger)

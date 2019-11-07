@@ -146,7 +146,7 @@ object Utils {
   def parseInfluxDBName(conf: SparkConf, logger: Logger) : String = {
     // handle InfluxDB username and password
     val influxdbName = conf.get("spark.sparkmeasure.influxdbName", "sparkmeasure")
-    logger.info(s"InfluxDB name: s$influxdbName")
+    logger.info(s"InfluxDB name: $influxdbName")
     influxdbName
   }
 
