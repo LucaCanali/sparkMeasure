@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory
  *  spark.sparkmeasure.influxdbName, defaults to "sparkmeasure"
  *  spark.sparkmeasure.influxdbStagemetrics, boolean, default is false
  *
+ *  spark.sparkmeasure.influxdbEnableBatch, boolean, default true
+ *     Note: this may improve performance, but requires explicitly stopping Spark Sesssion: spark.stop()
+ *
  * This code depends on "influxdb.java", you may need to add the dependency:
  *  --packages org.influxdb:influxdb-java:2.14
  *
@@ -63,8 +66,11 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
 
   val logStageMetrics = Utils.parseInfluxDBStagemetrics(conf, logger)
 
-  // Flush every 1000 Points, at least every 1000ms
-  influxDB.enableBatch(BatchOptions.DEFAULTS.actions(1000).flushDuration(1000))
+  val enableBatch = conf.getBoolean("spark.sparkmeasure.influxdbEnableBatch", true)
+  if (enableBatch) {
+    // Flush every 1000 Points, at least every 1000ms
+    influxDB.enableBatch(BatchOptions.DEFAULTS.actions(1000).flushDuration(1000))
+  }
 
   var appId = "noAppId"
 

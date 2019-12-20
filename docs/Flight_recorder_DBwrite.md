@@ -21,6 +21,9 @@ Configuration for InfluxDBSink is handled with Spark configuration parameters:
  spark.sparkmeasure.influxdbPassword (can be empty)
  spark.sparkmeasure.influxdbName, defaults to "sparkmeasure"
  spark.sparkmeasure.influxdbStagemetrics, boolean, default is false
+
+ spark.sparkmeasure.influxdbEnableBatch, boolean, default true
+     Note: this may improve performance, but requires explicitly stopping Spark Sesssion for clean exit: spark.stop()
  ```
 
 Current implementation depends on "influxdb.java". If you deploy sparkMeasure from maven central,
