@@ -10,9 +10,9 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 isSnapshot := true
 
 spName := "spark-measure"
-sparkVersion := "2.4.4"
+sparkVersion := "2.4.5"
 sparkComponents += "sql"
-//libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.3"
+//libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.5"
 
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.9"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.26"
@@ -24,7 +24,7 @@ libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.23.2" % "test"
 publishMavenStyle := true
 
 organization := "ch.cern.sparkmeasure"
-description := "sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads"
+description := "sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads."
 developers := List(Developer(
   "LucaCanali", "Luca Canali", "Luca.Canali@cern.ch",
   url("https://github.com/LucaCanali")
