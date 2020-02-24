@@ -13,8 +13,8 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
 
 ### Getting started with sparkMeasure, by example
  * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15`
-   - PySpark: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15`
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16`
+   - PySpark: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16`
      - note: install the Python wrapper API with: `pip install sparkmeasure`
    - Bleeding edge: build from master using sbt: `sbt +package` and use the jars instead of packages.
 
@@ -31,7 +31,7 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
 - CLI: spark-shell and pyspark
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -39,7 +39,7 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
   ```
   # Python CLI
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
