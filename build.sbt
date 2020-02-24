@@ -1,13 +1,13 @@
 name := "spark-measure"
 
-version := "0.16"
+version := "0.17-SNAPSHOT"
 
 scalaVersion := "2.11.12"
 crossScalaVersions := Seq("2.11.12", "2.12.10")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-isSnapshot := false
+isSnapshot := true
 
 spName := "spark-measure"
 sparkVersion := "2.4.5"
