@@ -28,14 +28,23 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
 
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyter_Python_getting_started.ipynb)
   
-- CLI: Scala REPL/spark-shell
-```
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
+- CLI: spark-shell and pyspark
+  ```
+  # Scala CLI
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
 
-val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
-stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
-```
+  val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
+  stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
+  ```
+  ```
+  # Python CLI
+  pip install sparkmeasure
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15
 
+  from sparkmeasure import StageMetrics
+  stagemetrics = StageMetrics(spark)
+  stagemetrics.runandmeasure(locals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(100)").show()')
+  ```
 The output should look like this:
 ```
 Scheduling mode = FIFO
@@ -70,7 +79,7 @@ sum(shuffleBytesWritten) => 472 (472 Bytes)
 sum(shuffleRecordsWritten) => 8
 ```
 
-### One tool for different use cases, links to documentation and example
+### One tool for different use cases, links to documentation and examples
   * **Interactive mode**: use sparkMeasure to collect and analyze Spark workload metrics real-time when
  working with shell or notebook environments, as `spark-shell` (Scala), `PySpark` (Python) and/or
 from `jupyter-notebook`. Works with Python and Scala kernels.
@@ -88,10 +97,10 @@ from `jupyter-notebook`. Works with Python and Scala kernels.
     - **[Flight Recorder mode with DB write output](docs/Flight_recorder_DBwrite.md)**
  * Additional info:
    - Presentations at Spark Summit:
-     - ["Performance Troubleshooting Using Apache Spark Metrics"(https://databricks.com/session_eu19/performance-troubleshooting-using-apache-spark-metrics)
+     - ["Performance Troubleshooting Using Apache Spark Metrics"](https://databricks.com/session_eu19/performance-troubleshooting-using-apache-spark-metrics)
      - ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)
    - Blogs:
-     - [2018 blog post](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
+     - [2018, SparkMeasure, a tool for performance troubleshooting of Apache Spark workloads](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
      - [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
   - [TODO list and known issues](docs/TODO_and_issues.md)
 
