@@ -9,42 +9,37 @@ working example of how to use Spark Listeners for collecting Spark task metrics 
  * Main author and contact: Luca.Canali@cern.ch + credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * Compatibility: use with Spark 2.1.x and higher. Compiles with Scala 2.11 and 2.12
  * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure) 
-     - Example: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15` 
-   - PySpark users: in addition, install the Python wrapper APIs: `pip install sparkmeasure`
-   - Bleeding edge: build from master using sbt: `sbt +package`
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15`
+   - PySpark: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.15`
+     - note: install the Python wrapper API with: `pip install sparkmeasure`
+   - Bleeding edge: build from master using sbt: `sbt +package` and use the jars instead of packages
     
-### One tool for different use cases
+### One tool for different use cases, links to documentation and example
  * Use sparkMeasure for troubleshooting **interactive and batch** Spark workloads.
  Use it also to collect metrics for long-term retention or as part of a **CI/CD** pipeline.
   * **Interactive mode**: use sparkMeasure to collect and analyze Spark workload metrics real-time when 
  working with shell or notebook environments, as `spark-shell` (Scala), `PySpark` (Python) and/or 
 from `jupyter-notebook`. Works with Python and Scala kernels.
+    - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
+    - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
  * **Code instrumentation**: instrument your code with the sparkMeasure API, for collecting, saving,
  and analyzing Spark workload metrics data, at your leisure.
+    - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
+    - **[Instrument Python code](docs/Instrument_Python_code.md)**
  * **"Flight Recorder" mode**: SparkMeasure will collect metrics transparently,
  without any need for you to change your code. Metrics can be saved to a file 
  (locally or to a Hadoop-compliant filesystem),
  or you can opt to write metrics in near-realtime to an InfluxDB instance.
-
-### Documentation and examples
-A list of [docs](docs) and [examples](examples):
-  - SparkMesure for **shell and notebooks**:
-    - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
-    - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
-  - **Instrument your code:** with sparkMeasure API:
-    - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
-    - **[Instrument Python code](docs/Instrument_Python_code.md)**
-  - SparkMeasure in **Flight Recorder** mode:
     - **[Flight Recorder mode with file output](docs/Flight_recorder_mode.md)**
     - **[Flight Recorder mode with DB write output](docs/Flight_recorder_DBwrite.md)**
-  - [Notes on implementation and APIs](docs/Notes_on_implementation_details.md)
-  - [Notes on metrics analysis](docs/Notes_on_metrics_analysis.md)
-  - [TODO list and known issues](docs/TODO_and_issues.md)
  * Additional info:
-   - Presentation at Spark Summit Europe 2017: 
-   ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)  
-   - Blogs:  [2018 blog post](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
-   [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+   - Presentations at Spark Summit:
+     - ["Performance Troubleshooting Using Apache Spark Metrics"(https://databricks.com/session_eu19/performance-troubleshooting-using-apache-spark-metrics)
+     - ["Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies"](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)
+   - Blogs:
+     - [2018 blog post](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
+     - [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+  - [TODO list and known issues](docs/TODO_and_issues.md)
 
 ### Getting started with sparkMeasure, by example
  
