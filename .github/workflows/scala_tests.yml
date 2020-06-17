@@ -1,4 +1,4 @@
-name: Scala CI
+name: sparkMeasure CI
 
 on:
   push:
@@ -23,5 +23,9 @@ jobs:
       run: sbt +package
     - uses: actions/upload-artifact@v2
       with:
-        name: packages
-        path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.1*/*.jar
+        name: sparkMeasure package scala 2.11
+        path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.11/*.jar
+    - uses: actions/upload-artifact@v2
+      with:
+        name: sparkMeasure package scala 2.12
+        path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.12/*.jar
