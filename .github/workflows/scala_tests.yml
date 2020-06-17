@@ -19,3 +19,9 @@ jobs:
         java-version: 1.8
     - name: Build and run tests for all scala versions supported
       run: sbt +test
+    - name: Package
+      run: sbt +package
+    - uses: actions/upload-artifact@v2
+      with:
+        name: packages
+        path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.1*/*.jar
