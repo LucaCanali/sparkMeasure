@@ -9,13 +9,18 @@ Use sparkMeasure for troubleshooting **interactive and batch** Spark workloads.
 Use it also to collect metrics for long-term retention or as part of a **CI/CD** pipeline.
 SparkMeasure is also intended as a working example of how to use Spark Listeners for collecting Spark task metrics data.
  * Main author and contact: Luca.Canali@cern.ch + credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
- * Compatibility: Spark 2.1.x and higher (Scala versions: 2.11 and 2.12).
+ * Compatibility: Spark 2.1.x and higher.
 
 ### Getting started with sparkMeasure, by example
  * How to use: deploy [sparkMeasure from Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16`
-   - PySpark: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16`
-     - note: install the Python wrapper API with: `pip install sparkmeasure`
+   - Spark 2.x built with scala 2_11:
+     - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16`
+     - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16`
+       - note: `pip install sparkmeasure` to get the Python wrapper API. 
+   - Spark 3.0.x and 2.4.x built with scala 2_12:
+     - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.16`
+     - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.16`
+       - note: `pip install sparkmeasure` to get the Python wrapper API. 
    - Bleeding edge: build from master using sbt: `sbt +package` and use the jars instead of packages.
 
 - [<img src="https://upload.wikimedia.org/wikipedia/en/0/09/Databricks_logo.png" height="40"> Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)  
@@ -30,16 +35,16 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
   
 - CLI: spark-shell and pyspark
   ```
-  # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16
+  # Scala CLI, Spark 3.0
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.16
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
   ```
   ```
-  # Python CLI
+  # Python CLI, Spark 3.0
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.16
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
@@ -51,32 +56,32 @@ Scheduling mode = FIFO
 Spark Context default degree of parallelism = 8
 Aggregated Spark stage metrics:
 numStages => 3
-sum(numTasks) => 17
-elapsedTime => 9103 (9 s)
-sum(stageDuration) => 9027 (9 s)
-sum(executorRunTime) => 69238 (1.2 min)
-sum(executorCpuTime) => 68004 (1.1 min)
-sum(executorDeserializeTime) => 1031 (1 s)
-sum(executorDeserializeCpuTime) => 151 (0.2 s)
-sum(resultSerializationTime) => 5 (5 ms)
-sum(jvmGCTime) => 64 (64 ms)
-sum(shuffleFetchWaitTime) => 0 (0 ms)
-sum(shuffleWriteTime) => 26 (26 ms)
-max(resultSize) => 17934 (17.0 KB)
-sum(numUpdatedBlockStatuses) => 0
-sum(diskBytesSpilled) => 0 (0 Bytes)
-sum(memoryBytesSpilled) => 0 (0 Bytes)
-max(peakExecutionMemory) => 0
-sum(recordsRead) => 2000
-sum(bytesRead) => 0 (0 Bytes)
-sum(recordsWritten) => 0
-sum(bytesWritten) => 0 (0 Bytes)
-sum(shuffleTotalBytesRead) => 472 (472 Bytes)
-sum(shuffleTotalBlocksFetched) => 8
-sum(shuffleLocalBlocksFetched) => 8
-sum(shuffleRemoteBlocksFetched) => 0
-sum(shuffleBytesWritten) => 472 (472 Bytes)
-sum(shuffleRecordsWritten) => 8
+numTasks => 17
+elapsedTime => 14594 (15 s)
+stageDuration => 14498 (14 s)
+executorRunTime => 108563 (1.8 min)
+executorCpuTime => 106613 (1.8 min)
+executorDeserializeTime => 4149 (4 s)
+executorDeserializeCpuTime => 1025 (1 s)
+resultSerializationTime => 1 (1 ms)
+jvmGCTime => 64 (64 ms)
+shuffleFetchWaitTime => 0 (0 ms)
+shuffleWriteTime => 15 (15 ms)
+resultSize => 19955 (19.0 KB)
+numUpdatedBlockStatuses => 0
+diskBytesSpilled => 0 (0 Bytes)
+memoryBytesSpilled => 0 (0 Bytes)
+peakExecutionMemory => 0
+recordsRead => 2000
+bytesRead => 0 (0 Bytes)
+recordsWritten => 0
+bytesWritten => 0 (0 Bytes)
+shuffleTotalBytesRead => 472 (472 Bytes)
+shuffleTotalBlocksFetched => 8
+shuffleLocalBlocksFetched => 8
+shuffleRemoteBlocksFetched => 0
+shuffleBytesWritten => 472 (472 Bytes)
+shuffleRecordsWritten => 8
 ```
 
 ### One tool for different use cases, links to documentation and examples
