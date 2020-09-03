@@ -12,12 +12,13 @@ class UtilsTest extends FlatSpec with Matchers {
     submissionTime = 10, completionTime = 11, stageDuration = 12, numTasks = 13,
     executorRunTime = 14, executorCpuTime = 15,
     executorDeserializeTime = 16, executorDeserializeCpuTime = 17,
-    resultSerializationTime = 18, jvmGCTime = 19, resultSize = 20, numUpdatedBlockStatuses = 21,
+    resultSerializationTime = 18, jvmGCTime = 19, resultSize = 20,
     diskBytesSpilled = 30, memoryBytesSpilled = 31, peakExecutionMemory = 32, recordsRead = 33,
     bytesRead = 34, recordsWritten = 35, bytesWritten = 36,
     shuffleFetchWaitTime = 40, shuffleTotalBytesRead = 41, shuffleTotalBlocksFetched = 42,
-    shuffleLocalBlocksFetched = 43, shuffleRemoteBlocksFetched = 44, shuffleWriteTime = 45,
-    shuffleBytesWritten = 46, shuffleRecordsWritten = 47
+    shuffleLocalBlocksFetched = 43, shuffleRemoteBlocksFetched = 44, shuffleLocalBytesRead = 45,
+    shuffleRemoteBytesRead = 46, shuffleRemoteBytesReadToDisk = 47, shuffleRecordsRead = 48,
+    shuffleWriteTime = 50, shuffleBytesWritten = 51, shuffleRecordsWritten = 52
   )
 
   val taskVals0 = TaskVals(jobId = 1, jobGroup = "test", stageId = 2, index = 3, launchTime = 4, finishTime = 5,
@@ -25,12 +26,13 @@ class UtilsTest extends FlatSpec with Matchers {
     speculative = false, gettingResultTime = 12, successful = true,
     executorRunTime = 14, executorCpuTime = 15,
     executorDeserializeTime = 16, executorDeserializeCpuTime = 17,
-    resultSerializationTime = 18, jvmGCTime = 19, resultSize = 20, numUpdatedBlockStatuses = 21,
+    resultSerializationTime = 18, jvmGCTime = 19, resultSize = 20,
     diskBytesSpilled = 30, memoryBytesSpilled = 31, peakExecutionMemory = 32, recordsRead = 33,
     bytesRead = 34, recordsWritten = 35, bytesWritten = 36,
     shuffleFetchWaitTime = 40, shuffleTotalBytesRead = 41, shuffleTotalBlocksFetched = 42,
-    shuffleLocalBlocksFetched = 43, shuffleRemoteBlocksFetched = 44, shuffleWriteTime = 45,
-    shuffleBytesWritten = 46, shuffleRecordsWritten = 47
+    shuffleLocalBlocksFetched = 43, shuffleRemoteBlocksFetched = 44, shuffleLocalBytesRead = 45,
+    shuffleRemoteBytesRead = 46, shuffleRemoteBytesReadToDisk = 47, shuffleRecordsRead = 48,
+    shuffleWriteTime = 50, shuffleBytesWritten = 51, shuffleRecordsWritten = 52
   )
 
   it should "write and read back StageVal (Java Serialization)" in {

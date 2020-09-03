@@ -9,23 +9,16 @@ If you plan to contribute to sparkMeasure development, please start by reviewing
      on the user to validate the output.
    * TODO: Task metrics values collected by sparkMeasure are only for successfully executed tasks. Note that 
      resources used by failed tasks are not collected in the current version. Can this be improved?
-   * We can expected more task metrics being added in future versions. Current code is not version aware and does
-     not offer and easy way to handle additional metrics only for newer versions without breaking backward compatibility.  
-     TODO: implement Spark version awareness and custom list of metrics in sparkMeasure  
-           + Following [SPARK PR 18249](https://github.com/apache/spark/pull/18249/files) add support for the metric 
      remoteBytesReadToDisk Task Metric (this is relevant for Spark 2.3.x and above).     
    * TODO: Flight recorder mode, task metrics, find ways to write metrics out to output files incrementally, 
      rather than using the current approach of buffering everything in memory and writing at the end? 
      The current approach has obvious scalability issues.
-   * TODO: write more tests to be executed by travis CI
+   * TODO: write more tests to be executed by GitHub CI actions
    * TODO: add code/exceptions to  handle error conditions that can arise in sparkMeasure code
    * TODO: add more statistics related to job execution, for example report start/min/max.number of executors
      the job had, which is useful in the case of yarn with spark dynamic allocation
    * TODO (maybe): add additional sinks for the collected metrics and aggregations besides prometheus,
      two possible candidates are Kafka and InfluxDB
-   * ~~TODO (maybe): remove _updatedBlockStatuses from the list of metrics collected by spakMeasure
-     This follows [SPARK PR 18162](https://github.com/apache/spark/pull/18162) 
-     TaskMetrics._updatedBlockStatuses is off by default.~~
    * TODO (maybe) implement in sparkMeasure the removeSparkListener method, to allow stopping data collection 
      from sparkMeasure. (note this is only possible from Spark versions 2.2 and above)
    * gatherAccumulables=true for taskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean) 

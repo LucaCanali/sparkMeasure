@@ -123,7 +123,6 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
 
     if (logStageMetrics) {
       val taskmetrics = stageCompleted.stageInfo.taskMetrics
-      // TODO: add all the available metrics
       val point2 = Point.measurement("stage_metrics")
         .tag("applicationId", appId)
         .time(completionTime, TimeUnit.MILLISECONDS)
