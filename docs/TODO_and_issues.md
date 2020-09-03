@@ -23,9 +23,9 @@ If you plan to contribute to sparkMeasure development, please start by reviewing
      the job had, which is useful in the case of yarn with spark dynamic allocation
    * TODO (maybe): add additional sinks for the collected metrics and aggregations besides prometheus,
      two possible candidates are Kafka and InfluxDB
-   * TODO (maybe): remove _updatedBlockStatuses from the list of metrics collected by spakMeasure
+   * ~~TODO (maybe): remove _updatedBlockStatuses from the list of metrics collected by spakMeasure
      This follows [SPARK PR 18162](https://github.com/apache/spark/pull/18162) 
-     TaskMetrics._updatedBlockStatuses is off by default.
+     TaskMetrics._updatedBlockStatuses is off by default.~~
    * TODO (maybe) implement in sparkMeasure the removeSparkListener method, to allow stopping data collection 
      from sparkMeasure. (note this is only possible from Spark versions 2.2 and above)
    * gatherAccumulables=true for taskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean) 

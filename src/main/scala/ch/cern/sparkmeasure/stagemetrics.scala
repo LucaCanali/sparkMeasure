@@ -32,7 +32,7 @@ case class StageVals (jobId: Int, jobGroup:String, stageId: Int, name: String,
                  submissionTime: Long, completionTime: Long, stageDuration: Long, numTasks: Int,
                  executorRunTime: Long, executorCpuTime: Long,
                  executorDeserializeTime: Long, executorDeserializeCpuTime: Long,
-                 resultSerializationTime: Long, jvmGCTime: Long, resultSize: Long, numUpdatedBlockStatuses: Int,
+                 resultSerializationTime: Long, jvmGCTime: Long, resultSize: Long,
                  diskBytesSpilled: Long, memoryBytesSpilled: Long, peakExecutionMemory: Long, recordsRead: Long,
                  bytesRead: Long, recordsWritten: Long, bytesWritten: Long,
                  shuffleFetchWaitTime: Long, shuffleTotalBytesRead: Long, shuffleTotalBlocksFetched: Long,
@@ -77,7 +77,7 @@ class StageInfoRecorderListener extends SparkListener {
       stageInfo.numTasks, taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
       taskMetrics.executorDeserializeTime, taskMetrics.executorDeserializeCpuTime / 1000000,
       taskMetrics.resultSerializationTime, taskMetrics.jvmGCTime, taskMetrics.resultSize,
-      taskMetrics.updatedBlockStatuses.length, taskMetrics.diskBytesSpilled, taskMetrics.memoryBytesSpilled,
+      taskMetrics.diskBytesSpilled, taskMetrics.memoryBytesSpilled,
       taskMetrics.peakExecutionMemory,
       taskMetrics.inputMetrics.recordsRead, taskMetrics.inputMetrics.bytesRead,
       taskMetrics.outputMetrics.recordsWritten, taskMetrics.outputMetrics.bytesWritten,
@@ -152,7 +152,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"sum(executorDeserializeTime) as executorDeserializeTime, sum(executorDeserializeCpuTime) as executorDeserializeCpuTime, " +
       s"sum(resultSerializationTime) as resultSerializationTime, sum(jvmGCTime) as jvmGCTime, "+
       s"sum(shuffleFetchWaitTime) as shuffleFetchWaitTime, sum(shuffleWriteTime) as shuffleWriteTime, " +
-      s"max(resultSize) as resultSize, sum(numUpdatedBlockStatuses) as numUpdatedBlockStatuses, " +
+      s"max(resultSize) as resultSize, " +
       s"sum(diskBytesSpilled) as diskBytesSpilled, sum(memoryBytesSpilled) as memoryBytesSpilled, " +
       s"max(peakExecutionMemory) as peakExecutionMemory, sum(recordsRead) as recordsRead, sum(bytesRead) as bytesRead, " +
       s"sum(recordsWritten) as recordsWritten, sum(bytesWritten) as bytesWritten, "+

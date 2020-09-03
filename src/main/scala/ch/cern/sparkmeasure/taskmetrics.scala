@@ -26,7 +26,7 @@ case class TaskVals(jobId: Int, jobGroup: String, stageId: Int, index: Long, lau
                     speculative: Boolean, gettingResultTime: Long, successful: Boolean,
                     executorRunTime: Long, executorCpuTime: Long,
                     executorDeserializeTime: Long, executorDeserializeCpuTime: Long,
-                    resultSerializationTime: Long, jvmGCTime: Long, resultSize: Long, numUpdatedBlockStatuses: Int,
+                    resultSerializationTime: Long, jvmGCTime: Long, resultSize: Long,
                     diskBytesSpilled: Long, memoryBytesSpilled: Long, peakExecutionMemory: Long, recordsRead: Long,
                     bytesRead: Long, recordsWritten: Long, bytesWritten: Long,
                     shuffleFetchWaitTime: Long, shuffleTotalBytesRead: Long, shuffleTotalBlocksFetched: Long,
@@ -78,7 +78,7 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
                                taskMetrics.executorRunTime, taskMetrics.executorCpuTime / 1000000,
                                taskMetrics.executorDeserializeTime, taskMetrics.executorDeserializeCpuTime / 1000000,
                                taskMetrics.resultSerializationTime, taskMetrics.jvmGCTime, taskMetrics.resultSize,
-                               taskMetrics.updatedBlockStatuses.length, taskMetrics.diskBytesSpilled, taskMetrics.memoryBytesSpilled,
+                               taskMetrics.diskBytesSpilled, taskMetrics.memoryBytesSpilled,
                                taskMetrics.peakExecutionMemory,
                                taskMetrics.inputMetrics.recordsRead, taskMetrics.inputMetrics.bytesRead,
                                taskMetrics.outputMetrics.recordsWritten, taskMetrics.outputMetrics.bytesWritten,
@@ -157,7 +157,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
       s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
       s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
       s"sum(gettingResultTime), " +
-      s"max(resultSize), sum(numUpdatedBlockStatuses), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
+      s"max(resultSize), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
       s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
       s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
       s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
