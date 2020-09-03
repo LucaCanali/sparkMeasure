@@ -30,8 +30,9 @@ case class TaskVals(jobId: Int, jobGroup: String, stageId: Int, index: Long, lau
                     diskBytesSpilled: Long, memoryBytesSpilled: Long, peakExecutionMemory: Long, recordsRead: Long,
                     bytesRead: Long, recordsWritten: Long, bytesWritten: Long,
                     shuffleFetchWaitTime: Long, shuffleTotalBytesRead: Long, shuffleTotalBlocksFetched: Long,
-                    shuffleLocalBlocksFetched: Long, shuffleRemoteBlocksFetched: Long, shuffleWriteTime: Long,
-                    shuffleBytesWritten: Long, shuffleRecordsWritten: Long)
+                    shuffleLocalBlocksFetched: Long, shuffleRemoteBlocksFetched: Long, shuffleLocalBytesRead: Long,
+                    shuffleRemoteBytesRead: Long, shuffleRemoteBytesReadToDisk: Long, shuffleRecordsRead: Long,
+                    shuffleWriteTime: Long, shuffleBytesWritten: Long, shuffleRecordsWritten: Long)
 
 // Accumulators contain task metrics and other metrics, such as SQL metrics, this case class is used to process them
 case class TaskAccumulablesInfo(jobId: Int, stageId: Int, taskId: Long, submissionTime: Long, finishTime: Long,
@@ -85,7 +86,9 @@ class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends Spar
                                taskMetrics.shuffleReadMetrics.fetchWaitTime, taskMetrics.shuffleReadMetrics.totalBytesRead,
                                taskMetrics.shuffleReadMetrics.totalBlocksFetched, taskMetrics.shuffleReadMetrics.localBlocksFetched,
                                taskMetrics.shuffleReadMetrics.remoteBlocksFetched,
-      taskMetrics.shuffleWriteMetrics.writeTime / 1000000, taskMetrics.shuffleWriteMetrics.bytesWritten,
+                               taskMetrics.shuffleReadMetrics.localBytesRead, taskMetrics.shuffleReadMetrics.remoteBytesRead,
+                               taskMetrics.shuffleReadMetrics.remoteBytesReadToDisk, taskMetrics.shuffleReadMetrics.recordsRead,
+                               taskMetrics.shuffleWriteMetrics.writeTime / 1000000, taskMetrics.shuffleWriteMetrics.bytesWritten,
                                taskMetrics.shuffleWriteMetrics.recordsWritten)
     taskMetricsData += currentTask
 
@@ -152,15 +155,22 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
   }
 
   def aggregateTaskMetrics(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
-    sparkSession.sql(s"select count(*) numtasks, " +
-      s"max(finishTime) - min(launchTime) as elapsedTime, sum(duration), sum(schedulerDelay), sum(executorRunTime), " +
-      s"sum(executorCpuTime), sum(executorDeserializeTime), sum(executorDeserializeCpuTime), " +
-      s"sum(resultSerializationTime), sum(jvmGCTime), sum(shuffleFetchWaitTime), sum(shuffleWriteTime), " +
-      s"sum(gettingResultTime), " +
-      s"max(resultSize), sum(diskBytesSpilled), sum(memoryBytesSpilled), " +
-      s"max(peakExecutionMemory), sum(recordsRead), sum(bytesRead), sum(recordsWritten), sum(bytesWritten), " +
-      s" sum(shuffleTotalBytesRead), sum(shuffleTotalBlocksFetched), sum(shuffleLocalBlocksFetched), " +
-      s"sum(shuffleRemoteBlocksFetched), sum(shuffleBytesWritten), sum(shuffleRecordsWritten) " +
+    sparkSession.sql(s"select count(*) as numtasks, " +
+      s"max(finishTime) - min(launchTime) as elapsedTime, sum(duration) as duration, sum(schedulerDelay) as schedulerDelayTime, " +
+      s"sum(executorRunTime) as executorRunTime, sum(executorCpuTime) as executorCpuTime, " +
+      s"sum(executorDeserializeTime) as executorDeserializeTime, sum(executorDeserializeCpuTime) as executorDeserializeCpuTime, " +
+      s"sum(resultSerializationTime) as resultSerializationTime, sum(jvmGCTime) as jvmGCTime, "+
+      s"sum(shuffleFetchWaitTime) as shuffleFetchWaitTime, sum(shuffleWriteTime) as shuffleWriteTime, " +
+      s"sum(gettingResultTime) as gettingResultTime, " +
+      s"max(resultSize) as resultSize, " +
+      s"sum(diskBytesSpilled) as diskBytesSpilled, sum(memoryBytesSpilled) as memoryBytesSpilled, " +
+      s"max(peakExecutionMemory) as peakExecutionMemory, sum(recordsRead) as recordsRead, sum(bytesRead) as bytesRead, " +
+      s"sum(recordsWritten) as recordsWritten, sum(bytesWritten) as bytesWritten, " +
+      s"sum(shuffleRecordsRead) as shuffleRecordsRead, sum(shuffleTotalBlocksFetched) as shuffleTotalBlocksFetched, "+
+      s"sum(shuffleLocalBlocksFetched) as shuffleLocalBlocksFetched, sum(shuffleRemoteBlocksFetched) as shuffleRemoteBlocksFetched, "+
+      s"sum(shuffleTotalBytesRead) as shuffleTotalBytesRead, sum(shuffleLocalBytesRead) as shuffleLocalBytesRead, " +
+      s"sum(shuffleRemoteBytesRead) as shuffleRemoteBytesRead, sum(shuffleRemoteBytesReadToDisk) as shuffleRemoteBytesReadToDisk, " +
+      s"sum(shuffleBytesWritten) as shuffleBytesWritten, sum(shuffleRecordsWritten) as shuffleRecordsWritten " +
       s"from $nameTempView " +
       s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
   }

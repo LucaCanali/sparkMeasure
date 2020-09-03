@@ -36,8 +36,9 @@ case class StageVals (jobId: Int, jobGroup:String, stageId: Int, name: String,
                  diskBytesSpilled: Long, memoryBytesSpilled: Long, peakExecutionMemory: Long, recordsRead: Long,
                  bytesRead: Long, recordsWritten: Long, bytesWritten: Long,
                  shuffleFetchWaitTime: Long, shuffleTotalBytesRead: Long, shuffleTotalBlocksFetched: Long,
-                 shuffleLocalBlocksFetched: Long, shuffleRemoteBlocksFetched: Long, shuffleWriteTime: Long,
-                 shuffleBytesWritten: Long, shuffleRecordsWritten: Long
+                 shuffleLocalBlocksFetched: Long, shuffleRemoteBlocksFetched: Long, shuffleLocalBytesRead: Long,
+                 shuffleRemoteBytesRead: Long, shuffleRemoteBytesReadToDisk: Long, shuffleRecordsRead: Long,
+                 shuffleWriteTime: Long, shuffleBytesWritten: Long, shuffleRecordsWritten: Long
                 )
 
 // Accumulators contain task metrics and other metrics, such as SQL metrics, this case class is used to process them
@@ -84,6 +85,8 @@ class StageInfoRecorderListener extends SparkListener {
       taskMetrics.shuffleReadMetrics.fetchWaitTime, taskMetrics.shuffleReadMetrics.totalBytesRead,
       taskMetrics.shuffleReadMetrics.totalBlocksFetched, taskMetrics.shuffleReadMetrics.localBlocksFetched,
       taskMetrics.shuffleReadMetrics.remoteBlocksFetched,
+      taskMetrics.shuffleReadMetrics.localBytesRead, taskMetrics.shuffleReadMetrics.remoteBytesRead,
+      taskMetrics.shuffleReadMetrics.remoteBytesReadToDisk, taskMetrics.shuffleReadMetrics.recordsRead,
       taskMetrics.shuffleWriteMetrics.writeTime / 1000000, taskMetrics.shuffleWriteMetrics.bytesWritten,
       taskMetrics.shuffleWriteMetrics.recordsWritten
     )
@@ -146,7 +149,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
   def aggregateStageMetrics(nameTempView: String = "PerfStageMetrics"): DataFrame = {
-    sparkSession.sql(s"select count(*) numStages, sum(numTasks) as numTasks, " +
+    sparkSession.sql(s"select count(*) as numStages, sum(numTasks) as numTasks, " +
       s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration) as stageDuration , " +
       s"sum(executorRunTime) as executorRunTime, sum(executorCpuTime) as executorCpuTime, " +
       s"sum(executorDeserializeTime) as executorDeserializeTime, sum(executorDeserializeCpuTime) as executorDeserializeCpuTime, " +
@@ -155,9 +158,11 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"max(resultSize) as resultSize, " +
       s"sum(diskBytesSpilled) as diskBytesSpilled, sum(memoryBytesSpilled) as memoryBytesSpilled, " +
       s"max(peakExecutionMemory) as peakExecutionMemory, sum(recordsRead) as recordsRead, sum(bytesRead) as bytesRead, " +
-      s"sum(recordsWritten) as recordsWritten, sum(bytesWritten) as bytesWritten, "+
-      s"sum(shuffleTotalBytesRead) as shuffleTotalBytesRead, sum(shuffleTotalBlocksFetched) as shuffleTotalBlocksFetched, "+
+      s"sum(recordsWritten) as recordsWritten, sum(bytesWritten) as bytesWritten, " +
+      s"sum(shuffleRecordsRead) as shuffleRecordsRead, sum(shuffleTotalBlocksFetched) as shuffleTotalBlocksFetched, "+
       s"sum(shuffleLocalBlocksFetched) as shuffleLocalBlocksFetched, sum(shuffleRemoteBlocksFetched) as shuffleRemoteBlocksFetched, "+
+      s"sum(shuffleTotalBytesRead) as shuffleTotalBytesRead, sum(shuffleLocalBytesRead) as shuffleLocalBytesRead, " +
+      s"sum(shuffleRemoteBytesRead) as shuffleRemoteBytesRead, sum(shuffleRemoteBytesReadToDisk) as shuffleRemoteBytesReadToDisk, " +
       s"sum(shuffleBytesWritten) as shuffleBytesWritten, sum(shuffleRecordsWritten) as shuffleRecordsWritten " +
       s"from $nameTempView " +
       s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
