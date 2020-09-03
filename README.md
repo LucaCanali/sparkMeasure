@@ -50,7 +50,7 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
   ```
   # Python CLI, Spark 3.0
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.16
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
