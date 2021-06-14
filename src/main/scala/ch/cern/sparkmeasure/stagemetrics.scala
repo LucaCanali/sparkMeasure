@@ -327,8 +327,8 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
   /** Helper method to save data, we expect to have small amounts of data so collapsing to 1 partition seems OK */
-  def saveData(df: DataFrame, fileName: String, fileFormat: String = "json") = {
-    df.repartition(1).write.format(fileFormat).save(fileName)
+  def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveMode: String = "default") = {
+    df.repartition(1).write.format(fileFormat).mode(saveMode).save(fileName)
     logger.warn(s"Stage metric data saved into $fileName using format=$fileFormat")
   }
   
