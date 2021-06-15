@@ -11,13 +11,12 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
  * Main author and contact: 
    * Luca.Canali@cern.ch + credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
  * For Spark 2.x and 3.x
-   * Tested on Spark 2.4 and 3.0
-   * Spark 2.3 -> should also be OK
-   * Spark 2.1 and 2.2 -> use sparkMeasure version 0.16 
+   * Tested on Spark 2.4, 3.0, 3.1
+   * Note for Spark 2.1 and 2.2 -> please use sparkMeasure version 0.16 
 
 ### Getting started with sparkMeasure
  * Note: sparkMeasure is available on [Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
- * Spark 3.0.x and 2.4.x with scala 2.12:
+ * Spark 3.x and 2.4 with scala 2.12:
    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17`
    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17`
       - note: `pip install sparkmeasure` to get the Python wrapper API. 
@@ -35,20 +34,18 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
 
 - [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="50"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
-- [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Microsoft_Azure_Logo.svg/200px-Microsoft_Azure_Logo.svg.png" height="30"> Jupyter notebook hosted on Microsoft Azure Notebooks](https://notebooks.azure.com/LucaCanali/projects/sparkmeasure/html/SparkMeasure_Jupyter_Azure_Example.ipynb)
-
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyter_Python_getting_started.ipynb)
   
 - CLI: spark-shell and PySpark
   ```
-  # Scala CLI, Spark 3.0
+  # Scala CLI, Spark 3.x
   bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
   ```
   ```
-  # Python CLI, Spark 3.0
+  # Python CLI, Spark 3.x
   pip install sparkmeasure
   bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17
 
@@ -94,7 +91,7 @@ shuffleRecordsWritten => 8
 ```
 - CLI: spark-shell, measure workload metrics aggregating from raw task metrics
   ```
-  # Scala CLI, Spark 3.0
+  # Scala CLI, Spark 3.x
   bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
