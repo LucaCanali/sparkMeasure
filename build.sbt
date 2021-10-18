@@ -9,7 +9,7 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 isSnapshot := true
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.7"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.9"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.26"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
