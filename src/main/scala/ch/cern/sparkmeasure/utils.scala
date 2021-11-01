@@ -157,4 +157,17 @@ object Utils {
     influxdbStagemetrics
   }
 
+  def parseKafkaConfig(conf: SparkConf, logger: Logger) : (String,String) = {
+    // handle InfluxDB username and password
+    val broker = conf.get("spark.sparkmeasure.kafkaBroker", "")
+    val topic = conf.get("spark.sparkmeasure.kafkaTopic", "")
+    if (broker.isEmpty || topic.isEmpty) {
+      throw new IllegalArgumentException("broker & topic are required for the Kafka connection")
+    } else {
+      logger.info(s"Kafka broker: $broker")
+      logger.info(s"Kafka topic: $topic")
+    }
+    (broker, topic)
+  }
+
 }

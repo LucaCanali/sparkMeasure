@@ -13,6 +13,7 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.9"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.26"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
+libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.7" % "test"
 libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.23.2" % "test"
 

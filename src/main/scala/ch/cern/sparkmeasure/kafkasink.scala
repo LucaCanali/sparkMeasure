@@ -1,0 +1,238 @@
+package ch.cern.sparkmeasure
+
+import org.apache.kafka.clients.producer.{KafkaProducer, Producer, ProducerRecord}
+import org.apache.kafka.common.serialization.ByteArraySerializer
+import org.apache.spark.SparkConf
+import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart, SparkListenerEvent, SparkListenerExecutorAdded, SparkListenerJobEnd, SparkListenerJobStart, SparkListenerStageCompleted, SparkListenerStageSubmitted}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.execution.ui.{SparkListenerSQLExecutionEnd, SparkListenerSQLExecutionStart}
+import org.slf4j.{Logger, LoggerFactory}
+
+import java.nio.charset.StandardCharsets
+import java.util.Properties
+import scala.util.Try
+
+/**
+ * KafkaSink: write Spark metrics and application info in near real-time to Kafka stream
+ *  use this mode to monitor Spark execution workload
+ *  use for Grafana dashboard and analytics of job execution
+ *
+ *  How to use: attach the KafkaSink to a Spark Context using the extra listener infrastructure.
+ *  Example:
+ *  --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink
+ *
+ *  Configuration for KafkaSink is handled with Spark conf parameters:
+ *
+ *  spark.sparkmeasure.kafkaBroker = Kafka broker endpoint URL
+ *    example: --conf spark.sparkmeasure.kafkaBroker=kafka.your-site.com:9092
+ *  spark.sparkmeasure.kafkaTopic = Kafka topic
+ *    example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
+ *
+ *  This code depends on "kafka clients", you may need to add the dependency:
+ *    --packages org.apache.kafka:kafka-clients:2.0.1
+ *
+ *  Output: each message contains the name, it is acknowledged as metrics name as well.
+ *  Note: the amount of data generated is relatively small in most applications: O(number_of_stages)
+ */
+class KafkaSink(conf: SparkConf) extends SparkListener{
+  private val logger: Logger = LoggerFactory.getLogger(this.getClass.getName)
+  logger.warn("Custom monitoring listener with Kafka sink initializing. Now attempting to connect to Kafka topic")
+
+  // Initialize Kafka connection
+  val (broker, topic) = Utils.parseKafkaConfig(conf, logger)
+  private var producer : Producer[String, Array[Byte]] = _
+
+  var appId: String = SparkSession.getActiveSession match {
+    case Some(sparkSession) => sparkSession.sparkContext.applicationId
+    case _ => "noAppId"
+  }
+
+  override def onExecutorAdded(executorAdded: SparkListenerExecutorAdded): Unit = {
+    val executorInfo = executorAdded.executorInfo
+    val metrics = Map[String, Any](
+      "name" -> "executors_started",
+      "appId" -> appId,
+      "executorId" -> executorAdded.executorId,
+      "host" -> executorInfo.executorHost,
+      "totalCores" -> executorInfo.totalCores,
+      "startTime" -> executorAdded.time
+    )
+    report(metrics)
+  }
+
+  override def onStageSubmitted(stageSubmitted: SparkListenerStageSubmitted): Unit = {
+    val submissionTime = stageSubmitted.stageInfo.submissionTime.getOrElse(0L)
+    val attemptNumber = stageSubmitted.stageInfo.attemptNumber()
+    val stageId = stageSubmitted.stageInfo.stageId.toString
+
+    val metrics = Map[String, Any](
+      "name" -> "stages_started",
+      "appId" -> appId,
+      "stageId" -> stageId,
+      "attemptNumber" -> attemptNumber,
+      "submissionTime" -> submissionTime
+    )
+    report(metrics)
+  }
+
+
+  override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
+    val stageId = stageCompleted.stageInfo.stageId.toString
+    val submissionTime = stageCompleted.stageInfo.submissionTime.getOrElse(0L)
+    val completionTime = stageCompleted.stageInfo.completionTime.getOrElse(0L)
+    val attemptNumber = stageCompleted.stageInfo.attemptNumber()
+
+    // Report overall metrics
+    val stageEndMetrics = Map[String, Any](
+      "name" -> "stages_ended",
+      "appId" -> appId,
+      "stageId" -> stageId,
+      "attemptNumber" -> attemptNumber,
+      "submissionTime" -> submissionTime,
+      "completionTime"-> completionTime
+    )
+    report(stageEndMetrics)
+
+    // Report stage task metric
+    val taskMetrics = stageCompleted.stageInfo.taskMetrics
+    val stageTaskMetrics = Map[String, Any](
+      "name" -> "stage_metrics",
+      "appId" -> appId,
+      "stageId" -> stageId,
+      "attemptNumber" -> attemptNumber,
+      "submissionTime" -> submissionTime,
+      "completionTime"-> completionTime,
+      "failureReason"-> stageCompleted.stageInfo.failureReason.getOrElse(""),
+      "executorRunTime"-> taskMetrics.executorRunTime,
+      "executorCpuTime"-> taskMetrics.executorRunTime,
+      "executorDeserializeCpuTime"-> taskMetrics.executorDeserializeCpuTime,
+      "executorDeserializeTime"-> taskMetrics.executorDeserializeTime,
+      "jvmGCTime"->  taskMetrics.jvmGCTime,
+      "memoryBytesSpilled"->  taskMetrics.memoryBytesSpilled,
+      "peakExecutionMemory"->  taskMetrics.peakExecutionMemory,
+      "resultSerializationTime"->  taskMetrics.resultSerializationTime,
+      "resultSize"->  taskMetrics.resultSize,
+      "bytesRead"->  taskMetrics.inputMetrics.bytesRead,
+      "recordsRead"->  taskMetrics.inputMetrics.recordsRead,
+      "bytesWritten"->  taskMetrics.outputMetrics.bytesWritten,
+      "recordsWritten"->  taskMetrics.outputMetrics.recordsWritten,
+      "shuffleTotalBytesRead"->  taskMetrics.shuffleReadMetrics.totalBytesRead,
+      "shuffleRemoteBytesRead"->  taskMetrics.shuffleReadMetrics.remoteBytesRead,
+      "shuffleRemoteBytesReadToDisk"->  taskMetrics.shuffleReadMetrics.remoteBytesReadToDisk,
+      "shuffleLocalBytesRead"->  taskMetrics.shuffleReadMetrics.localBytesRead,
+      "shuffleTotalBlocksFetched"->  taskMetrics.shuffleReadMetrics.totalBlocksFetched,
+      "shuffleLocalBlocksFetched"->  taskMetrics.shuffleReadMetrics.localBlocksFetched,
+      "shuffleRemoteBlocksFetched"->  taskMetrics.shuffleReadMetrics.remoteBlocksFetched,
+      "shuffleRecordsRead"->  taskMetrics.shuffleReadMetrics.recordsRead,
+      "shuffleFetchWaitTime"->  taskMetrics.shuffleReadMetrics.fetchWaitTime,
+      "shuffleBytesWritten"->  taskMetrics.shuffleWriteMetrics.bytesWritten,
+      "shuffleRecordsWritten"->  taskMetrics.shuffleWriteMetrics.recordsWritten,
+      "shuffleWriteTime"->  taskMetrics.shuffleWriteMetrics.writeTime
+    )
+
+    report(stageTaskMetrics)
+  }
+
+  override def onOtherEvent(event: SparkListenerEvent): Unit = {
+    event match {
+      case e: SparkListenerSQLExecutionStart =>
+        val startTime = e.time
+        val queryId = e.executionId.toString
+        val description = e.description
+
+        val queryStartMetrics = Map[String, Any](
+          "name" -> "queries_started",
+          "appId" -> appId,
+          "description" -> description,
+          "queryId" -> queryId,
+          "startTime" -> startTime
+        )
+        report(queryStartMetrics)
+      case e: SparkListenerSQLExecutionEnd =>
+        val endTime = e.time
+        val queryId = e.executionId.toString
+
+        val queryEndMetrics = Map[String, Any](
+          "name" -> "queries_ended",
+          "appId" -> appId,
+          "queryId" -> queryId,
+          "endTime" -> endTime
+        )
+        report(queryEndMetrics)
+      case _ => None // Ignore
+    }
+  }
+
+  override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
+    val startTime = jobStart.time
+    val jobId = jobStart.jobId.toString
+
+    val jobStartMetrics = Map[String, Any](
+      "name" -> "jobs_started",
+      "appId" -> appId,
+      "jobId" -> jobId,
+      "startTime" -> startTime
+    )
+    report(jobStartMetrics)
+  }
+
+  override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = {
+    val completionTime = jobEnd.time
+    val jobId = jobEnd.jobId.toString
+
+    val jobEndMetrics = Map[String, Any](
+      "name" -> "jobs_ended",
+      "appId" -> appId,
+      "jobId" -> jobId,
+      "completionTime" -> completionTime
+    )
+    report(jobEndMetrics)
+  }
+
+  override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
+    appId = applicationStart.appId.getOrElse("noAppId")
+  }
+
+  override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
+    logger.info(s"Spark application ended, timestamp = ${applicationEnd.time}, closing Kafka connection.")
+    synchronized(
+      if(Option(producer).isDefined) {
+        // Flush metrics & close the connection
+        producer.flush()
+        producer.close()
+
+        // Reassign to null
+        producer = null
+      }
+    )
+  }
+
+
+  private def report[T <: Any]( metrics : Map[String, T]) : Unit = Try{
+    ensureProducer()
+
+    val str = IOUtils.writeToStringSerializedJSON(metrics)
+    val message = str.getBytes(StandardCharsets.UTF_8)
+    producer.send(new ProducerRecord[String, Array[Byte]](topic, message))
+  }.recover{
+    case ex: Throwable => logger.error(s"error on reporting metrics to kafka stream, details=${ex.getMessage}", ex)
+  }
+
+  private def ensureProducer() : Unit = {
+    synchronized(
+      if(Option(producer).isEmpty) {
+        val props = new Properties()
+        props.put("bootstrap.servers", broker)
+        props.put("retries", "10")
+        props.put("batch.size", "16384")
+        props.put("linger.ms", "0")
+        props.put("buffer.memory", "16384000")
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+        props.put("value.serializer", classOf[ByteArraySerializer].getName)
+        props.put("client.id", "spark-measure")
+        producer = new KafkaProducer(props)
+      }
+    )
+  }
+
+}
