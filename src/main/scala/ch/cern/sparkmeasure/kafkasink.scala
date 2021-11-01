@@ -3,7 +3,7 @@ package ch.cern.sparkmeasure
 import org.apache.kafka.clients.producer.{KafkaProducer, Producer, ProducerRecord}
 import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.apache.spark.SparkConf
-import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart, SparkListenerEvent, SparkListenerExecutorAdded, SparkListenerJobEnd, SparkListenerJobStart, SparkListenerStageCompleted, SparkListenerStageSubmitted}
+import org.apache.spark.scheduler._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.ui.{SparkListenerSQLExecutionEnd, SparkListenerSQLExecutionStart}
 import org.slf4j.{Logger, LoggerFactory}
@@ -14,33 +14,33 @@ import scala.util.Try
 
 /**
  * KafkaSink: write Spark metrics and application info in near real-time to Kafka stream
- *  use this mode to monitor Spark execution workload
- *  use for Grafana dashboard and analytics of job execution
+ * use this mode to monitor Spark execution workload
+ * use for Grafana dashboard and analytics of job execution
  *
- *  How to use: attach the KafkaSink to a Spark Context using the extra listener infrastructure.
- *  Example:
- *  --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink
+ * How to use: attach the KafkaSink to a Spark Context using the extra listener infrastructure.
+ * Example:
+ * --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink
  *
- *  Configuration for KafkaSink is handled with Spark conf parameters:
+ * Configuration for KafkaSink is handled with Spark conf parameters:
  *
- *  spark.sparkmeasure.kafkaBroker = Kafka broker endpoint URL
- *    example: --conf spark.sparkmeasure.kafkaBroker=kafka.your-site.com:9092
- *  spark.sparkmeasure.kafkaTopic = Kafka topic
- *    example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
+ * spark.sparkmeasure.kafkaBroker = Kafka broker endpoint URL
+ * example: --conf spark.sparkmeasure.kafkaBroker=kafka.your-site.com:9092
+ * spark.sparkmeasure.kafkaTopic = Kafka topic
+ * example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
  *
- *  This code depends on "kafka clients", you may need to add the dependency:
- *    --packages org.apache.kafka:kafka-clients:2.0.1
+ * This code depends on "kafka clients", you may need to add the dependency:
+ * --packages org.apache.kafka:kafka-clients:2.0.1
  *
- *  Output: each message contains the name, it is acknowledged as metrics name as well.
- *  Note: the amount of data generated is relatively small in most applications: O(number_of_stages)
+ * Output: each message contains the name, it is acknowledged as metrics name as well.
+ * Note: the amount of data generated is relatively small in most applications: O(number_of_stages)
  */
-class KafkaSink(conf: SparkConf) extends SparkListener{
+class KafkaSink(conf: SparkConf) extends SparkListener {
   private val logger: Logger = LoggerFactory.getLogger(this.getClass.getName)
   logger.warn("Custom monitoring listener with Kafka sink initializing. Now attempting to connect to Kafka topic")
 
   // Initialize Kafka connection
   val (broker, topic) = Utils.parseKafkaConfig(conf, logger)
-  private var producer : Producer[String, Array[Byte]] = _
+  private var producer: Producer[String, Array[Byte]] = _
 
   var appId: String = SparkSession.getActiveSession match {
     case Some(sparkSession) => sparkSession.sparkContext.applicationId
@@ -89,7 +89,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener{
       "stageId" -> stageId,
       "attemptNumber" -> attemptNumber,
       "submissionTime" -> submissionTime,
-      "completionTime"-> completionTime
+      "completionTime" -> completionTime
     )
     report(stageEndMetrics)
 
@@ -101,33 +101,33 @@ class KafkaSink(conf: SparkConf) extends SparkListener{
       "stageId" -> stageId,
       "attemptNumber" -> attemptNumber,
       "submissionTime" -> submissionTime,
-      "completionTime"-> completionTime,
-      "failureReason"-> stageCompleted.stageInfo.failureReason.getOrElse(""),
-      "executorRunTime"-> taskMetrics.executorRunTime,
-      "executorCpuTime"-> taskMetrics.executorRunTime,
-      "executorDeserializeCpuTime"-> taskMetrics.executorDeserializeCpuTime,
-      "executorDeserializeTime"-> taskMetrics.executorDeserializeTime,
-      "jvmGCTime"->  taskMetrics.jvmGCTime,
-      "memoryBytesSpilled"->  taskMetrics.memoryBytesSpilled,
-      "peakExecutionMemory"->  taskMetrics.peakExecutionMemory,
-      "resultSerializationTime"->  taskMetrics.resultSerializationTime,
-      "resultSize"->  taskMetrics.resultSize,
-      "bytesRead"->  taskMetrics.inputMetrics.bytesRead,
-      "recordsRead"->  taskMetrics.inputMetrics.recordsRead,
-      "bytesWritten"->  taskMetrics.outputMetrics.bytesWritten,
-      "recordsWritten"->  taskMetrics.outputMetrics.recordsWritten,
-      "shuffleTotalBytesRead"->  taskMetrics.shuffleReadMetrics.totalBytesRead,
-      "shuffleRemoteBytesRead"->  taskMetrics.shuffleReadMetrics.remoteBytesRead,
-      "shuffleRemoteBytesReadToDisk"->  taskMetrics.shuffleReadMetrics.remoteBytesReadToDisk,
-      "shuffleLocalBytesRead"->  taskMetrics.shuffleReadMetrics.localBytesRead,
-      "shuffleTotalBlocksFetched"->  taskMetrics.shuffleReadMetrics.totalBlocksFetched,
-      "shuffleLocalBlocksFetched"->  taskMetrics.shuffleReadMetrics.localBlocksFetched,
-      "shuffleRemoteBlocksFetched"->  taskMetrics.shuffleReadMetrics.remoteBlocksFetched,
-      "shuffleRecordsRead"->  taskMetrics.shuffleReadMetrics.recordsRead,
-      "shuffleFetchWaitTime"->  taskMetrics.shuffleReadMetrics.fetchWaitTime,
-      "shuffleBytesWritten"->  taskMetrics.shuffleWriteMetrics.bytesWritten,
-      "shuffleRecordsWritten"->  taskMetrics.shuffleWriteMetrics.recordsWritten,
-      "shuffleWriteTime"->  taskMetrics.shuffleWriteMetrics.writeTime
+      "completionTime" -> completionTime,
+      "failureReason" -> stageCompleted.stageInfo.failureReason.getOrElse(""),
+      "executorRunTime" -> taskMetrics.executorRunTime,
+      "executorCpuTime" -> taskMetrics.executorRunTime,
+      "executorDeserializeCpuTime" -> taskMetrics.executorDeserializeCpuTime,
+      "executorDeserializeTime" -> taskMetrics.executorDeserializeTime,
+      "jvmGCTime" -> taskMetrics.jvmGCTime,
+      "memoryBytesSpilled" -> taskMetrics.memoryBytesSpilled,
+      "peakExecutionMemory" -> taskMetrics.peakExecutionMemory,
+      "resultSerializationTime" -> taskMetrics.resultSerializationTime,
+      "resultSize" -> taskMetrics.resultSize,
+      "bytesRead" -> taskMetrics.inputMetrics.bytesRead,
+      "recordsRead" -> taskMetrics.inputMetrics.recordsRead,
+      "bytesWritten" -> taskMetrics.outputMetrics.bytesWritten,
+      "recordsWritten" -> taskMetrics.outputMetrics.recordsWritten,
+      "shuffleTotalBytesRead" -> taskMetrics.shuffleReadMetrics.totalBytesRead,
+      "shuffleRemoteBytesRead" -> taskMetrics.shuffleReadMetrics.remoteBytesRead,
+      "shuffleRemoteBytesReadToDisk" -> taskMetrics.shuffleReadMetrics.remoteBytesReadToDisk,
+      "shuffleLocalBytesRead" -> taskMetrics.shuffleReadMetrics.localBytesRead,
+      "shuffleTotalBlocksFetched" -> taskMetrics.shuffleReadMetrics.totalBlocksFetched,
+      "shuffleLocalBlocksFetched" -> taskMetrics.shuffleReadMetrics.localBlocksFetched,
+      "shuffleRemoteBlocksFetched" -> taskMetrics.shuffleReadMetrics.remoteBlocksFetched,
+      "shuffleRecordsRead" -> taskMetrics.shuffleReadMetrics.recordsRead,
+      "shuffleFetchWaitTime" -> taskMetrics.shuffleReadMetrics.fetchWaitTime,
+      "shuffleBytesWritten" -> taskMetrics.shuffleWriteMetrics.bytesWritten,
+      "shuffleRecordsWritten" -> taskMetrics.shuffleWriteMetrics.recordsWritten,
+      "shuffleWriteTime" -> taskMetrics.shuffleWriteMetrics.writeTime
     )
 
     report(stageTaskMetrics)
@@ -196,7 +196,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener{
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
     logger.info(s"Spark application ended, timestamp = ${applicationEnd.time}, closing Kafka connection.")
     synchronized(
-      if(Option(producer).isDefined) {
+      if (Option(producer).isDefined) {
         // Flush metrics & close the connection
         producer.flush()
         producer.close()
@@ -208,19 +208,19 @@ class KafkaSink(conf: SparkConf) extends SparkListener{
   }
 
 
-  private def report[T <: Any]( metrics : Map[String, T]) : Unit = Try{
+  protected def report[T <: Any](metrics: Map[String, T]): Unit = Try {
     ensureProducer()
 
     val str = IOUtils.writeToStringSerializedJSON(metrics)
     val message = str.getBytes(StandardCharsets.UTF_8)
     producer.send(new ProducerRecord[String, Array[Byte]](topic, message))
-  }.recover{
+  }.recover {
     case ex: Throwable => logger.error(s"error on reporting metrics to kafka stream, details=${ex.getMessage}", ex)
   }
 
-  private def ensureProducer() : Unit = {
+  private def ensureProducer(): Unit = {
     synchronized(
-      if(Option(producer).isEmpty) {
+      if (Option(producer).isEmpty) {
         val props = new Properties()
         props.put("bootstrap.servers", broker)
         props.put("retries", "10")
@@ -235,4 +235,88 @@ class KafkaSink(conf: SparkConf) extends SparkListener{
     )
   }
 
+}
+
+/**
+ * KafkaSinkExtended extends the basic KafkaSink functionality with a verbose dump of tasks metrics
+ * Note: this can generate a large amount of data O(Number_of_tasks)
+ * Configuration parameters and how-to use: see KafkaSink
+ */
+class KafkaSinkExtended(conf: SparkConf) extends KafkaSink(conf) {
+
+  override def onTaskStart(taskStart: SparkListenerTaskStart): Unit = {
+    val taskInfo = taskStart.taskInfo
+    val taskStartMetrics = Map[String, Any](
+      "name" -> "tasks_started",
+      "appId" -> appId,
+      "taskId" -> taskInfo.taskId,
+      "attemptNumber" -> taskInfo.attemptNumber,
+      "stageId" -> taskStart.stageId,
+      "launchTime" -> taskInfo.launchTime
+    )
+    report(taskStartMetrics)
+  }
+
+  override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
+    val taskInfo = taskEnd.taskInfo
+    val taskmetrics = taskEnd.taskMetrics
+
+    val point1 = Map[String, Any](
+      "name" -> "tasks_ended",
+      "appId" -> appId,
+      "taskId" -> taskInfo.taskId,
+      "attemptNumber" -> taskInfo.attemptNumber,
+      "stageId" -> taskEnd.stageId,
+      "launchTime" -> taskInfo.launchTime,
+      "finishTime" -> taskInfo.finishTime
+    )
+    report(point1)
+
+    val point2 = Map[String, Any](
+      "name" -> "task_metrics",
+      "appId" -> appId,
+      // task info
+      "taskId" -> taskInfo.taskId,
+      "attemptNumber" -> taskInfo.attemptNumber,
+      "stageId" -> taskEnd.stageId,
+      "launchTime" -> taskInfo.launchTime,
+      "finishTime" -> taskInfo.finishTime,
+      "failed" -> taskInfo.failed,
+      "speculative" -> taskInfo.speculative,
+      "killed" -> taskInfo.killed,
+      "finished" -> taskInfo.finished,
+      "executorId" -> taskInfo.executorId,
+      "duration" -> taskInfo.duration,
+      "successful" -> taskInfo.successful,
+      "host" -> taskInfo.host,
+      "taskLocality" -> Utils.encodeTaskLocality(taskInfo.taskLocality),
+      // task metrics
+      "executorRunTime" -> taskmetrics.executorRunTime,
+      "executorCpuTime" -> taskmetrics.executorCpuTime,
+      "executorDeserializeCpuTime" -> taskmetrics.executorDeserializeCpuTime,
+      "executorDeserializeTime" -> taskmetrics.executorDeserializeTime,
+      "jvmGCTime" -> taskmetrics.jvmGCTime,
+      "memoryBytesSpilled" -> taskmetrics.memoryBytesSpilled,
+      "peakExecutionMemory" -> taskmetrics.peakExecutionMemory,
+      "resultSerializationTime" -> taskmetrics.resultSerializationTime,
+      "resultSize" -> taskmetrics.resultSize,
+      "bytesRead" -> taskmetrics.inputMetrics.bytesRead,
+      "recordsRead" -> taskmetrics.inputMetrics.recordsRead,
+      "bytesWritten" -> taskmetrics.outputMetrics.bytesWritten,
+      "recordsWritten" -> taskmetrics.outputMetrics.recordsWritten,
+      "shuffleTotalBytesRead" -> taskmetrics.shuffleReadMetrics.totalBytesRead,
+      "shuffleRemoteBytesRead" -> taskmetrics.shuffleReadMetrics.remoteBytesRead,
+      "shuffleLocalBytesRead" -> taskmetrics.shuffleReadMetrics.localBytesRead,
+      "shuffleTotalBlocksFetched" -> taskmetrics.shuffleReadMetrics.totalBlocksFetched,
+      "shuffleLocalBlocksFetched" -> taskmetrics.shuffleReadMetrics.localBlocksFetched,
+      "shuffleRemoteBlocksFetched" -> taskmetrics.shuffleReadMetrics.remoteBlocksFetched,
+      "shuffleRecordsRead" -> taskmetrics.shuffleReadMetrics.recordsRead,
+      // this requires spark2.3 and above "remoteBytesReadToDisk" -> taskmetrics.shuffleReadMetrics.remoteBytesReadToDisk,
+      "shuffleFetchWaitTime" -> taskmetrics.shuffleReadMetrics.fetchWaitTime,
+      "shuffleBytesWritten" -> taskmetrics.shuffleWriteMetrics.bytesWritten,
+      "shuffleRecordsWritten" -> taskmetrics.shuffleWriteMetrics.recordsWritten,
+      "shuffleWriteTime" -> taskmetrics.shuffleWriteMetrics.writeTime
+    )
+    report(point2)
+  }
 }
