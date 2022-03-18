@@ -5,24 +5,25 @@
 
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark jobs
 SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
-Use sparkMeasure for troubleshooting **interactive and batch** Spark workloads.  
-Use it also to collect metrics for long-term retention or as part of a **CI/CD** pipeline.  
+Use sparkMeasure for 
+  - troubleshooting **interactive** and **batch** Spark workloads.  
+  - to collect metrics for long-term retention, or as part of a **CI/CD** pipeline.  
+  - to sink to external systems like InfluxDB or Apache Kafka
 SparkMeasure is also intended as a working example of how to use Spark Listeners for collecting Spark task metrics data.
  * Main author and contact: 
-   * Luca.Canali@cern.ch + credits to Viktor.Khristenko@cern.ch + thanks to PR contributors
- * For Spark 2.x and 3.x
-   * Tested on Spark 2.4, 3.0, 3.1
+   * Luca.Canali@cern.ch - credits to Viktor Khristenko and to PR contributors
+ * Use with Spark 2.x and 3.x
    * Note for Spark 2.1 and 2.2 -> please use sparkMeasure version 0.16 
 
 ### Getting started with sparkMeasure
  * Note: sparkMeasure is available on [Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
- * Spark 3.x and 2.4 with scala 2.12:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17`
+ * Spark 3.x and 2.4 with Scala 2.12:
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.18`
+   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.18`
       - note: `pip install sparkmeasure` to get the Python wrapper API. 
  * Spark 2.x with Scala 2.11:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.17`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.17`
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.18`
+   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.18`
      - note: `pip install sparkmeasure` to get the Python wrapper API. 
  * Bleeding edge: build sparkMeasure jar using sbt: `sbt +package` and use `--jars`
    with the jar just built instead of using `--packages`.
@@ -39,7 +40,7 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
 - CLI: spark-shell and PySpark
   ```
   # Scala CLI, Spark 3.x
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.18
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -47,7 +48,7 @@ SparkMeasure is also intended as a working example of how to use Spark Listeners
   ```
   # Python CLI, Spark 3.x
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.18
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
@@ -92,7 +93,7 @@ shuffleRecordsWritten => 8
 - CLI: spark-shell, measure workload metrics aggregating from raw task metrics
   ```
   # Scala CLI, Spark 3.x
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.17
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.18
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -114,13 +115,14 @@ from `jupyter-notebook`. Works with Python and Scala kernels.
  or you can opt to write metrics in near-realtime to an InfluxDB instance.
     - **[Flight Recorder mode with file output](docs/Flight_recorder_mode.md)**
     - **[Flight Recorder mode with DB write output](docs/Flight_recorder_DBwrite.md)**
+    - Support to sink metrics into Apache Kafka
  * Additional info:
    - Presentations at Spark Summit:
      - [Performance Troubleshooting Using Apache Spark Metrics](https://databricks.com/session_eu19/performance-troubleshooting-using-apache-spark-metrics)
      - [Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)
    - Blogs:
      - [2018: SparkMeasure, a tool for performance troubleshooting of Apache Spark workloads](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
-     - [2017 blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
+     - [2017: SparkMeasure blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
   - [TODO list and known issues](docs/TODO_and_issues.md)
 
 ### Architecture diagram  

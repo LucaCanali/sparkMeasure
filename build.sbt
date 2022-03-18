@@ -1,21 +1,21 @@
 name := "spark-measure"
 
-version := "0.18-SNAPSHOT"
+version := "0.18"
 
 scalaVersion := "2.12.10"
 crossScalaVersions := Seq("2.11.12", "2.12.10")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-isSnapshot := true
+isSnapshot := false
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8"
-libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.0"
-libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.26"
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.2"
+libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.36"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
-libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.0.1"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.7" % "test"
-libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.23.2" % "test"
+libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.0.1"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.9" % "test"
+libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.27.2" % "test"
 
 // publishing to Sonatype Nexus repository and Maven
 publishMavenStyle := true

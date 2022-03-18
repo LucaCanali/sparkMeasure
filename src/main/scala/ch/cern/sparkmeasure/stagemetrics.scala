@@ -1,14 +1,11 @@
 package ch.cern.sparkmeasure
 
-//import java.lang.Long
-import java.util.Properties
 import java.util.LinkedHashMap
 import java.util.Map
 
-import collection.JavaConversions._
-
 import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
+
 import scala.collection.mutable.ListBuffer
 import org.slf4j.LoggerFactory
 
@@ -26,8 +23,8 @@ import org.slf4j.LoggerFactory
  *
  */
 
-// contains the list of task metrics and other measurements of interest at the Stage level, as a case class
-// Note, remoteBytesReadToDisk is not there for backward compatibility, as it has been introduced in Spark 2.3.0
+// contains the list of task metrics and other measurements of interest at the Stage level,
+// packaged into a case class
 case class StageVals (jobId: Int, jobGroup:String, stageId: Int, name: String,
                  submissionTime: Long, completionTime: Long, stageDuration: Long, numTasks: Int,
                  executorRunTime: Long, executorCpuTime: Long,
@@ -92,7 +89,7 @@ class StageInfoRecorderListener extends SparkListener {
     )
     stageMetricsData += currentStage
 
-    /** Collect data from accumulators, with additional care to keep only numerical values */
+    // Collect data from accumulators, with additional care to keep only numerical values
     stageInfo.accumulables.foreach(acc => try {
       val value = acc._2.value.getOrElse(0L).asInstanceOf[Long]
       val name = acc._2.name.getOrElse("")
@@ -112,11 +109,11 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
-  /** This inserts the custom Spark Listener into the live Spark Context */
+  // This inserts the custom Spark Listener into the live Spark Context
   val listenerStage = new StageInfoRecorderListener
   sparkSession.sparkContext.addSparkListener(listenerStage)
 
-  /** Variables used to store the start and end time of the period of interest for the metrics report */
+  // Variables used to store the start and end time of the period of interest for the metrics report
   var beginSnapshot: Long = 0L
   var endSnapshot: Long = 0L
 
@@ -131,7 +128,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     endSnapshot
   }
 
-  /** Move data recorded from the custom listener into a DataFrame and register it as a view for easier processing */
+  // Move data recorded from the custom listener into a DataFrame and register it as a view for easier processing
   def createStageMetricsDF(nameTempView: String = "PerfStageMetrics"): DataFrame = {
     import sparkSession.implicits._
     val resultDF = listenerStage.stageMetricsData.toDF
@@ -193,7 +190,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     resultMap
   }
   
-  /** Custom aggregations and post-processing of metrics data */
+  // Custom aggregations and post-processing of metrics data
  def report(): String = {
     val nameTempView = "PerfStageMetrics"
     createStageMetricsDF(nameTempView)
@@ -225,7 +222,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     println(report())
   }
 
-  /** for internal metrics sum all the values, for the accumulables compute max value for each accId and name */
+  // For internal metrics sum all the values, for the accumulables compute max value for each accId and name
   def reportAccumulables(): String = {
     import sparkSession.implicits._
 
@@ -316,19 +313,19 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
   def runAndMeasure[T](f: => T): T = {
-    this.begin()
+    begin()
     val startTime = System.nanoTime()
     val ret = f
     val endTime = System.nanoTime()
-    this.end()
+    end()
     println(s"Time taken: ${(endTime - startTime) / 1000000} ms")
     printReport()
     ret
   }
 
-  /** Helper method to save data, we expect to have small amounts of data so collapsing to 1 partition seems OK */
+  // Helper method to save data, we expect to have small amounts of data so collapsing to 1 partition seems OK
   def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveMode: String = "default") = {
-    df.repartition(1).write.format(fileFormat).mode(saveMode).save(fileName)
+    df.coalesce(1).write.format(fileFormat).mode(saveMode).save(fileName)
     logger.warn(s"Stage metric data saved into $fileName using format=$fileFormat")
   }
   
