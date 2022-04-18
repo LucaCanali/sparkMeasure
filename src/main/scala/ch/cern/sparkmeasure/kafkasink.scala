@@ -49,13 +49,15 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
 
   override def onExecutorAdded(executorAdded: SparkListenerExecutorAdded): Unit = {
     val executorInfo = executorAdded.executorInfo
+    val epochMillis = System.currentTimeMillis()
     val metrics = Map[String, Any](
       "name" -> "executors_started",
       "appId" -> appId,
       "executorId" -> executorAdded.executorId,
       "host" -> executorInfo.executorHost,
       "totalCores" -> executorInfo.totalCores,
-      "startTime" -> executorAdded.time
+      "startTime" -> executorAdded.time,
+      "epochMillis" -> epochMillis
     )
     report(metrics)
   }
@@ -64,13 +66,15 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     val submissionTime = stageSubmitted.stageInfo.submissionTime.getOrElse(0L)
     val attemptNumber = stageSubmitted.stageInfo.attemptNumber()
     val stageId = stageSubmitted.stageInfo.stageId.toString
+    val epochMillis = System.currentTimeMillis()
 
     val metrics = Map[String, Any](
       "name" -> "stages_started",
       "appId" -> appId,
       "stageId" -> stageId,
       "attemptNumber" -> attemptNumber,
-      "submissionTime" -> submissionTime
+      "submissionTime" -> submissionTime,
+      "epochMillis" -> epochMillis
     )
     report(metrics)
   }
@@ -81,6 +85,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     val submissionTime = stageCompleted.stageInfo.submissionTime.getOrElse(0L)
     val completionTime = stageCompleted.stageInfo.completionTime.getOrElse(0L)
     val attemptNumber = stageCompleted.stageInfo.attemptNumber()
+    val epochMillis = System.currentTimeMillis()
 
     // Report overall metrics
     val stageEndMetrics = Map[String, Any](
@@ -89,7 +94,8 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "stageId" -> stageId,
       "attemptNumber" -> attemptNumber,
       "submissionTime" -> submissionTime,
-      "completionTime" -> completionTime
+      "completionTime" -> completionTime,
+      "epochMillis" -> epochMillis
     )
     report(stageEndMetrics)
 
@@ -127,13 +133,15 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "shuffleFetchWaitTime" -> taskMetrics.shuffleReadMetrics.fetchWaitTime,
       "shuffleBytesWritten" -> taskMetrics.shuffleWriteMetrics.bytesWritten,
       "shuffleRecordsWritten" -> taskMetrics.shuffleWriteMetrics.recordsWritten,
-      "shuffleWriteTime" -> taskMetrics.shuffleWriteMetrics.writeTime
+      "shuffleWriteTime" -> taskMetrics.shuffleWriteMetrics.writeTime,
+      "epochMillis" -> epochMillis
     )
 
     report(stageTaskMetrics)
   }
 
   override def onOtherEvent(event: SparkListenerEvent): Unit = {
+    val epochMillis = System.currentTimeMillis()
     event match {
       case e: SparkListenerSQLExecutionStart =>
         val startTime = e.time
@@ -145,7 +153,8 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
           "appId" -> appId,
           "description" -> description,
           "queryId" -> queryId,
-          "startTime" -> startTime
+          "startTime" -> startTime,
+          "epochMillis" -> epochMillis
         )
         report(queryStartMetrics)
       case e: SparkListenerSQLExecutionEnd =>
@@ -156,7 +165,8 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
           "name" -> "queries_ended",
           "appId" -> appId,
           "queryId" -> queryId,
-          "endTime" -> endTime
+          "endTime" -> endTime,
+          "epochMillis" -> epochMillis
         )
         report(queryEndMetrics)
       case _ => None // Ignore
@@ -166,12 +176,14 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
   override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
     val startTime = jobStart.time
     val jobId = jobStart.jobId.toString
+    val epochMillis = System.currentTimeMillis()
 
     val jobStartMetrics = Map[String, Any](
       "name" -> "jobs_started",
       "appId" -> appId,
       "jobId" -> jobId,
-      "startTime" -> startTime
+      "startTime" -> startTime,
+      "epochMillis" -> epochMillis
     )
     report(jobStartMetrics)
   }
@@ -179,12 +191,14 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
   override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = {
     val completionTime = jobEnd.time
     val jobId = jobEnd.jobId.toString
+    val epochMillis = System.currentTimeMillis()
 
     val jobEndMetrics = Map[String, Any](
       "name" -> "jobs_ended",
       "appId" -> appId,
       "jobId" -> jobId,
-      "completionTime" -> completionTime
+      "completionTime" -> completionTime,
+      "epochMillis" -> epochMillis
     )
     report(jobEndMetrics)
   }
@@ -246,13 +260,16 @@ class KafkaSinkExtended(conf: SparkConf) extends KafkaSink(conf) {
 
   override def onTaskStart(taskStart: SparkListenerTaskStart): Unit = {
     val taskInfo = taskStart.taskInfo
+    val epochMillis = System.currentTimeMillis()
+
     val taskStartMetrics = Map[String, Any](
       "name" -> "tasks_started",
       "appId" -> appId,
       "taskId" -> taskInfo.taskId,
       "attemptNumber" -> taskInfo.attemptNumber,
       "stageId" -> taskStart.stageId,
-      "launchTime" -> taskInfo.launchTime
+      "launchTime" -> taskInfo.launchTime,
+      "epochMillis" -> epochMillis
     )
     report(taskStartMetrics)
   }
@@ -260,6 +277,7 @@ class KafkaSinkExtended(conf: SparkConf) extends KafkaSink(conf) {
   override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
     val taskInfo = taskEnd.taskInfo
     val taskmetrics = taskEnd.taskMetrics
+    val epochMillis = System.currentTimeMillis()
 
     val point1 = Map[String, Any](
       "name" -> "tasks_ended",
@@ -268,7 +286,8 @@ class KafkaSinkExtended(conf: SparkConf) extends KafkaSink(conf) {
       "attemptNumber" -> taskInfo.attemptNumber,
       "stageId" -> taskEnd.stageId,
       "launchTime" -> taskInfo.launchTime,
-      "finishTime" -> taskInfo.finishTime
+      "finishTime" -> taskInfo.finishTime,
+      "epochMillis" -> epochMillis
     )
     report(point1)
 
@@ -315,7 +334,8 @@ class KafkaSinkExtended(conf: SparkConf) extends KafkaSink(conf) {
       "shuffleFetchWaitTime" -> taskmetrics.shuffleReadMetrics.fetchWaitTime,
       "shuffleBytesWritten" -> taskmetrics.shuffleWriteMetrics.bytesWritten,
       "shuffleRecordsWritten" -> taskmetrics.shuffleWriteMetrics.recordsWritten,
-      "shuffleWriteTime" -> taskmetrics.shuffleWriteMetrics.writeTime
+      "shuffleWriteTime" -> taskmetrics.shuffleWriteMetrics.writeTime,
+      "epochMillis" -> epochMillis
     )
     report(point2)
   }
