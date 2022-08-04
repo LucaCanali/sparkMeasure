@@ -34,6 +34,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
   def begin(): Long = {
     listenerTask.taskMetricsData.clear()    // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
+    endSnapshot = beginSnapshot
     beginSnapshot
   }
 
@@ -59,10 +60,14 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     val agg = Utils.zeroMetricsTask()
 
     for (metrics <- listenerTask.taskMetricsData
-         if (metrics.launchTime >= beginSnapshot && metrics.launchTime <= endSnapshot)) {
+         if (metrics.launchTime >= beginSnapshot && metrics.finishTime <= endSnapshot)) {
       agg("numTasks") += 1L
-      if (metrics.successful)
+      if (metrics.successful) {
         agg("successful tasks") += 1L
+      }
+      if (metrics.speculative) {
+        agg("speculative tasks") += 1L
+      }
       agg("taskDuration") += metrics.duration
       agg("schedulerDelayTime") += metrics.schedulerDelay
       agg("executorRunTime") += metrics.executorRunTime

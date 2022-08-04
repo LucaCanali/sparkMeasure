@@ -103,6 +103,7 @@ object Utils {
     val zeroedMetrics = LinkedHashMap(
       "numTasks" -> 0L,
       "successful tasks" -> 0L,
+      "speculative tasks" -> 0L,
       "taskDuration" -> 0L,
       "schedulerDelayTime" -> 0L,
       "executorRunTime" -> 0L,
