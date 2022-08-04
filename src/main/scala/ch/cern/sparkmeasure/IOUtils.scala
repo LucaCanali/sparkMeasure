@@ -16,7 +16,6 @@ import org.apache.spark.SparkConf
  * "flight recorder" mode.
  * Two serialization modes are supported currently: java serialization and JSON serialization with jackson library.
  */
-
 object IOUtils {
 
   val objectMapper = new ObjectMapper with ScalaObjectMapper

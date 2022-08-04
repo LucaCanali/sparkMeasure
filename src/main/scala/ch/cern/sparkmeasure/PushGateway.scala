@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
  * pushGateway.post(str_metrics, metricsType, labelName, labelValue)
  *
  * Notes:
- * Sending same metric with different number of dimentions will stop collecting data
+ * Sending same metric with different number of dimensions will stop collecting data
  * from Pushgateway with error. So we send defaults if labelName and/or labelValue is empty.
  *
  * Metrics names, metricsJob, metricsType, labelName, labelValue
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
  * https://prometheus.io/docs/instrumenting/exposition_formats/
  * Names that can't be url-encoded will be set to default values.
  *
- * Valid characteers for metrics and label names are: A-Z, a-z, digits and '_'.
+ * Valid characters for metrics and label names are: A-Z, a-z, digits and '_'.
  * Metric name can also contain ':'.
  * Metrics and label names cannot start with digit.
  * All non-matching characters will be replaced with '_'.

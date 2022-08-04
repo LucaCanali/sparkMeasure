@@ -36,7 +36,7 @@ class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListe
   // should we print to stdout too? handle conf: spark.sparkmeasure.printToStdout
   val printToStdout = Utils.parsePrintToStdout(conf, logger, false)
 
-  /** when the application stops, serialize the content of stageMetricsData into a file and/or print to stdout */
+  // when the application stops, serialize the content of stageMetricsData into a file and/or print to stdout
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
     logger.info(s"Spark application ended, timestamp = ${applicationEnd.time}")
 
@@ -95,7 +95,7 @@ class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListene
   // should we print to stdout too? handle conf: spark.sparkmeasure.printToStdout
   val printToStdout = Utils.parsePrintToStdout(conf, logger, false)
 
-  /** when the application stops, serialize the content of stageMetricsData into a file and/or print to stdout */
+  // when the application stops, serialize the content of stageMetricsData into a file and/or print to stdout
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
     logger.info(s"Spark application ended, timestamp = ${applicationEnd.time}")
 
