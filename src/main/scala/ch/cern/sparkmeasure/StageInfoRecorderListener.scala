@@ -22,21 +22,16 @@ case class StageVals (jobId: Int, jobGroup:String, stageId: Int, name: String,
                  shuffleWriteTime: Long, shuffleBytesWritten: Long, shuffleRecordsWritten: Long
                 )
 
-// Accumulators contain task metrics and other metrics, such as SQL metrics, this case class is used to process them
-case class StageAccumulablesInfo (jobId: Int, stageId: Int, submissionTime: Long, completionTime: Long,
-                                  accId: Long, name: String, value: Long)
-
 /**
  * StageInfoRecorderListener: this listener gathers metrics with Stage execution granularity
  * It is based on the Spark Listener interface
- * Stage metrics are stored in memory and can be consumed "raw" (to a file, to Kafka, InfluxDB, Prometheus)
- * or used in a form of report that aggregates resource consumption
+ * Stage metrics are stored in memory and use to produce a report that aggregates resource consumption
+ * they can also be consumed "raw" (transformed into a DataFrame and/or saved to a file)
  * See StageMetrics
  */
 class StageInfoRecorderListener extends SparkListener {
 
   val stageMetricsData: ListBuffer[StageVals] = ListBuffer.empty[StageVals]
-  val accumulablesMetricsData: ListBuffer[StageAccumulablesInfo] = ListBuffer.empty[StageAccumulablesInfo]
   val StageIdtoJobId: HashMap[Int, Int] = HashMap.empty[Int, Int]
   val StageIdtoJobGroup: HashMap[Int, String] = HashMap.empty[Int, String]
 

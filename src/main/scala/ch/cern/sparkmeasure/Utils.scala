@@ -4,6 +4,8 @@ import org.slf4j.Logger
 import org.apache.spark.SparkConf
 import org.apache.spark.scheduler.TaskLocality
 
+import scala.collection.mutable.LinkedHashMap
+
 /**
  * The object Utils contains some helper code for the sparkMeasure package
  * The methods formatDuration and formatBytes are used for printing stage metrics reports
@@ -57,6 +59,81 @@ object Utils {
     } else {
       "%.1f%s".format(value, unit)
     }
+  }
+
+  // Return the data structure use to compute metrics reports for StageMetrics
+  def zeroMetricsStage() : LinkedHashMap[String, Long] = {
+    val zeroedMetrics = LinkedHashMap(
+      "numStages" -> 0L,
+      "numTasks" -> 0L,
+      "elapsedTime" -> 0L,
+      "stageDuration" -> 0L,
+      "executorRunTime" -> 0L,
+      "executorCpuTime" -> 0L,
+      "executorDeserializeTime" -> 0L,
+      "executorDeserializeCpuTime" -> 0L,
+      "resultSerializationTime" -> 0L,
+      "jvmGCTime" -> 0L,
+      "shuffleFetchWaitTime"-> 0L,
+      "shuffleWriteTime"-> 0L,
+      "resultSize" -> 0L,
+      "diskBytesSpilled" -> 0L,
+      "memoryBytesSpilled" -> 0L,
+      "peakExecutionMemory" -> 0L,
+      "recordsRead" -> 0L,
+      "bytesRead" -> 0L,
+      "recordsWritten" -> 0L,
+      "bytesWritten" -> 0L,
+      "shuffleRecordsRead" -> 0L,
+      "shuffleTotalBlocksFetched" -> 0L,
+      "shuffleLocalBlocksFetched" -> 0L,
+      "shuffleRemoteBlocksFetched" -> 0L,
+      "shuffleTotalBytesRead" -> 0L,
+      "shuffleLocalBytesRead" -> 0L,
+      "shuffleRemoteBytesRead" -> 0L,
+      "shuffleRemoteBytesReadToDisk" -> 0L,
+      "shuffleBytesWritten" -> 0L,
+      "shuffleRecordsWritten" -> 0L
+    )
+    zeroedMetrics
+  }
+
+  // Return the data structure use to compute metrics reports for TaskMetrics
+  def zeroMetricsTask() : LinkedHashMap[String, Long] = {
+    val zeroedMetrics = LinkedHashMap(
+      "numTasks" -> 0L,
+      "successful tasks" -> 0L,
+      "taskDuration" -> 0L,
+      "schedulerDelayTime" -> 0L,
+      "executorRunTime" -> 0L,
+      "executorCpuTime" -> 0L,
+      "executorDeserializeTime" -> 0L,
+      "executorDeserializeCpuTime" -> 0L,
+      "resultSerializationTime" -> 0L,
+      "jvmGCTime" -> 0L,
+      "shuffleFetchWaitTime"-> 0L,
+      "shuffleWriteTime" -> 0L,
+      "gettingResultTime" -> 0L,
+      "resultSize" -> 0L,
+      "diskBytesSpilled" -> 0L,
+      "memoryBytesSpilled" -> 0L,
+      "peakExecutionMemory" -> 0L,
+      "recordsRead" -> 0L,
+      "bytesRead" -> 0L,
+      "recordsWritten" -> 0L,
+      "bytesWritten" -> 0L,
+      "shuffleRecordsRead" -> 0L,
+      "shuffleTotalBlocksFetched" -> 0L,
+      "shuffleLocalBlocksFetched" -> 0L,
+      "shuffleRemoteBlocksFetched" -> 0L,
+      "shuffleTotalBytesRead" -> 0L,
+      "shuffleLocalBytesRead" -> 0L,
+      "shuffleRemoteBytesRead" -> 0L,
+      "shuffleRemoteBytesReadToDisk" -> 0L,
+      "shuffleBytesWritten" -> 0L,
+      "shuffleRecordsWritten" -> 0L
+    )
+    zeroedMetrics
   }
 
   def prettyPrintValues(metric: String, value: Long): String = {

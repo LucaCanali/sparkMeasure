@@ -1,43 +1,38 @@
 package ch.cern.sparkmeasure
 
-import collection.mutable.LinkedHashMap
-
+import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 
-import scala.collection.mutable.ListBuffer
-import scala.math.{min, max}
+import scala.collection.mutable.{LinkedHashMap, ListBuffer}
+import scala.math.{max, min}
 
 /**
- *  Stage Metrics: collects stage-level metrics with Stage granularity
- *                 and provides aggregation and reporting functions for the end-user
- *
- * Example usage for stage metrics:
- * val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
- * stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
- *
- * The tool is based on using Spark Listeners as data source and collecting metrics in a ListBuffer of
- * a case class that encapsulates Spark task metrics.
- * The List Buffer is then transformed into a DataFrame for ease of reporting and analysis.
- *
- * Stage metrics are stored in memory and use to produce a report that aggregates resource consumption
- * they can also be consumed "raw" (transformed into a DataFrame and/or saved to a file)
- *
- */
-case class StageMetrics(sparkSession: SparkSession) {
+  *  Task Metrics: collects metrics data at Task granularity
+  *                and provides aggregation and reporting functions for the end-user
+  *
+  * Example of how to use task metrics:
+  * val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
+  * taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
+  *
+  * The tool is based on using Spark Listeners as data source and collecting metrics in a ListBuffer of
+  * a case class that encapsulates Spark task metrics.
+  *
+  */
+case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean = false) {
 
   lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
-  // This inserts and starts the custom Spark Listener into the live Spark Context
-  val listenerStage = new StageInfoRecorderListener
-  registerListener(sparkSession, listenerStage)
+  // This starts inserts and starts the custom Spark Listener into the live Spark Context
+  val listenerTask = new TaskInfoRecorderListener(gatherAccumulables)
+  registerListener(sparkSession, listenerTask)
 
   // Variables used to store the start and end time of the period of interest for the metrics report
   var beginSnapshot: Long = 0L
   var endSnapshot: Long = 0L
 
   def begin(): Long = {
-    listenerStage.stageMetricsData.clear()    // clear previous data to reduce memory footprint
+    listenerTask.taskMetricsData.clear()    // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
     beginSnapshot
   }
@@ -48,28 +43,28 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
   // helper method to register the listener
-  def registerListener(spark: SparkSession, listener: StageInfoRecorderListener): Unit = {
+  def registerListener(spark: SparkSession, listener: TaskInfoRecorderListener): Unit = {
     spark.sparkContext.addSparkListener(listener)
   }
 
   // helper method to remove the listener
   def removeListenerStage(): Unit = {
-    sparkSession.sparkContext.removeSparkListener(listenerStage)
+    sparkSession.sparkContext.removeSparkListener(listenerTask)
   }
 
   // Compute basic aggregation on the Stage metrics for the metrics report
   // also filter on the time boundaries for the report
   def aggregateStageMetrics() : LinkedHashMap[String, Long] = {
 
-    val agg = Utils.zeroMetricsStage()
-    var submissionTime = Long.MaxValue
-    var completionTime = 0L
+    val agg = Utils.zeroMetricsTask()
 
-    for (metrics <- listenerStage.stageMetricsData
-         if (metrics.submissionTime >= beginSnapshot && metrics.completionTime <= endSnapshot)) {
-      agg("numStages") += 1L
-      agg("numTasks") += metrics.numTasks
-      agg("stageDuration") += metrics.stageDuration
+    for (metrics <- listenerTask.taskMetricsData
+         if (metrics.launchTime >= beginSnapshot && metrics.launchTime <= endSnapshot)) {
+      agg("numTasks") += 1L
+      if (metrics.successful)
+        agg("successful tasks") += 1L
+      agg("taskDuration") += metrics.duration
+      agg("schedulerDelayTime") += metrics.schedulerDelay
       agg("executorRunTime") += metrics.executorRunTime
       agg("executorCpuTime") += metrics.executorCpuTime
       agg("executorDeserializeTime") += metrics.executorDeserializeTime
@@ -78,6 +73,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       agg("jvmGCTime") += metrics.jvmGCTime
       agg("shuffleFetchWaitTime") += metrics.shuffleFetchWaitTime
       agg("shuffleWriteTime") += metrics.shuffleWriteTime
+      agg("gettingResultTime") += metrics.gettingResultTime
       agg("resultSize") = max(metrics.resultSize, agg("resultSize"))
       agg("diskBytesSpilled") += metrics.diskBytesSpilled
       agg("memoryBytesSpilled") += metrics.memoryBytesSpilled
@@ -96,10 +92,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       agg("shuffleRemoteBytesReadToDisk") += metrics.shuffleRemoteBytesReadToDisk
       agg("shuffleBytesWritten") += metrics.shuffleBytesWritten
       agg("shuffleRecordsWritten") += metrics.shuffleRecordsWritten
-      submissionTime = min(metrics.submissionTime, submissionTime)
-      completionTime = max(metrics.completionTime, completionTime)
     }
-    agg("elapsedTime") = completionTime - submissionTime
     agg
   }
 
@@ -108,9 +101,9 @@ case class StageMetrics(sparkSession: SparkSession) {
     val aggregatedMetrics = aggregateStageMetrics()
     var result = ListBuffer[String]()
 
-    result = result :+ s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}"
-    result = result :+ s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}"
-    result = result :+ "Aggregated Spark stage metrics:"
+    result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
+    result = result :+ (s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    result = result :+ ("Aggregated Spark task metrics:")
 
     for (x <- aggregatedMetrics) {
       result = result :+ Utils.prettyPrintValues(x._1, x._2)
@@ -125,22 +118,23 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   // Legacy transformation of data recorded from the custom Stage listener
   // into a DataFrame and register it as a view for querying with SQL
-  def createStageMetricsDF(nameTempView: String = "PerfStageMetrics"): DataFrame = {
+  def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
     import sparkSession.implicits._
-    val resultDF = listenerStage.stageMetricsData.toDF
+    val resultDF = listenerTask.taskMetricsData.toDF
     resultDF.createOrReplaceTempView(nameTempView)
     logger.warn(s"Stage metrics data refreshed into temp view $nameTempView")
     resultDF
   }
 
   // legacy metrics aggregation computed using SQL
-  def aggregateStageMetrics(nameTempView: String = "PerfStageMetrics"): DataFrame = {
-    sparkSession.sql(s"select count(*) as numStages, sum(numTasks) as numTasks, " +
-      s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration) as stageDuration , " +
+  def aggregateTaskMetrics(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
+    sparkSession.sql(s"select count(*) as numtasks, " +
+      s"max(finishTime) - min(launchTime) as elapsedTime, sum(duration) as duration, sum(schedulerDelay) as schedulerDelayTime, " +
       s"sum(executorRunTime) as executorRunTime, sum(executorCpuTime) as executorCpuTime, " +
       s"sum(executorDeserializeTime) as executorDeserializeTime, sum(executorDeserializeCpuTime) as executorDeserializeCpuTime, " +
       s"sum(resultSerializationTime) as resultSerializationTime, sum(jvmGCTime) as jvmGCTime, "+
       s"sum(shuffleFetchWaitTime) as shuffleFetchWaitTime, sum(shuffleWriteTime) as shuffleWriteTime, " +
+      s"sum(gettingResultTime) as gettingResultTime, " +
       s"max(resultSize) as resultSize, " +
       s"sum(diskBytesSpilled) as diskBytesSpilled, sum(memoryBytesSpilled) as memoryBytesSpilled, " +
       s"max(peakExecutionMemory) as peakExecutionMemory, sum(recordsRead) as recordsRead, sum(bytesRead) as bytesRead, " +
@@ -151,36 +145,31 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"sum(shuffleRemoteBytesRead) as shuffleRemoteBytesRead, sum(shuffleRemoteBytesReadToDisk) as shuffleRemoteBytesReadToDisk, " +
       s"sum(shuffleBytesWritten) as shuffleBytesWritten, sum(shuffleRecordsWritten) as shuffleRecordsWritten " +
       s"from $nameTempView " +
-      s"where submissionTime >= $beginSnapshot and completionTime <= $endSnapshot")
-
+      s"where launchTime >= $beginSnapshot and finishTime <= $endSnapshot")
   }
 
   // Custom aggregations and post-processing of metrics data
   // This is legacy and uses Spark DataFrame operations,
   // use report instead, which will process data in the driver using Scala
   def reportUsingDataFrame(): String = {
-    val nameTempView = "PerfStageMetrics"
-    createStageMetricsDF(nameTempView)
-    val aggregateDF = aggregateStageMetrics(nameTempView)
     var result = ListBuffer[String]()
+    val nameTempView = "PerfTaskMetrics"
+    createTaskMetricsDF(nameTempView)
+    val aggregateDF = aggregateTaskMetrics(nameTempView)
 
-    result = result :+ s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}"
-    result = result :+ s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}"
+    result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
+    result = result :+ (s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    result = result :+ ("Aggregated Spark task metrics:")
 
-    /** Print a summary of the stage metrics. */
+    /** Print a summary of the task metrics. */
     val aggregateValues = aggregateDF.take(1)(0).toSeq
-    if (aggregateValues(1) != null) {
-      result = result :+ "Aggregated Spark stage metrics:"
-      val cols = aggregateDF.columns
-      result = result :+ (cols zip aggregateValues)
-        .map{
-          case(n:String, v:Long) => Utils.prettyPrintValues(n, v)
-          case(n: String, null) => n + " => null"
-          case(_,_) => ""
-        }.mkString("\n")
-    } else {
-      result = result :+ " no data to report "
-    }
+    val cols = aggregateDF.columns
+    result = result :+ (cols zip aggregateValues)
+      .map {
+        case(n: String, v: Long) => Utils.prettyPrintValues(n, v)
+        case(n: String, null) => n + " => null"
+        case(_,_) => ""
+      }.mkString("\n")
 
     result.mkString("\n")
   }
@@ -197,11 +186,11 @@ case class StageMetrics(sparkSession: SparkSession) {
                  labelName: String = sparkSession.sparkContext.appName,
                  labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
 
-    val nameTempView = "PerfStageMetrics"
-    createStageMetricsDF(nameTempView)
-    val aggregateDF = aggregateStageMetrics(nameTempView)
+    val nameTempView = "PerfTaskMetrics"
+    createTaskMetricsDF(nameTempView)
+    val aggregateDF = aggregateTaskMetrics(nameTempView)
 
-    /** Prepare a summary of the stage metrics for Prometheus. */
+    /** Prepare a summary of the task metrics for Prometheus. */
     val pushGateway = PushGateway(serverIPnPort, metricsJob)
     var str_metrics = s""
     val aggregateValues = aggregateDF.take(1)(0).toSeq
@@ -213,27 +202,27 @@ case class StageMetrics(sparkSession: SparkSession) {
         case(_,_) => // We should no get here, in case add code to handle this
       }
 
-    /** Send stage metrics to Prometheus. */
-    val metricsType = s"stage"
+    /** Send task metrics to Prometheus. */
+    val metricsType = s"task"
     pushGateway.post(str_metrics, metricsType, labelName, labelValue)
   }
 
   /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
   def runAndMeasure[T](f: => T): T = {
-    begin()
+    this.begin()
     val startTime = System.nanoTime()
     val ret = f
     val endTime = System.nanoTime()
-    end()
+    this.end()
     println(s"Time taken: ${(endTime - startTime) / 1000000} ms")
     printReport()
     ret
   }
 
-  // Helper method to save data, we expect to have small amounts of data so collapsing to 1 partition seems OK
+  /** helper method to save data, we expect to have moderate amounts of data so collapsing to 1 partition seems OK */
   def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveMode: String = "default") = {
-    df.coalesce(1).write.format(fileFormat).mode(saveMode).save(fileName)
-    logger.warn(s"Stage metric data saved into $fileName using format=$fileFormat")
+    df.repartition(1).write.format(fileFormat).mode(saveMode).save(fileName)
+    logger.warn(s"Task metric data saved into $fileName using format=$fileFormat")
   }
-  
+
 }
