@@ -104,17 +104,35 @@ case class StageMetrics(sparkSession: SparkSession) {
     agg
   }
 
+  // Extracts stages and their duration
+  def stagesDuration() : LinkedHashMap[Int, Long] ={
+
+    val stages : LinkedHashMap[Int, Long] = LinkedHashMap.empty[Int,Long]
+    for (metrics <- listenerStage.stageMetricsData
+         if (metrics.submissionTime >= beginSnapshot && metrics.completionTime <= endSnapshot)) {
+      stages += (metrics.stageId -> metrics.stageDuration)
+    }
+    stages
+  }
+
   // Custom aggregations and post-processing of metrics data
   def report(): String = {
     val aggregatedMetrics = aggregateStageMetrics()
+    val stages = stagesDuration()
     var result = ListBuffer[String]()
 
     result = result :+ s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}"
-    result = result :+ s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}"
+    result = result :+ s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}\n"
     result = result :+ "Aggregated Spark stage metrics:"
 
     for (x <- aggregatedMetrics) {
       result = result :+ Utils.prettyPrintValues(x._1, x._2)
+    }
+
+    // additional details on stages and their duration
+    result = result :+ "\nStages and their duration:"
+    for (x <- stages) {
+      result = result :+ Utils.prettyPrintValues("Stage " + x._1.toString + " duration", x._2)
     }
 
     result.mkString("\n")

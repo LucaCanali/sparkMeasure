@@ -107,7 +107,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     var result = ListBuffer[String]()
 
     result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
-    result = result :+ (s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}")
+    result = result :+ (s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}\n")
     result = result :+ ("Aggregated Spark task metrics:")
 
     for (x <- aggregatedMetrics) {
