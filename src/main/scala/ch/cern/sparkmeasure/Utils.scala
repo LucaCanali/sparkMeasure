@@ -198,7 +198,7 @@ object Utils {
 
   def parseInfluxDBURL(conf: SparkConf, logger: Logger) : String = {
     // handle InfluxDB URL
-    val influxdbURL = conf.get("spark.sparkmeasure.influxdbURL", "")
+    val influxdbURL = conf.get("spark.sparkmeasure.influxdbURL", "http://localhost:8086")
     if (influxdbURL.isEmpty) {
       logger.error("InfluxDB URL not found, this will make the listener fail.")
       throw new RuntimeException

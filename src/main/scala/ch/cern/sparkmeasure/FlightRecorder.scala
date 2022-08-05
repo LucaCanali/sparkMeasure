@@ -67,7 +67,7 @@ class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListe
 }
 
 /**
- * FlightRecorderTaskMetrics - Use a Spark Listener to record task metrics data and save them in a file
+ * FlightRecorderTaskMetrics - Use a Spark Listener to record task metrics data and save them to a file
  *
  * Use:
  *  by adding the following configuration to spark-submit (or Spark Session) configuration

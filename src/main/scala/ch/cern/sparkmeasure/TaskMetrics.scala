@@ -19,18 +19,19 @@ import scala.math.{max, min}
   * a case class that encapsulates Spark task metrics.
   *
   */
-case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean = false) {
+case class TaskMetrics(sparkSession: SparkSession) {
 
   lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
   // This starts inserts and starts the custom Spark Listener into the live Spark Context
-  val listenerTask = new TaskInfoRecorderListener(gatherAccumulables)
+  val listenerTask = new TaskInfoRecorderListener()
   registerListener(sparkSession, listenerTask)
 
   // Variables used to store the start and end time of the period of interest for the metrics report
   var beginSnapshot: Long = 0L
   var endSnapshot: Long = 0L
 
+  // Marks the beginning of data collection
   def begin(): Long = {
     listenerTask.taskMetricsData.clear()    // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
@@ -38,6 +39,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     beginSnapshot
   }
 
+  // Marks the end of data collection
   def end(): Long = {
     endSnapshot = System.currentTimeMillis()
     endSnapshot
@@ -49,13 +51,13 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
   }
 
   // helper method to remove the listener
-  def removeListenerStage(): Unit = {
+  def removeListener(): Unit = {
     sparkSession.sparkContext.removeSparkListener(listenerTask)
   }
 
-  // Compute basic aggregation on the Stage metrics for the metrics report
+  // Compute basic aggregation on the Task metrics for the metrics report
   // also filter on the time boundaries for the report
-  def aggregateStageMetrics() : LinkedHashMap[String, Long] = {
+  def aggregateTaskMetrics() : LinkedHashMap[String, Long] = {
 
     val agg = Utils.zeroMetricsTask()
 
@@ -103,7 +105,7 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
 
   // Custom aggregations and post-processing of metrics data
   def report(): String = {
-    val aggregatedMetrics = aggregateStageMetrics()
+    val aggregatedMetrics = aggregateTaskMetrics()
     var result = ListBuffer[String]()
 
     result = result :+ (s"\nScheduling mode = ${sparkSession.sparkContext.getSchedulingMode.toString}")
@@ -179,6 +181,24 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     result.mkString("\n")
   }
 
+  // Shortcut to run and measure the metrics for Spark execution, built after spark.time()
+  def runAndMeasure[T](f: => T): T = {
+    this.begin()
+    val startTime = System.nanoTime()
+    val ret = f
+    val endTime = System.nanoTime()
+    this.end()
+    println(s"Time taken: ${(endTime - startTime) / 1000000} ms")
+    printReport()
+    ret
+  }
+
+  // helper method to save data, we expect to have moderate amounts of data so collapsing to 1 partition seems OK
+  def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveMode: String = "default") = {
+    df.repartition(1).write.format(fileFormat).mode(saveMode).save(fileName)
+    logger.warn(s"Task metric data saved into $fileName using format=$fileFormat")
+  }
+
   /**
    * Send the metrics to Prometheus.
    * serverIPnPort: String with prometheus pushgateway address, format is hostIP:Port,
@@ -187,9 +207,9 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
    * labelValue: metrics label value, default is sparkSession.sparkContext.applicationId
    */
   def sendReportPrometheus(serverIPnPort: String,
-                 metricsJob: String,
-                 labelName: String = sparkSession.sparkContext.appName,
-                 labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
+                           metricsJob: String,
+                           labelName: String = sparkSession.sparkContext.appName,
+                           labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
 
     val nameTempView = "PerfTaskMetrics"
     createTaskMetricsDF(nameTempView)
@@ -210,24 +230,6 @@ case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean =
     /** Send task metrics to Prometheus. */
     val metricsType = s"task"
     pushGateway.post(str_metrics, metricsType, labelName, labelValue)
-  }
-
-  /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
-  def runAndMeasure[T](f: => T): T = {
-    this.begin()
-    val startTime = System.nanoTime()
-    val ret = f
-    val endTime = System.nanoTime()
-    this.end()
-    println(s"Time taken: ${(endTime - startTime) / 1000000} ms")
-    printReport()
-    ret
-  }
-
-  /** helper method to save data, we expect to have moderate amounts of data so collapsing to 1 partition seems OK */
-  def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveMode: String = "default") = {
-    df.repartition(1).write.format(fileFormat).mode(saveMode).save(fileName)
-    logger.warn(s"Task metric data saved into $fileName using format=$fileFormat")
   }
 
 }

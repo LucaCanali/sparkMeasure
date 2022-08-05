@@ -23,14 +23,8 @@ class StageMetrics:
     def report(self):
         return self.stagemetrics.report()
 
-    def report_accumulables(self):
-        return self.stagemetrics.reportAccumulables()
-
     def print_report(self):
         print(self.report())
-
-    def print_accumulables(self):
-        print(self.report_accumulables())
 
     def runandmeasure(self, env, codetorun):
         self.begin()
@@ -52,3 +46,6 @@ class StageMetrics:
 
     def save_data(self, df, filepathandname, fileformat="json"):
         df.repartition(1).write.format(fileformat).save(filepathandname)
+
+    def remove_listener(self):
+        self.stagemetrics.removeListener()

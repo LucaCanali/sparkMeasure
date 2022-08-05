@@ -36,6 +36,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   var beginSnapshot: Long = 0L
   var endSnapshot: Long = 0L
 
+  // Marks the beginning of data collection
   def begin(): Long = {
     listenerStage.stageMetricsData.clear()    // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
@@ -43,6 +44,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     beginSnapshot
   }
 
+  // Marks the end of data collection
   def end(): Long = {
     endSnapshot = System.currentTimeMillis()
     endSnapshot
@@ -54,7 +56,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
   // helper method to remove the listener
-  def removeListenerStage(): Unit = {
+  def removeListener(): Unit = {
     sparkSession.sparkContext.removeSparkListener(listenerStage)
   }
 
@@ -105,7 +107,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
   // Extracts stages and their duration
-  def stagesDuration() : LinkedHashMap[Int, Long] ={
+  def stagesDuration() : LinkedHashMap[Int, Long] = {
 
     val stages : LinkedHashMap[Int, Long] = LinkedHashMap.empty[Int,Long]
     for (metrics <- listenerStage.stageMetricsData
@@ -138,6 +140,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     result.mkString("\n")
   }
 
+  // Runs report and prints it
   def printReport(): Unit = {
     println(report())
   }
@@ -152,7 +155,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     resultDF
   }
 
-  // legacy metrics aggregation computed using SQL
+  // Legacy metrics aggregation computed using SQL
   def aggregateStageMetrics(nameTempView: String = "PerfStageMetrics"): DataFrame = {
     sparkSession.sql(s"select count(*) as numStages, sum(numTasks) as numTasks, " +
       s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration) as stageDuration , " +
@@ -204,6 +207,24 @@ case class StageMetrics(sparkSession: SparkSession) {
     result.mkString("\n")
   }
 
+  // Shortcut to run and measure the metrics for Spark execution, built after spark.time()
+  def runAndMeasure[T](f: => T): T = {
+    begin()
+    val startTime = System.nanoTime()
+    val ret = f
+    val endTime = System.nanoTime()
+    end()
+    println(s"Time taken: ${(endTime - startTime) / 1000000} ms")
+    printReport()
+    ret
+  }
+
+  // Helper method to save data, we expect to have small amounts of data so collapsing to 1 partition seems OK
+  def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveMode: String = "default") = {
+    df.coalesce(1).write.format(fileFormat).mode(saveMode).save(fileName)
+    logger.warn(s"Stage metric data saved into $fileName using format=$fileFormat")
+  }
+
   /**
    * Send the metrics to Prometheus.
    * serverIPnPort: String with prometheus pushgateway address, format is hostIP:Port,
@@ -212,9 +233,9 @@ case class StageMetrics(sparkSession: SparkSession) {
    * labelValue: metrics label value, default is sparkSession.sparkContext.applicationId
    */
   def sendReportPrometheus(serverIPnPort: String,
-                 metricsJob: String,
-                 labelName: String = sparkSession.sparkContext.appName,
-                 labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
+                           metricsJob: String,
+                           labelName: String = sparkSession.sparkContext.appName,
+                           labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
 
     val nameTempView = "PerfStageMetrics"
     createStageMetricsDF(nameTempView)
@@ -237,22 +258,4 @@ case class StageMetrics(sparkSession: SparkSession) {
     pushGateway.post(str_metrics, metricsType, labelName, labelValue)
   }
 
-  /** Shortcut to run and measure the metrics for Spark execution, built after spark.time() */
-  def runAndMeasure[T](f: => T): T = {
-    begin()
-    val startTime = System.nanoTime()
-    val ret = f
-    val endTime = System.nanoTime()
-    end()
-    println(s"Time taken: ${(endTime - startTime) / 1000000} ms")
-    printReport()
-    ret
-  }
-
-  // Helper method to save data, we expect to have small amounts of data so collapsing to 1 partition seems OK
-  def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveMode: String = "default") = {
-    df.coalesce(1).write.format(fileFormat).mode(saveMode).save(fileName)
-    logger.warn(s"Stage metric data saved into $fileName using format=$fileFormat")
-  }
-  
 }

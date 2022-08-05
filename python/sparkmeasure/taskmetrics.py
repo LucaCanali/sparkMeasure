@@ -27,9 +27,6 @@ class TaskMetrics:
     def print_report(self):
         print(self.report())
 
-    def print_accumulables(self):
-        none # not yet implemented
-
     def runandmeasure(self, env, codetorun):
         self.begin()
         exec(codetorun, env)
@@ -50,3 +47,6 @@ class TaskMetrics:
 
     def save_data(self, df, filepathandname, fileformat):
         df.repartition(1).write.format(fileformat).save(filepathandname)
+
+    def remove_listener(self):
+        self.taskmetrics.removeListener()

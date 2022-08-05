@@ -4,8 +4,8 @@ import org.apache.spark.sql._
 
 /**
   * Test sparkMeasure (https://github.com/LucaCanali/sparkMeasure). Use:
-  * bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.11:0.13 \
-  * --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.11-0.1.jar
+  * bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19 \
+  * --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.12-0.1.jar
   */
 object testSparkMeasure {
 

@@ -21,18 +21,19 @@ import org.slf4j.LoggerFactory
  *
  *  Configuration for InfluxDBSink is handled with Spark conf parameters:
  *
- *  spark.sparkmeasure.influxdbURL = InfluxDB endpoint URL
- *     example: --conf spark.sparkmeasure.influxdbURL="http://mytestInfluxDB:8086"
- *  spark.sparkmeasure.influxdbUsername (can be empty)
- *  spark.sparkmeasure.influxdbPassword (can be empty)
- *  spark.sparkmeasure.influxdbName, defaults to "sparkmeasure"
- *  spark.sparkmeasure.influxdbStagemetrics, boolean, default is false
- *
- *  spark.sparkmeasure.influxdbEnableBatch, boolean, default true
- *     Note: this may improve performance, but requires explicitly stopping Spark Sesssion: spark.stop()
+ * spark.sparkmeasure.influxdbURL (default "http://localhost:8086")
+ * spark.sparkmeasure.influxdbUsername (default "", not this can be empty if InfluxDB is configured with no authentication)
+ * spark.sparkmeasure.influxdbPassword (default "")
+ * spark.sparkmeasure.influxdbName (default "sparkmeasure")
+ * spark.sparkmeasure.influxdbStagemetrics, (boolean, default is false)
+ * spark.sparkmeasure.influxdbEnableBatch, boolean, default true
+ *     Note: this is to improve write performance,
+ *     but it requires to explicitly stopping Spark Session for clean exit: spark.stop()
+ *     consider setting it to false if this is an issue
  *
  * This code depends on "influxdb.java", you may need to add the dependency:
  *  --packages org.influxdb:influxdb-java:2.14
+ *  Note currently we need to use version 2.14 as newer versions generate jar conflicts (tested up to Spark 3.3.0)
  *
  * InfluxDBExtended: provides additional and verbose info on Task execution
  *  use: --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSinkExtended

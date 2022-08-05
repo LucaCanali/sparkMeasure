@@ -28,12 +28,13 @@ case class TaskVals(jobId: Int, jobGroup: String, stageId: Int, index: Long, lau
  * Task metrics are stored in memory and use to produce a report that aggregates resource consumption
  * they can also be consumed "raw" (transformed into a DataFrame and/or saved to a file)
  */
-class TaskInfoRecorderListener(gatherAccumulables: Boolean = false) extends SparkListener {
+class TaskInfoRecorderListener() extends SparkListener {
 
   val taskMetricsData: ListBuffer[TaskVals] = ListBuffer.empty[TaskVals]
   val StageIdtoJobId: collection.mutable.HashMap[Int, Int] = collection.mutable.HashMap.empty[Int, Int]
   val StageIdtoJobGroup: collection.mutable.HashMap[Int, String] = collection.mutable.HashMap.empty[Int, String]
 
+  // Collects information made available at job start
   override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
     jobStart.stageIds.foreach(stageId => StageIdtoJobId += (stageId -> jobStart.jobId))
     val group = jobStart.properties.getProperty("spark.jobGroup.id")
