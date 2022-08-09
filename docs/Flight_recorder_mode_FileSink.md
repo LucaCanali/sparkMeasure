@@ -1,4 +1,4 @@
-# SparkMeasure in Flight Recorder mode with file output
+# SparkMeasure Flight Recorder - File Sink
 
 Use sparkMeasure in flight recording mode to instrument Spark applications without touching their code.
 Flight recorder mode attaches a Spark Listener to the Spark Context, which takes care of 

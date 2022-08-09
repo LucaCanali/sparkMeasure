@@ -29,7 +29,7 @@ import scala.util.Try
  * example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
  *
  * This code depends on "kafka clients", you may need to add the dependency:
- * --packages org.apache.kafka:kafka-clients:3.0.1
+ * --packages org.apache.kafka:kafka-clients:3.2.1
  *
  * Output: each message contains the name, it is acknowledged as metrics name as well.
  * Note: the amount of data generated is relatively small in most applications: O(number_of_stages)

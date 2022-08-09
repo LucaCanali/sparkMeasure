@@ -139,8 +139,8 @@ Stage 3 duration => 49 (49 ms)
     * or you can write metrics in near-realtime to an InfluxDB instance or to Apache Kafka
     * More details:
       - **[Flight Recorder mode with file sink](docs/Flight_recorder_mode_FileSink.md)**
-      - **[Flight Recorder mode with InfluxDB sink](docs/Flight_recorder_mode_InfluDBSink.md)**
-      - Flight Recorder mode with Apache Kafka sink
+      - **[Flight Recorder mode with InfluxDB sink](docs/Flight_recorder_mode_InfluxDBSink.md)**
+      - **[Flight Recorder mode with Apache Kafka sink](docs/Flight_recorder_mode_KafkaSink.md)**
   
   * **[SparkMeasure API and configuration reference](docs/Reference_SparkMeasure_API_and_Configs.md)**  
 

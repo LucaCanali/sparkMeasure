@@ -1,7 +1,8 @@
 # sparkMeasure
 ## Export metrics to the Prometheus monitoring system
 
-Batch jobs send metrics to an intermediary job which Prometheus can scrape. The Prometheus Pushgateway can accept collected data and keep it for Prometheus scraping.
+Batch jobs send metrics to an intermediary job which Prometheus can scrape.
+The Prometheus Pushgateway can accept collected data and keep it for Prometheus scraping.
 * Related info:
    - [Prometheus monitoring system](https://prometheus.io/)
    - [Pushing metrics to Prometheus](https://prometheus.io/docs/instrumenting/pushing/)
@@ -29,8 +30,13 @@ https://prometheus.io/docs/instrumenting/exposition_formats/
 
 **Examples:**
  
+- Start the prometheus gateway. For testing you can use:
+`docker run -d -p 9091:9091 prom/pushgateway`
+
 1. Measure metrics at the Stage level (example in Scala):
 ```
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19 
+
 val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.begin()
 
@@ -45,11 +51,8 @@ stageMetrics.sendReportPrometheus(s"localhost:9091", s"aaa_job", s"label_name", 
 stageMetrics.sendReportPrometheus(s"localhost:9091", s"aaa_job")
 ```
 
-3. For automation the scala script could be stored in file 'script.scala'.
-Next run from spark directory:
-```
-bin/spark-shell --jars path/to/sparkMeasure/target/scala-2.11/spark-measure_2.11-0.12-SNAPSHOT.jar -i path/to/script.scala
-```
+3. Check the stored metrics
+point the browser to `http://localhost:9091`
 
 ---
 **Additional info on PushGateway implementation:**
@@ -74,15 +77,11 @@ Added method:
 
 **Additional info on Task Metrics:**
 
-case class TaskMetrics(sparkSession: SparkSession, gatherAccumulables: Boolean = false)
+case class TaskMetrics(sparkSession: SparkSession)
    * Collects metrics at the end of each Task
 
 Added method:
    * def sendReportPrometheus(serverIPnPort: String, metricsJob: String,
      labelName: String = sparkSession.sparkContext.appName,
      labelValue: String = sparkSession.sparkContext.applicationId): Unit -> send metrics to prometheus pushgateway
-
-
-
-
-
+   

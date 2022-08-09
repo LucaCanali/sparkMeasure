@@ -1,9 +1,8 @@
-# SparkMeasure Flight Recorder mode - InfluxDB sink
+# SparkMeasure Flight Recorder Mode - InfluxDB Sink
 
 Use sparkMeasure in flight recorder mode to instrument Spark applications without touching their code.
 Flight recorder mode attaches a Spark Listener that collects the metrics while the application runs.
 This describes how to sink Spark metrics to an InfluxDB instance.
-See also [flight recorder mode with file output](Flight_recorder_mode_FileSink.md) for details on the file sink.
 
 ## InfluxDBSink and InfluxDBSinkExtended 
 
@@ -24,23 +23,26 @@ Note: you can add configuration using --config option when using spark-submit
 use the .config method when allocating the Spark Session in Scala/Python/Java).  
 Configurations:  
  ```
-Start the listener for InfluxDBSink or InfluxDBSink+InfluxDBSinkExtended:
-spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink
-spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink,ch.cern.sparkmeasure.InfluxDBSinkExtended
+Option 1 (recommended) Start the listener for InfluxDBSink: 
+--conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink
 
-InfluxDBSink parameters:
-spark.sparkmeasure.influxdbURL (default "http://localhost:8086")
-spark.sparkmeasure.influxdbUsername (default "")
-   Note: username and password can be empty only if InfluxDB runs with auth-enabled=false
-spark.sparkmeasure.influxdbPassword (default "")
-spark.sparkmeasure.influxdbName (default "sparkmeasure")
-     Note: the DB will be created if it does not exist already
-spark.sparkmeasure.influxdbStagemetrics, (boolean, default is false)
-    Note: when this is true stage metrics will be collected too
-spark.sparkmeasure.influxdbEnableBatch, boolean, default true
-    Note: this is to improve write performance, 
-          but it requires to explicitly stopping Spark Session for clean exit: spark.stop()
-          consider setting it to false if this is an issue
+As an alternative, start the listener for InfluxDBSink+InfluxDBSinkExtended:
+--conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink,ch.cern.sparkmeasure.InfluxDBSinkExtended
+
+Configuration - InfluxDBSink parameters:
+
+--conf spark.sparkmeasure.influxdbURL (default "http://localhost:8086")
+--conf spark.sparkmeasure.influxdbUsername (default "")
+       Note: username and password can be empty only if InfluxDB runs with auth-enabled=false
+--conf spark.sparkmeasure.influxdbPassword (default "")
+--conf spark.sparkmeasure.influxdbName (default "sparkmeasure")
+       Note: the DB will be created if it does not exist already
+--conf spark.sparkmeasure.influxdbStagemetrics, (boolean, default is false)
+       Note: when this is true stage metrics will be collected too
+--conf spark.sparkmeasure.influxdbEnableBatch, boolean, default true
+       Note: this is to improve write performance, 
+             but it requires to explicitly stopping Spark Session for clean exit: spark.stop()
+             consider setting it to false if this is an issue
  ```
 
 The current implementation depends on "influxdb.java". If you deploy sparkMeasure from maven central,
