@@ -127,14 +127,18 @@ case class StageMetrics(sparkSession: SparkSession) {
     result = result :+ s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}\n"
     result = result :+ "Aggregated Spark stage metrics:"
 
-    for (x <- aggregatedMetrics) {
-      result = result :+ Utils.prettyPrintValues(x._1, x._2)
+    aggregatedMetrics.foreach {
+      case (metric: String, value: Long) =>
+        result = result :+ Utils.prettyPrintValues(metric, value)
+      case (_, _) => // We should no get here, in case add code to handle this
     }
+    result.mkString("\n")
 
     // additional details on stages and their duration
     result = result :+ "\nStages and their duration:"
-    for (x <- stages) {
-      result = result :+ Utils.prettyPrintValues("Stage " + x._1.toString + " duration", x._2)
+    stages.foreach {
+      case (stageId: Int, duration: Long) =>
+        result = result :+ Utils.prettyPrintValues(stageId.toString, duration)
     }
 
     result.mkString("\n")
@@ -237,20 +241,15 @@ case class StageMetrics(sparkSession: SparkSession) {
                            labelName: String = sparkSession.sparkContext.appName,
                            labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
 
-    val nameTempView = "PerfStageMetrics"
-    createStageMetricsDF(nameTempView)
-    val aggregateDF = aggregateStageMetrics(nameTempView)
+    val aggregatedMetrics = aggregateStageMetrics()
 
     /** Prepare a summary of the stage metrics for Prometheus. */
     val pushGateway = PushGateway(serverIPnPort, metricsJob)
     var str_metrics = s""
-    val aggregateValues = aggregateDF.take(1)(0).toSeq
-    val cols = aggregateDF.columns
-    (cols zip aggregateValues)
-      .foreach {
-        case(n:String, v:Long) =>
-          str_metrics += pushGateway.validateMetric(n.toLowerCase()) + s" " + v.toString + s"\n"
-        case(_,_) => // We should no get here, in case add code to handle this
+
+    aggregatedMetrics.foreach {
+      case (metric: String, value: Long) =>
+          str_metrics += pushGateway.validateMetric(metric.toLowerCase()) + s" " + value.toString + s"\n"
       }
 
     /** Send stage metrics to Prometheus. */

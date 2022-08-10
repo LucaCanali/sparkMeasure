@@ -16,7 +16,7 @@ sbt package
 bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19 --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.12-0.1.jar
  ```
  
-### Stage Metrics
+### Collect and save Stage Metrics
 An example of how to collect task metrics aggregated at the stage execution level.
 Some relevant snippet of code are:
  ```scala
@@ -49,6 +49,11 @@ to study skew effects, otherwise consider using stagemetrics aggregation as pref
       spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
     }
     ```
+
+### Export to Prometheus PushGateway
+
+You have the option to export aggregated stage metrics and/or task metrics a Prometheus push gateway.
+See details at: [Prometheus Pushgateway](Prometheus.md)
 
 ### Run sparkMeasure using the packaged version from Maven Central
 

@@ -4,10 +4,8 @@ import java.net.{URL, URLEncoder, HttpURLConnection}
 import org.slf4j.LoggerFactory
 
 /**
- * Spark Measure package: proof-of-concept tool for measuring Spark performance metrics
- *   This is based on using Spark Listeners as data source and collecting metrics in a ListBuffer
- *   The list buffer is then transformed into a DataFrame for analysis
- *
+ * PushGateway
+ * Note this does not use the prometheous client bather rather implements it using and HTTP client
  * Http Client: send metrics to prometheus pushgateway
  *
  * Example usage for pushgateway:

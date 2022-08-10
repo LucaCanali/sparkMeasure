@@ -45,10 +45,10 @@ Configuration - InfluxDBSink parameters:
              consider setting it to false if this is an issue
  ```
 
-The current implementation depends on "influxdb.java". If you deploy sparkMeasure from maven central,
-the dependency is being taken care of.
+Note: The current implementation depends on "influxdb.java". If you deploy sparkMeasure from maven central,
+the dependency is being taken care of.  
 If you run sparkMeasure from a jar instead, you may need to add the dependency manually
-in spark-submit as in:
+in spark-submit/spark-shell as in:
  - `--packages org.influxdb:influxdb-java:2.14`
 Note currently we need to use influxdb-java version 2.14, as newer versions generate jar conflicts (tested up to Spark 3.3.0)
 
@@ -75,8 +75,8 @@ Note currently we need to use influxdb-java version 2.14, as newer versions gene
 docker run --name influx --network=host -d lucacanali/spark-dashboard:v01
 
 # Alternative 2.
-# Just run InfluxDB 
-docker run  --name influx --network=host -d influxdb:1.8.10
+# Start InfluxDB, for example using a docker image 
+docker run --name influx --network=host -d influxdb:1.8.10
 ```
 
 - Start Spark with the InfluxDBSink Listener
@@ -87,7 +87,7 @@ bin/spark-shell \
   --conf spark.sparkmeasure.influxdbStagemetrics=true
   --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
 
-// run Spark job/a query  
+// run a Spark job, this will produce metrics  
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show
 ```
 
@@ -98,9 +98,10 @@ spark.sql("select count(*) from range(1000) cross join range(1000) cross join ra
   - Task metrics for `task_metrics`, `tasks_ended` and `tasks_started` will only be populated if you use InfluxDBExtended class instead of InfluxDbSink
 - Connect to InfluxDB shell and explore the metrics collected:
 ```
+# Use this if you started InfluxDB uising a docker image
 docker exec -it influx /bin/bash
 
-#start the InfluxDB CLI
+# Start the InfluxDB CLI
 /usr/bin/influx
 
 > use sparkmeasure
@@ -123,33 +124,34 @@ tasks_started
 > show series
 key
 ---
-executors_started,applicationId=application_1562699646005_9843
-jobs_ended,applicationId=application_1562699646005_9843
-jobs_started,applicationId=application_1562699646005_9843
-queries_ended,applicationId=application_1562699646005_9843
-queries_started,applicationId=application_1562699646005_9843
-stages_ended,applicationId=application_1562699646005_9843
-stages_started,applicationId=application_1562699646005_9843
-task_metrics,applicationId=application_1562699646005_9843
-tasks_ended,applicationId=application_1562699646005_9843
-tasks_started,applicationId=application_1562699646005_9843
-
-> select * from /queries/
-name: queries_ended
-time                applicationId       description queryId
-----                -------------       ----------- -------
-1659987980943000000 local-1659987970333             0
-
+executors_started,applicationId=noAppId
+jobs_ended,applicationId=local-1660122150941
+jobs_started,applicationId=local-1660122150941
+queries_ended,applicationId=local-1660122150941
+queries_started,applicationId=local-1660122150941
+stage_metrics,applicationId=local-1660122150941
+stages_ended,applicationId=local-1660122150941
+stages_started,applicationId=local-1660122150941
+task_metrics,applicationId=local-1660122150941
+tasks_ended,applicationId=local-1660122150941
+tasks_started,applicationId=local-1660122150941
+> select * from queries_started
 name: queries_started
 time                applicationId       description          queryId
 ----                -------------       -----------          -------
-1659987978905000000 local-1659987970333 show at <console>:23 0
-
+1660122211786000000 local-1660122150941 show at <console>:23 0
 > select * from /executors/
 name: executors_started
 time                applicationId executorHost              executorId totalCores
 ----                ------------- ------------              ---------- ----------
-1659987970509000000 noAppId       host1234.cern.ch driver     8
+1660122151091000000 noAppId       pcitdbgpu1.dyndns.cern.ch driver     8
+> select * from stage_metrics
+name: stage_metrics
+time                applicationId       attemptNumber bytesRead bytesWritten completionTime executorCpuTime executorDeserializeCpuTime executorDeserializeTime executorRunTime failureReason jvmGCTime memoryBytesSpilled peakExecutionMemory recordsRead recordsWritten resultSerializationTime resultSize shuffleBytesWritten shuffleFetchWaitTime shuffleLocalBlocksFetched shuffleLocalBytesRead shuffleRecordsRead shuffleRecordsWritten shuffleRemoteBlocksFetched shuffleRemoteBytesRead shuffleRemoteBytesReadToDisk shuffleTotalBlocksFetched shuffleTotalBytesRead shuffleWriteTime stageId submissionTime
+----                -------------       ------------- --------- ------------ -------------- --------------- -------------------------- ----------------------- --------------- ------------- --------- ------------------ ------------------- ----------- -------------- ----------------------- ---------- ------------------- -------------------- ------------------------- --------------------- ------------------ --------------------- -------------------------- ---------------------- ---------------------------- ------------------------- --------------------- ---------------- ------- --------------
+1660122213061000000 local-1660122150941 0             0         0            1660122213061  82265168        1039200151                 3171                    301                           144       0                  0                   1000        0              7                       12119      0                   0                    0                         0                     0                  0                     0                          0                      0                            0                         0                     0                0       1660122212450
+1660122213630000000 local-1660122150941 0             0         0            1660122213630  2180200879      49937229                   155                     2491                          0         0                  0                   1000        0              7                       16134      472                 0                    0                         0                     0                  8                     0                          0                      0                            0                         0                     65588303         1       1660122213240
+1660122213764000000 local-1660122150941 0             0         0            1660122213764  38334075        2650585                    2                       39                            0         0                  0                   0           0              0                       2667       0                   0                    8                         472                   8                  0                     0                          0                      0                            8                         472                   0                3       1660122213711
 ```
 
 ## List of the Task Metrics collected by InfluxDBSink

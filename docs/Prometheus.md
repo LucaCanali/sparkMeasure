@@ -30,7 +30,7 @@ https://prometheus.io/docs/instrumenting/exposition_formats/
 
 **Examples:**
  
-- Start the prometheus gateway. For testing you can use:
+- Start the prometheus gateway. For testing, you can use:
 `docker run -d -p 9091:9091 prom/pushgateway`
 
 1. Measure metrics at the Stage level (example in Scala):

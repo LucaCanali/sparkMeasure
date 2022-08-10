@@ -112,10 +112,10 @@ case class TaskMetrics(sparkSession: SparkSession) {
     result = result :+ (s"Spark Context default degree of parallelism = ${sparkSession.sparkContext.defaultParallelism}\n")
     result = result :+ ("Aggregated Spark task metrics:")
 
-    for (x <- aggregatedMetrics) {
-      result = result :+ Utils.prettyPrintValues(x._1, x._2)
+    aggregatedMetrics.foreach {
+      case (metric: String, value: Long) =>
+        result = result :+ Utils.prettyPrintValues(metric, value)
     }
-
     result.mkString("\n")
   }
 
@@ -211,20 +211,15 @@ case class TaskMetrics(sparkSession: SparkSession) {
                            labelName: String = sparkSession.sparkContext.appName,
                            labelValue: String = sparkSession.sparkContext.applicationId): Unit = {
 
-    val nameTempView = "PerfTaskMetrics"
-    createTaskMetricsDF(nameTempView)
-    val aggregateDF = aggregateTaskMetrics(nameTempView)
+    val aggregatedMetrics = aggregateTaskMetrics()
 
     /** Prepare a summary of the task metrics for Prometheus. */
     val pushGateway = PushGateway(serverIPnPort, metricsJob)
     var str_metrics = s""
-    val aggregateValues = aggregateDF.take(1)(0).toSeq
-    val cols = aggregateDF.columns
-    (cols zip aggregateValues)
-      .foreach {
-        case(n:String, v:Long) =>
-          str_metrics += pushGateway.validateMetric(n.toLowerCase()) + s" " + v.toString + s"\n"
-        case(_,_) => // We should no get here, in case add code to handle this
+
+    aggregatedMetrics.foreach {
+      case (metric: String, value: Long) =>
+          str_metrics += pushGateway.validateMetric(metric.toLowerCase()) + s" " + value.toString + s"\n"
       }
 
     /** Send task metrics to Prometheus. */

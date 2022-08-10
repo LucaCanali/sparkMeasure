@@ -103,7 +103,8 @@ stagemetrics aggregation as preferred choice.
 One simple use case is to make use of the data collected and reported by stagemetrics and taskmetrics 
 printReport methods for immediate troubleshooting and workload analysis.  
 You also have options to save metrics aggregated as in the printReport output.  
-Another option is to export the metrics to an external system, such as [Prometheus Pushgateway](Prometheus.md) 
+
+Another option is to export the metrics to an external system, see details at [Prometheus Pushgateway](Prometheus.md) 
   
 - Example on how to export raw Stage metrics data in json format
     ```python
