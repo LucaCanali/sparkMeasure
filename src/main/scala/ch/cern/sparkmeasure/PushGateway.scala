@@ -147,12 +147,12 @@ case class PushGateway(serverIPnPort: String, metricsJob: String) {
       if (responseCode != 202) // 202 Accepted, 400 Bad Request
         logger.error(s"Data sent error, url: '$urlFull', response: $responseCode '$responseMessage'")
     } catch {
-      case ioe: java.io.IOException =>
-        println("java.io.IOException")
-        logger.error(s"Data sent error, url: '$urlFull', " + ioe.getMessage())
       case ste: java.net.SocketTimeoutException =>
         println("java.net.SocketTimeoutException")
         logger.error(s"Data sent error, url: '$urlFull', " + ste.getMessage())
+      case ioe: java.io.IOException =>
+        println("java.io.IOException")
+        logger.error(s"Data sent error, url: '$urlFull', " + ioe.getMessage())
     }
 
   }

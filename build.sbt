@@ -3,7 +3,7 @@ name := "spark-measure"
 version := "0.20-SNAPSHOT"
 
 scalaVersion := "2.12.15"
-crossScalaVersions := Seq("2.12.15")
+crossScalaVersions := Seq("2.12.15", "2.13.8")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 

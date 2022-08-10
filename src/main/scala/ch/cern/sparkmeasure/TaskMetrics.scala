@@ -127,7 +127,7 @@ case class TaskMetrics(sparkSession: SparkSession) {
   // into a DataFrame and register it as a view for querying with SQL
   def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
     import sparkSession.implicits._
-    val resultDF = listenerTask.taskMetricsData.toDF
+    val resultDF = listenerTask.taskMetricsData.toSeq.toDF()
     resultDF.createOrReplaceTempView(nameTempView)
     logger.warn(s"Stage metrics data refreshed into temp view $nameTempView")
     resultDF
