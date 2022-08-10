@@ -138,7 +138,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     result = result :+ "\nStages and their duration:"
     stages.foreach {
       case (stageId: Int, duration: Long) =>
-        result = result :+ Utils.prettyPrintValues(stageId.toString, duration)
+        result = result :+ Utils.prettyPrintValues(s"Stage $stageId duration", duration)
     }
 
     result.mkString("\n")
