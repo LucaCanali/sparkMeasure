@@ -13,7 +13,7 @@ import org.apache.spark.SparkConf
 /**
  * The object IOUtils contains some helper code for the sparkMeasure package
  * The methods readSerializedStageMetrics and readSerializedTaskMetrics are used to read data serialized into files by
- * "flight recorder" mode.
+ * the "flight recorder" mode.
  * Two serialization modes are supported currently: java serialization and JSON serialization with jackson library.
  */
 object IOUtils {

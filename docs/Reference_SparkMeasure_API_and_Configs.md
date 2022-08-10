@@ -340,3 +340,53 @@ Configuration - KafkaSink parameters:
 This code depends on "kafka-clients", you may need to add the dependency explicitly:
   --packages org.apache.kafka:kafka-clients:3.2.1
 ```
+
+## IOUtils
+
+The object IOUtils contains some helper code for the sparkMeasure package
+The methods readSerializedStageMetrics and readSerializedTaskMetrics are used to read data serialized into files by
+the "flight recorder" mode.
+Two serialization modes are supported currently: java serialization and JSON serialization with jackson library.
+
+
+```
+def writeSerializedJSON(fullPath: String, metricsData: AnyRef): Unit =
+def writeSerializedJSONToHadoop(fullPath: String, metricsData: AnyRef, conf: SparkConf): Unit
+def writeToStringSerializedJSON(metricsData: AnyRef): String
+def writeSerialized(fullPath: String, metricsData: Any): Unit
+
+def readSerializedStageMetricsJSON(stageMetricsFileName: String): List[StageVals]
+def readSerializedStageMetrics(stageMetricsFileName: String): ListBuffer[StageVals]
+def readSerializedTaskMetricsJSON(taskMetricsFileName: String): List[TaskVals]
+def readSerializedTaskMetrics(stageMetricsFileName: String): ListBuffer[TaskVals]
+```
+
+## Utils
+
+The object Utils contains some helper code for the sparkMeasure package
+The methods formatDuration and formatBytes are used for printing stage metrics reports
+
+```
+// Boilerplate code for pretty printing
+def formatDuration(milliseconds: Long): String 
+def formatBytes(bytes: Long): String
+def prettyPrintValues(metric: String, value: Long): String
+def encodeTaskLocality(taskLocality: TaskLocality.TaskLocality): Int 
+
+// Return the data structure use to compute metrics reports
+def zeroMetricsStage() : LinkedHashMap[String, Long]
+def zeroMetricsTask() : LinkedHashMap[String, Long]
+
+// Handle metrics format parameter
+def parseMetricsFormat(conf: SparkConf, logger: Logger, defaultFormat:String) : String
+def parseMetricsFilename(conf: SparkConf, logger: Logger, defaultFileName:String) : String 
+
+// Parameter parsing
+def parsePrintToStdout(conf: SparkConf, logger: Logger, defaultVal:Boolean) : Boolean
+def parseMetricsFilename(conf: SparkConf, logger: Logger, defaultFileName:String) : String 
+def parseInfluxDBURL(conf: SparkConf, logger: Logger) : String
+def parseInfluxDBCredentials(conf: SparkConf, logger: Logger) : (String,String)
+def parseInfluxDBName(conf: SparkConf, logger: Logger) : String
+def parseInfluxDBStagemetrics(conf: SparkConf, logger: Logger) : Boolean
+def parseKafkaConfig(conf: SparkConf, logger: Logger) : (String,String)
+```
