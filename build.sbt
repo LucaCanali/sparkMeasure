@@ -1,6 +1,6 @@
 name := "spark-measure"
 
-version := "0.20"
+version := "0.21-SNAPSHOT"
 
 scalaVersion := "2.12.15"
 crossScalaVersions := Seq("2.12.15", "2.13.8")
@@ -18,7 +18,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.9" % "test"
 libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.27.2" % "test"
 
 // publishing to Sonatype Nexus repository and Maven
-publishMavenStyle := true
+publishMavenStyle := false
 
 organization := "ch.cern.sparkmeasure"
 description := "sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads."
