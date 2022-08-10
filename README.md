@@ -110,7 +110,7 @@ Stage 3 duration => 49 (49 ms)
   - this is slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI, Spark 3.x
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.18
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -132,7 +132,7 @@ Stage 3 duration => 49 (49 ms)
      - **[Instrument Python code](docs/Instrument_Python_code.md)**
  
     
-  * **"Flight Recorder" mode**: 
+  * **Flight Recorder mode**: 
     * SparkMeasure in flight recorder will collect metrics transparently, without any need for you 
     to change your code. 
     * Metrics can be saved to a file, locally or to a Hadoop-compliant filesystem
@@ -141,13 +141,16 @@ Stage 3 duration => 49 (49 ms)
       - **[Flight Recorder mode with file sink](docs/Flight_recorder_mode_FileSink.md)**
       - **[Flight Recorder mode with InfluxDB sink](docs/Flight_recorder_mode_InfluxDBSink.md)**
       - **[Flight Recorder mode with Apache Kafka sink](docs/Flight_recorder_mode_KafkaSink.md)**
+
   
-  * **[SparkMeasure API and configuration reference](docs/Reference_SparkMeasure_API_and_Configs.md)**  
+  * **Reference**
+    * **[SparkMeasure API and configuration](docs/Reference_SparkMeasure_API_and_Configs.md)**  
+
 
   * **Additional documentation**:
-    - Presentations at Spark Summit:
+    - Presentations at Spark/Data+AI Summit:
       - [Performance Troubleshooting Using Apache Spark Metrics](https://databricks.com/session_eu19/performance-troubleshooting-using-apache-spark-metrics)
-      - [Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies](https://spark-summit.org/eu-2017/events/apache-spark-performance-troubleshooting-at-scale-challenges-tools-and-methodologies/)
+      - [Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies](http://canali.web.cern.ch/docs/Spark_Summit_2017EU_Performance_Luca_Canali_CERN.pdf)
     - Blog articles:
       - [2018: SparkMeasure, a tool for performance troubleshooting of Apache Spark workloads](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
       - [2017: SparkMeasure blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
