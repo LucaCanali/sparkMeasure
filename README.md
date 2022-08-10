@@ -16,8 +16,9 @@ Use sparkMeasure for:
    
 **Compatibility:**
   * Use with Spark 3.x and Spark 2.x
-     * Note for Spark 2.4 and 2.3 with scala 2_11, please use version 0.19
-     * Note for Spark 2.1 and 2.2, please use version 0.16
+     * For Scala 2.12 and 2.13
+     * For scala 2.11 with Spark 2.4 or 2.3, please use version 0.19
+     * For Spark 2.1 and 2.2, please use version 0.16
      * Use with Scala, Python, and Java
 
 Main author and contact: Luca.Canali@cern.ch
@@ -25,18 +26,23 @@ Main author and contact: Luca.Canali@cern.ch
 ---
 ### Getting started with sparkMeasure
  * Spark 3.x and 2.4 with Scala 2.12:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19`
-      - note: also install `pip install sparkmeasure` to get the Python wrapper API. 
- * Spark 2.x with Scala 2.11:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
+   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20`
+   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20`
+      - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/). 
+ 
+ 
+ * Spark 3.3.0 and higher with Scala 2.13:
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.20`
+   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.20`
      - note: `pip install sparkmeasure` to get the Python wrapper API.
+
+
  * Note: see sparkMeasure versions available on [Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
  * Bleeding edge: build sparkMeasure jar from master using sbt: `sbt +package` and use `--jars`
    with the jar just built instead of using `--packages`.
-   * Note: you can find the latest jars already built as artifacts in the [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
+ * Note: you can find the latest jars built as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
 
+---
 ### Examples notebooks and CLI for interactive use of sparkMeasure
 
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)  
@@ -47,18 +53,19 @@ Main author and contact: Luca.Canali@cern.ch
 
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyter_Python_getting_started.ipynb)
   
+
 - Command line, collecting Stage-level metrics:
   ```
-  # Scala CLI, Spark 3.x
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
+  # Scala CLI
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
   ```
   ```
-  # Python CLI, Spark 3.x
+  # Python CLI
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
@@ -110,8 +117,8 @@ Stage 3 duration => 49 (49 ms)
 - Command line, collecting Task-level metrics:
   - this is slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
-  # Scala CLI, Spark 3.x
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
+  # Scala CLI
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
