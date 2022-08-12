@@ -82,6 +82,20 @@ Stage 0 duration => 573 (0.6 s)
 Stage 1 duration => 354 (0.4 s)
 Stage 3 duration => 67 (67 ms)
 ```
+ 
+- New in sparkMeasure v01: memory metrics report:
+```
+> stageMetrics.printMemoryReport
+
+Additional stage-level executor metrics (memory usasge info):
+
+Stage 0 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
+Stage 0 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+Stage 1 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
+Stage 1 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+Stage 3 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
+Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+```
 
 2. An alternative way to collect and print metrics:
     ```scala

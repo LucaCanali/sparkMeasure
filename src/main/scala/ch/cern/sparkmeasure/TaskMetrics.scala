@@ -1,11 +1,10 @@
 package ch.cern.sparkmeasure
 
-import org.apache.spark.scheduler._
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 
 import scala.collection.mutable.{LinkedHashMap, ListBuffer}
-import scala.math.{max, min}
+import scala.math.max
 
 /**
   *  Task Metrics: collects metrics data at Task granularity

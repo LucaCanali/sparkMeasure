@@ -27,6 +27,9 @@ Some relevant snippet of code are:
  
      // print report to standard output
      stageMetrics.printReport()
+
+     // New in sparkMeasure v0.21, memory metrics report:
+     stageMetrics.printMemoryReport()
  
      //save session metrics data
      val df = stageMetrics.createStageMetricsDF("PerfStageMetrics")

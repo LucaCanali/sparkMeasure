@@ -1,14 +1,15 @@
 package ch.cern.sparkmeasure
 
-import scala.collection.mutable.ListBuffer
 import java.io._
 import java.nio.file.Paths
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import com.fasterxml.jackson.module.scala.{DefaultScalaModule,ScalaObjectMapper}
+
 import org.apache.spark.SparkConf
+
+import scala.collection.mutable.ListBuffer
 
 /**
  * The object IOUtils contains some helper code for the sparkMeasure package

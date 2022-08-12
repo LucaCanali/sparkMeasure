@@ -40,18 +40,19 @@ object Utils {
     val billion = 1024L*1024L*1024L
     val million = 1024L*1024L
     val thousand = 1024L
+    val bytesDouble = bytes.toDouble
 
     val (value, unit): (Double, String) = {
-      if (bytes >= 2*trillion) {
-        (bytes / trillion, " TB")
+      if (bytesDouble >= 2*trillion) {
+        (bytesDouble / trillion, " TB")
       } else if (bytes >= 2*billion) {
-        (bytes / billion, " GB")
+        (bytesDouble / billion, " GB")
       } else if (bytes >= 2*million) {
-        (bytes / million, " MB")
+        (bytesDouble / million, " MB")
       } else if (bytes >= 2*thousand) {
-        (bytes / thousand, " KB")
+        (bytesDouble / thousand, " KB")
       } else {
-        (bytes, " Bytes")
+        (bytesDouble, " Bytes")
       }
     }
     if (unit == " Bytes") {
@@ -246,6 +247,23 @@ object Utils {
       logger.info(s"Kafka topic: $topic")
     }
     (broker, topic)
+  }
+
+  // handle list of metrics to process by the listener onExecutorMetricsUpdate
+  // returns an array with the metrics to process
+  def parseExecutorMetricsConfig(conf: SparkConf, logger: Logger) : Array[String] = {
+    val metrics = conf.get("spark.sparkmeasure.stageinfo.executormetrics",
+      "JVMHeapMemory,OnHeapExecutionMemory")
+    logger.info(s"Executor metrics being collected: ${metrics.toString}")
+    metrics.split(",", -1)
+  }
+
+  // boolean flag, turns on/off collecting and reporting additional stage info (duration and memory details)
+  def parseExtraStageMetrics(conf: SparkConf, logger: Logger) : Boolean = {
+    // handle InfluxDB username and password
+    val extraStageMetrics = conf.getBoolean("spark.sparkmeasure.stageinfo.verbose", true)
+    logger.info(s"Collect and report extra stage metrics: ${extraStageMetrics.toString}")
+    extraStageMetrics
   }
 
 }

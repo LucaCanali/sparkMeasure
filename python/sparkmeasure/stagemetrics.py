@@ -26,6 +26,12 @@ class StageMetrics:
     def print_report(self):
         print(self.report())
 
+    def report_memory(self):
+        return self.stagemetrics.reportMemory()
+
+    def print_memory_report(self):
+        print(self.report_memory())
+
     def runandmeasure(self, env, codetorun):
         self.begin()
         exec(codetorun, env)

@@ -26,24 +26,31 @@ Main author and contact: Luca.Canali@cern.ch
 ---
 ### Getting started with sparkMeasure
  * Spark 3.x and 2.4 with Scala 2.12:
-   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20`
-   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20`
+   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21`
+   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/). 
  
  
  * Spark 3.3.0 and higher with Scala 2.13:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.20`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.20`
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.21`
+   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.21`
      - note: `pip install sparkmeasure` to get the Python wrapper API.
 
 
- * Note: see sparkMeasure versions available on [Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
- * Bleeding edge: build sparkMeasure jar from master using sbt: `sbt +package` and use `--jars`
+* Spark 2.4 and 2.3 with Scala 2.11:
+    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.113:0.19`
+    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
+        - note: `pip install sparkmeasure` to get the Python wrapper API.
+
+
+ * Notes: 
+    * See the list of sparkMeasure versions available on [Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
+    * You can find the latest jars built as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
+    * Bleeding edge: build sparkMeasure jar from master using sbt: `sbt +package` and use `--jars`
    with the jar just built instead of using `--packages`.
- * Note: you can find the latest jars built as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
 
 ---
-### Examples notebooks and CLI for interactive use of sparkMeasure
+### Examples of interactive use of sparkMeasure, from notebooks and CLI
 
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2729765977711377/442806354506758/latest.html)  
 
@@ -54,10 +61,10 @@ Main author and contact: Luca.Canali@cern.ch
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyter_Python_getting_started.ipynb)
   
 
-- Command line, collecting Stage-level metrics:
+- Stage-level metrics from command line:
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -65,7 +72,7 @@ Main author and contact: Luca.Canali@cern.ch
   ```
   # Python CLI
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
@@ -114,11 +121,32 @@ Stage 1 duration => 416 (0.4 s)
 Stage 3 duration => 49 (49 ms)
 ```
 
-- Command line, collecting Task-level metrics:
-  - this is slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
+- Stage metrics collection mode has an optional memory report command
+  - new in sparkMeasure since version 0.21, use with Spark versions 3.1 and above 
+  - note: this report requires per-stage memory (executor metrics) data which is sent by the
+  executors at each heartbeat to the driver, there could be a small delay or the order of
+  a few seconds between the end of the job and the time the last metrics value is received. 
+  - If you receive the error message java.util.NoSuchElementException: key not found,
+  retry running the report after waiting for a few seconds.
+```
+(scala)> stageMetrics.printMemoryReport
+(python)> stagemetrics.print_memory_report()
+
+Additional stage-level executor metrics (memory usasge info):
+
+Stage 0 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
+Stage 0 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+Stage 1 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
+Stage 1 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+Stage 3 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
+Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+```
+
+- Task-level metrics, from command line:
+    - this is slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.20
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())

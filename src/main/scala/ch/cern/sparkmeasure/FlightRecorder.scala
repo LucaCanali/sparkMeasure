@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory
  *                                                       to stdout.
  */
 
-class FlightRecorderStageMetrics(conf: SparkConf) extends StageInfoRecorderListener {
+class FlightRecorderStageMetrics(conf: SparkConf) extends
+  StageInfoRecorderListener(false, Array.empty[String]) {
+  // Note no extra Spark executor (memory) metrics collected on FlightRecorder for the FIle Sink
 
   lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 

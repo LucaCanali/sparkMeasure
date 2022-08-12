@@ -1,11 +1,9 @@
 package ch.cern.sparkmeasure
 
-import collection.mutable.LinkedHashMap
-
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.{ListBuffer, LinkedHashMap}
 import scala.math.{min, max}
 
 /**
@@ -27,9 +25,11 @@ import scala.math.{min, max}
 case class StageMetrics(sparkSession: SparkSession) {
 
   lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
+  val stageInfoVerbose = Utils.parseExtraStageMetrics(sparkSession.sparkContext.getConf, logger)
+  val executorMetricsNames = Utils.parseExecutorMetricsConfig(sparkSession.sparkContext.getConf, logger)
 
   // This inserts and starts the custom Spark Listener into the live Spark Context
-  val listenerStage = new StageInfoRecorderListener
+  val listenerStage = new StageInfoRecorderListener(stageInfoVerbose, executorMetricsNames)
   registerListener(sparkSession, listenerStage)
 
   // Variables used to store the start and end time of the period of interest for the metrics report
@@ -110,7 +110,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   def stagesDuration() : LinkedHashMap[Int, Long] = {
 
     val stages : LinkedHashMap[Int, Long] = LinkedHashMap.empty[Int,Long]
-    for (metrics <- listenerStage.stageMetricsData
+    for (metrics <- listenerStage.stageMetricsData.sortBy(_.stageId)
          if (metrics.submissionTime >= beginSnapshot && metrics.completionTime <= endSnapshot)) {
       stages += (metrics.stageId -> metrics.stageDuration)
     }
@@ -135,10 +135,56 @@ case class StageMetrics(sparkSession: SparkSession) {
     result.mkString("\n")
 
     // additional details on stages and their duration
-    result = result :+ "\nStages and their duration:"
+    // can be switched off with a configuration
+    if (stageInfoVerbose) {
+      result = result :+ "\nStages and their duration:"
+      stages.foreach {
+        case (stageId: Int, duration: Long) =>
+          result = result :+ Utils.prettyPrintValues(s"Stage $stageId duration", duration)
+      }
+    }
+
+    result.mkString("\n")
+  }
+
+  // Custom aggregations and post-processing of executor metrics data with memory usage details
+  // Note this report requires per-stage memory (executor metrics) data which is sent by the executors
+  // at each heartbeat to the driver, there could be a small delay or the order of a few seconds
+  // between the end of the job and the time the last metrics value is received
+  // if you receive the error message java.util.NoSuchElementException: key not found:
+  // retry to run the report after a few seconds
+    def reportMemory(): String = {
+
+    var result = ListBuffer[String]()
+    val stages = {for (metrics <- listenerStage.stageMetricsData) yield metrics.stageId}.sorted
+
+    // additional details on executor (memory) metrics
+    result = result :+ "\nAdditional stage-level executor metrics (memory usage info):\n"
+
     stages.foreach {
-      case (stageId: Int, duration: Long) =>
-        result = result :+ Utils.prettyPrintValues(s"Stage $stageId duration", duration)
+      case (stageId: Int) =>
+        for (metric <- executorMetricsNames) {
+          val stageExecutorMetricsRaw = listenerStage.stageIdtoExecutorMetrics(stageId, metric)
+
+          // find maximum metric value and corresponding executor
+          val (executorMaxVal, maxVal) = stageExecutorMetricsRaw.maxBy(_._2)
+
+          // This code is commented on purpose
+          // It's there if in the future you want to have more complex metrics
+          // 1. remove duplicate stageId values more precisely take the maximum value for each stageId
+          // val stageExecutorMetrics  = stageExecutorMetricsRaw.groupBy(_._1).transform((_,v) => v.sortBy(_._2).last)
+          // 2. find maximum value and corresponding executor value
+          // val (executorMaxVal, maxVal) = stageExecutorMetrics.maxBy { case (key, value) => value }._2
+
+          val messageHead = Utils.prettyPrintValues(s"Stage $stageId $metric maxVal bytes", maxVal)
+          val messageTail =
+            if (executorMaxVal != "driver") {
+              s" on executor $executorMaxVal"
+            } else {
+            ""
+            }
+          result = result :+ (messageHead + messageTail)
+        }
     }
 
     result.mkString("\n")
@@ -147,6 +193,17 @@ case class StageMetrics(sparkSession: SparkSession) {
   // Runs report and prints it
   def printReport(): Unit = {
     println(report())
+  }
+
+  // Runs the memory report and prints it
+  def printMemoryReport(): Unit = {
+    if (stageInfoVerbose) {
+      println(reportMemory())
+    }
+    else {
+      println("Collecting data for the memory is off")
+      println("Check the value of spark.sparkmeasure.stageinfo.verbose")
+    }
   }
 
   // Legacy transformation of data recorded from the custom Stage listener

@@ -4,9 +4,16 @@ This doc is a reference to the sparkMeasure API, modules, and configuration para
 Contents:  
 - [StageMetrics - Scala](#stagemetrics---scala)
 - [StageMetrics - Python](#stagemetrics---python)
+- [StageInfoRecorderListener](#stageinforecorderlistener)
 - [TaskMetrics - Scala](#taskmetrics---scala)
+- [TaskInfoRecorderListener](#taskinforecorderlistener)
 - [TaskMetrics - Python](#taskmetrics---python)
-  
+- [Flight Recorder Mode - File Sink](#flight-recorder-mode---file-sink)
+- [InfluxDBSink and InfluxDBSinkExtended](#influxdbsink-and-influxdbsinkextended)
+- [KafkaSink and KafkaSinkExtended](#kafkasink-and-kafkasinkextended)
+- [IOUtils](#ioutils)
+- [Utils](#utils)
+
 ## StageMetrics - Scala
 
 ```
@@ -18,6 +25,14 @@ Contents:
   Example usage for stage metrics:
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
+
+Configuration:
+
+spark.sparkmeasure.stageinfo.verbose, boolean, default true
+   Note: this control print the stage info report and collecting executor memory metrics  
+spark.sparkmeasure.stageinfo.executormetrics, string, default "JVMHeapMemory,OnHeapExecutionMemory")
+   Note: this is the list of executor metrics that are captured
+   documentation on the available metrics at: https://spark.apache.org/docs/latest/monitoring.html#executor-metrics
 ```
 
 Methods:  
@@ -38,6 +53,17 @@ def report(): String
 
 // Runs report and prints it
 def printReport(): Unit
+
+// Custom aggregations and post-processing of executor metrics data with memory usage details
+// Note this report requires per-stage memory (executor metrics) data which is sent by the executors
+// at each heartbeat to the driver, there could be a small delay or the order of a few seconds
+// between the end of the job and the time the last metrics value is received
+// if you receive the error message java.util.NoSuchElementException: key not found,
+// retry running the report after waiting for a few seconds.
+def reportMemory(): String
+
+// Runs the memory report and prints it
+def printMemoryReport(): Unit
 
 // Legacy transformation of data recorded from the custom Stage listener
 // into a DataFrame and register it as a view for querying with SQL
@@ -83,14 +109,17 @@ def saveData(df: DataFrame, fileName: String, fileFormat: String = "json", saveM
 Data structures:
 
 val stageMetricsData: ListBuffer[StageVals] = ListBuffer.empty[StageVals]
-val StageIdtoJobId: HashMap[Int, Int] = HashMap.empty[Int, Int]
-val StageIdtoJobGroup: HashMap[Int, String] = HashMap.empty[Int, String]
+val stageIdtoJobId: HashMap[Int, Int] = HashMap.empty[Int, Int]
+val stageIdtoJobGroup: HashMap[Int, String] = HashMap.empty[Int, String]
+val stageIdtoExecutorMetrics: HashMap[(Int, String), ListBuffer[(String, Long)]]
 
 Methods:
 
 // This methods fires at the end of the stage and collects metrics flattened into the stageMetricsData ListBuffer
 override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit
 override def onJobStart(jobStart: SparkListenerJobStart): Unit 
+// Record executor metrics detailed per stage, this provides memory utilization values. Use with Spark 3.1.0 and above
+override def onExecutorMetricsUpdate(executorMetricsUpdate: SparkListenerExecutorMetricsUpdate): Unit
 
 // contains the list of task metrics and other measurements of interest at the Stage level,
 case class StageVals
@@ -119,6 +148,10 @@ def end(self):
 def report(self):
 
 def print_report(self):
+
+def report_memory(self):
+
+def print_memory_report(self):
 
 def runandmeasure(self, env, codetorun):
 

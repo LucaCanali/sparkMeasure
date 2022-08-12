@@ -1,11 +1,8 @@
 package ch.cern.sparkmeasure
 
 import org.apache.spark.scheduler._
-import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.slf4j.LoggerFactory
-import scala.collection.mutable.ListBuffer
 
-
+import scala.collection.mutable.{HashMap, ListBuffer}
 
 // Contains the list of task metrics and other measurements of interest at the Task level, as a case class
 case class TaskVals(jobId: Int, jobGroup: String, stageId: Int, index: Long, launchTime: Long, finishTime: Long,
@@ -31,8 +28,8 @@ case class TaskVals(jobId: Int, jobGroup: String, stageId: Int, index: Long, lau
 class TaskInfoRecorderListener() extends SparkListener {
 
   val taskMetricsData: ListBuffer[TaskVals] = ListBuffer.empty[TaskVals]
-  val StageIdtoJobId: collection.mutable.HashMap[Int, Int] = collection.mutable.HashMap.empty[Int, Int]
-  val StageIdtoJobGroup: collection.mutable.HashMap[Int, String] = collection.mutable.HashMap.empty[Int, String]
+  val StageIdtoJobId: HashMap[Int, Int] = HashMap.empty[Int, Int]
+  val StageIdtoJobGroup: HashMap[Int, String] = HashMap.empty[Int, String]
 
   // Collects information made available at job start
   override def onJobStart(jobStart: SparkListenerJobStart): Unit = {

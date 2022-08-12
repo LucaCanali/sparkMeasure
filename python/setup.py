@@ -11,7 +11,7 @@ Use from python command line or in Jupyter notebook environments, or as a tool t
 **[Link to sparkMeasure GitHub page and documentation](https://github.com/lucacanali/sparkMeasure)**"""
 
 setup(name='sparkmeasure',
-    version='0.19.0',
+    version='0.21.0',
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",

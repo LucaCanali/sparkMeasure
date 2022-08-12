@@ -39,7 +39,9 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     stagemetrics.begin()
     spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
     stagemetrics.end()
+
     stagemetrics.print_report()
+    stageMetrics.print_memory_report()
    ```
 2. Similar to example 1, but with a shortcut to run code and measure it with one command line:
     ```python
@@ -48,6 +50,8 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     
     stagemetrics.runandmeasure(globals(),
     'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
+   
+   stageMetrics.print_memory_report()
    ```
 
 ### Jupyter notebook example
@@ -134,5 +138,18 @@ Another option is to export the metrics to an external system, see details at [P
     taskMetrics.save_data(df.orderBy("jobId", "stageId", "index"), "taskmetrics_test3", "json")
     ```
 
+- New in sparkMeasure v01: memory metrics report:
+```
+stageMetrics.print_memory_report()
+
+Additional stage-level executor metrics (memory usage info):
+
+Stage 0 JVMHeapMemory maxVal bytes => 279558120 (266.6 MB)
+Stage 0 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+Stage 1 JVMHeapMemory maxVal bytes => 279558120 (266.6 MB)
+Stage 1 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+Stage 3 JVMHeapMemory maxVal bytes => 279558120 (266.6 MB)
+Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
+```
 
     

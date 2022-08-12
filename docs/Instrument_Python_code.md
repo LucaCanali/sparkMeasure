@@ -25,6 +25,9 @@ How to run the example:
 
     # print report to standard output
     stagemetrics.print_report()
+    
+    # New in sparkMeasure v0.21, memory metrics report:
+    stageMetrics.print_memory_report()
 
     # save session metrics data in json format (default)
     df = stagemetrics.create_stagemetrics_DF("PerfStageMetrics")
