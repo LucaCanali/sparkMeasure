@@ -11,7 +11,7 @@ You can find an example of how to instrument a Scala application running Apache 
  
 How to run the example:
  ```
-./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21 test_sparkmeasure_python.py
+bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21 <path_to_examples>/test_sparkmeasure_python.py
  ```
 
  Some relevant snippet of code are:
