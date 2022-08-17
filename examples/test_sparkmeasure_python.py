@@ -3,10 +3,9 @@ A simple example demonstrating the use of sparkMeasure to instrument Python code
 Prerequisite:
    pip install sparkmeasure
 Run with:
-  ./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19 test_sparkmeasure_python.py
+  ./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21 test_sparkmeasure_python.py
 """
 
-from __future__ import print_function
 from pyspark.sql import SparkSession
 from sparkmeasure import StageMetrics
 
