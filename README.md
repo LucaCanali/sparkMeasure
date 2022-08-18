@@ -21,7 +21,10 @@ Use sparkMeasure for:
      * For Spark 2.1 and 2.2, please use version 0.16
      * Use with Scala, Python, and Java
 
-Main author and contact: Luca.Canali@cern.ch
+Main author and contact: Luca.Canali@cern.ch  
+
+Related work: [Spark Dashboard](https://github.com/cerndb/spark-dashboard)
+simplifies the rollout of an Apache Spark Performance Dashboard using containers technology.
 
 ---
 ### Getting started with sparkMeasure
