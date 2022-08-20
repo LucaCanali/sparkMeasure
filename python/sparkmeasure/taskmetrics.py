@@ -13,7 +13,7 @@ class TaskMetrics:
     def __init__(self, sparksession):
         self.sparksession = sparksession
         self.sc = self.sparksession.sparkContext
-        self.taskmetrics = self.sc._jvm.ch.cern.sparkmeasure.TaskMetrics(self.sparksession._jsparkSession, False)
+        self.taskmetrics = self.sc._jvm.ch.cern.sparkmeasure.TaskMetrics(self.sparksession._jsparkSession)
 
     def begin(self):
         self.taskmetrics.begin()
