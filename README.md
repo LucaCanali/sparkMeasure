@@ -154,6 +154,15 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
   ```
+  ```
+  # Python CLI
+  pip install sparkmeasure
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21
+
+  from sparkmeasure import TaskMetrics
+  taskmetrics = TaskMetrics(spark)
+  taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
+  ```
 ---
 ### One tool for different use cases, links to documentation and examples
   * **Interactive mode**: 
