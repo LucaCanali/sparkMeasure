@@ -15,11 +15,11 @@ Use sparkMeasure for:
   - Link to [documentation, examples and API reference](#one-tool-for-different-use-cases-links-to-documentation-and-examples)
    
 **Compatibility:**
-  * Use with Spark 3.x and Spark 2.x
-     * For Scala 2.12 and 2.13
-     * For scala 2.11 with Spark 2.4 or 2.3, please use version 0.19
-     * For Spark 2.1 and 2.2, please use version 0.16
-     * Use with Scala, Python, and Java
+  * SparkMeasure works with Spark 3.x and Spark 2.x
+     * Use it from Scala, Python, and Java
+     * For Scala 2.12 and 2.13, please use the latest version, 0.21
+     * For Scala 2.11, with Spark 2.4 or 2.3, use version 0.19
+     * For Spark 2.1 and 2.2, use version 0.16
 
 Main author and contact: Luca.Canali@cern.ch  
 
