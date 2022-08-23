@@ -23,27 +23,28 @@ Use sparkMeasure for:
 
 Main author and contact: Luca.Canali@cern.ch  
 
-Related work: [Spark Dashboard](https://github.com/cerndb/spark-dashboard)
-simplifies the rollout of an Apache Spark Performance Dashboard using containers technology.
+Related work: **[Spark Dashboard](https://github.com/cerndb/spark-dashboard)**
+is meant to streamline the deployment of an Apache Spark Performance Dashboard using containers technology.
+It is implemented using Grafana, InfluxDB, and the [Spark metrics system](https://spark.apache.org/docs/latest/monitoring.html#metrics).
 
 ---
 ### Getting started with sparkMeasure
  * Spark 3.x and 2.4 with Scala 2.12:
    - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21`
    - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21`
-      - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/). 
+      - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
  
  
  * Spark 3.3.0 and higher with Scala 2.13:
    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.21`
    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.21`
-     - note: `pip install sparkmeasure` to get the Python wrapper API.
+     - note: `pip install sparkmeasure` to get the Python wrapper API
 
 
 * Spark 2.4 and 2.3 with Scala 2.11:
     - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.113:0.19`
     - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
-        - note: `pip install sparkmeasure` to get the Python wrapper API.
+        - note: `pip install sparkmeasure` to get the Python wrapper API
 
 
  * Notes: 
