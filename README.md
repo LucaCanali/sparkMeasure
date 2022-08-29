@@ -42,7 +42,7 @@ It is implemented using Grafana, InfluxDB, and the [Spark metrics system](https:
 
 
 * Spark 2.4 and 2.3 with Scala 2.11:
-    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.113:0.19`
+    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
     - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
         - note: `pip install sparkmeasure` to get the Python wrapper API
 
@@ -51,7 +51,7 @@ It is implemented using Grafana, InfluxDB, and the [Spark metrics system](https:
     * See the list of sparkMeasure versions available on [Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
     * You can find the latest jars built as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
     * Bleeding edge: build sparkMeasure jar from master using sbt: `sbt +package` and use `--jars`
-   with the jar just built instead of using `--packages`.
+   with the jar just built.
 
 ---
 ### Examples of interactive use of sparkMeasure, using notebooks and CLI
