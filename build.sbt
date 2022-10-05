@@ -1,13 +1,15 @@
 name := "spark-measure"
 
-version := "0.22-SNAPSHOT"
+version := "0.22"
 
 scalaVersion := "2.12.15"
 crossScalaVersions := Seq("2.12.15", "2.13.8")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-isSnapshot := true
+// publishing to Sonatype Nexus repository and Maven
+publishMavenStyle := true
+isSnapshot := false
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.3.0"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.3"
@@ -16,9 +18,6 @@ libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.2.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.9" % "test"
 libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.27.2" % "test"
-
-// publishing to Sonatype Nexus repository and Maven
-publishMavenStyle := false
 
 organization := "ch.cern.sparkmeasure"
 description := "sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads."
