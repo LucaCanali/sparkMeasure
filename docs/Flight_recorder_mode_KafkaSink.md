@@ -42,12 +42,12 @@ This code depends on "kafka-clients". If you deploy sparkMeasure from maven cent
 the dependency is being taken care of.
 If you run sparkMeasure from a jar instead, you may need to add the dependency manually
 in spark-submit as in:
- - `--packages org.apache.kafka:kafka-clients:3.2.1`
+ - `--packages org.apache.kafka:kafka-clients:3.3.1`
 
 ## Use cases
 
-- The original use case to develop KafkaSink was to extend Spark moinitoring, but dumping execution metrics into Kafka  performance dashboard
-  and use them to populate a Grafana dashboard
+- The original use case to develop KafkaSink was to extend Spark monitoring, but dumping execution metrics into Kafka 
+  performance dashboard and use them to populate a Grafana dashboard.
 
 
 ## Example of how to use KafkaSink
@@ -55,7 +55,7 @@ in spark-submit as in:
 - Start Apache Kafka. 
   - This example uses Kafka configured as in the getting started instructions at
     [Apache Kafka quickstart](https://kafka.apache.org/quickstart)
-    - download Apache Kafka (tested with version 3.2.1)
+    - download Apache Kafka and extract it (see instructions in the link above)
     - start zookepeer: `bin/zookeeper-server-start.sh config/zookeeper.properties`
     - start kafka broker `bin/kafka-server-start.sh config/server.properties`
 
@@ -68,7 +68,7 @@ bin/spark-shell \
 --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink \
 --conf spark.sparkmeasure.kafkaBroker=my_kafka_server:9092 \
 --conf spark.sparkmeasure.kafkaTopic=metrics
---packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
+--packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
 ```
 
 - Look at the metrics being written to Kafka:

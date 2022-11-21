@@ -8,10 +8,10 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 
 - The alternative, see paragraph above, is to build a jar from master.
     ```
-    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
+    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
 
     // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.19.jar
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.22.jar
    ```
 
 ### Download and build sparkMeasure (optional)
@@ -24,17 +24,17 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     ls -l target/scala-2.12/spark-measure*.jar  # location of the compiled jar
  
     # Run as in one of these examples:
-    bin/spark-shell --jars <path>/spark-measure_2.12-0.20-SNAPSHOT.jar
+    bin/spark-shell --jars <path>/spark-measure_2.12-0.23-SNAPSHOT.jar
     
     # alternative, set classpath for the driver (the jar is only needed in the driver)
-    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.20-SNAPSHOT.jar
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.23-SNAPSHOT.jar
     ```
 
 ### Example: collect and print stage metrics with sparkMeasure
  
 1. Measure metrics at the Stage level, a basic example:
     ```
-    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
+    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
     
     val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
     stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
@@ -130,7 +130,7 @@ printReport methods for immediate troubleshooting and workload analysis.
 You also have options to save metrics aggregated as in the printReport output.  
 Another option is to export the metrics to an external system, such as [Prometheus Pushgateway](Prometheus.md) 
   
-- Example on how to export raw Stage Metrics metrics into a DataFrame and sabe data in json format
+- Example on how to export raw "StageMetrics" into a DataFrame and save data in json format
     ```scala
     val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
     stageMetrics.runAndMeasure( ...your workload here ... )

@@ -50,7 +50,7 @@ the dependency is being taken care of.
 If you run sparkMeasure from a jar instead, you may need to add the dependency manually
 in spark-submit/spark-shell as in:
  - `--packages org.influxdb:influxdb-java:2.14`
-Note currently we need to use influxdb-java version 2.14, as newer versions generate jar conflicts (tested up to Spark 3.3.0)
+Note currently we need to use influxdb-java version 2.14, as newer versions generate jar conflicts (tested up to Spark version 3.3.1)
 
 ## Use cases
 
@@ -85,7 +85,7 @@ bin/spark-shell \
   --conf spark.sparkmeasure.influxdbURL="http://localhost:8086" \
   --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink,ch.cern.sparkmeasure.InfluxDBSinkExtended \
   --conf spark.sparkmeasure.influxdbStagemetrics=true
-  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19
+  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
 
 // run a Spark job, this will produce metrics  
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show

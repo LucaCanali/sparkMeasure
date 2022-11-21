@@ -13,7 +13,7 @@ How to run the example:
 # build the example jar
 sbt package
 
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21 --class ch.cern.testSparkMeasure.testSparkMeasure <path_to_the_example_jar>/testsparkmeasurescala_2.12-0.1.jar
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22 --class ch.cern.testSparkMeasure.testSparkMeasure <path_to_the_example_jar>/testsparkmeasurescala_2.12-0.1.jar
  ```
  
 ### Collect and save Stage Metrics
@@ -33,7 +33,7 @@ Some relevant snippet of code are:
      // print report to standard output
      stageMetrics.printReport()
 
-     // New in sparkMeasure v0.21, memory metrics report:
+     // Introduced in sparkMeasure v0.21, memory metrics report:
      stageMetrics.printMemoryReport()
  
      //save session metrics data
@@ -67,10 +67,10 @@ See details at: [Prometheus Pushgateway](Prometheus.md)
 
 - This is how to run sparkMeasure using a packaged version in Maven Central
     ```
-    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21
+    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
 
     // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.21.jar ...
+    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.22.jar ...
    ```
 - The alternative, see paragraph above, is to build a jar from master (See below).
 
@@ -84,7 +84,7 @@ See details at: [Prometheus Pushgateway](Prometheus.md)
    ls -l target/scala-2.12/spark-measure*.jar  # location of the compiled jar
 
    # Run as in one of these examples:
-   bin/spark-submit --jars path>/spark-measure_2.12-0.22-SNAPSHOT.jar
+   bin/spark-submit --jars path>/spark-measure_2.12-0.23-SNAPSHOT.jar
    
    # alternative, set classpath for the driver (it is only needed in the driver)
    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.22-SNAPSHOT.jar ...
