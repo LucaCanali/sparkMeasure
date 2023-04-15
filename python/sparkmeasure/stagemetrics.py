@@ -24,7 +24,7 @@ class StageMetrics:
         return self.stagemetrics.report()
 
     def aggregate_stagemetrics(self):
-        return self.aggregateStageMetricsJavaMap()
+        return self.stagemetrics.aggregateStageMetricsJavaMap()
 
     def print_report(self):
         print(self.report())

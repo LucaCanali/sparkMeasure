@@ -25,7 +25,7 @@ class TaskMetrics:
         return self.taskmetrics.report()
 
     def aggregate_taskmetrics(self):
-        return self.aggregateTaskMetricsJavaMap()
+        return self.taskmetrics.aggregateTaskMetricsJavaMap()
 
     def print_report(self):
         print(self.report())
