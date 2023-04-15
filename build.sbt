@@ -2,8 +2,8 @@ name := "spark-measure"
 
 version := "0.23-SNAPSHOT"
 
-scalaVersion := "2.12.15"
-crossScalaVersions := Seq("2.12.15", "2.13.8")
+scalaVersion := "2.12.17"
+crossScalaVersions := Seq("2.12.17", "2.13.8")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
@@ -11,7 +11,7 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 publishMavenStyle := true
 isSnapshot := true
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.3.1"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.4.0"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.3"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.36"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
