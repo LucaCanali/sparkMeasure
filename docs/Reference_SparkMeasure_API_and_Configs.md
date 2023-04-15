@@ -43,6 +43,7 @@ def removeListener(): Unit // helper method to remove the listener
 
 // Compute basic aggregation on the Stage metrics for the metrics report
 // also filter on the time boundaries for the report
+// The output is a map with metrics names and their aggregatd values
 def aggregateStageMetrics() : LinkedHashMap[String, Long] 
 
 // Extracts stages and their duration
@@ -147,6 +148,8 @@ def end(self):
 
 def report(self):
 
+def aggregate_stagemetrics(self):
+
 def print_report(self):
 
 def report_memory(self):
@@ -183,6 +186,7 @@ def removeListener(): Unit // helper method to remove the listener
 
 // Compute basic aggregation on the Task metrics for the metrics report
 // also filter on the time boundaries for the report
+// The output is a map with metrics names and their aggregatd values
 def aggregateTaskMetrics() : LinkedHashMap[String, Long] = {
 
 // Custom aggregations and post-processing of metrics data
@@ -260,6 +264,8 @@ def begin(self):
 def end(self):
 
 def report(self):
+
+def aggregate_taskmetrics(self):
 
 def print_report(self):
 

@@ -7,19 +7,16 @@
 **Why:** Troubleshooting and understanding the root causes of issues and errors from Spark jobs is often complicated.  
 SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
 Use sparkMeasure for:
-  - troubleshooting **interactive** Spark workloads (use with notebooks and spark shell/pyspark).
+  - troubleshooting **interactive** Spark workloads (use with notebooks and spark-shell/pyspark).
   - troubleshooting **batch** jobs using the "flight recorder" mode.
   - **monitoring**, by sinking metrics to external systems like InfluxDB, Apache Kafka, Prometheus gateway.
-  - comparing Spark jobs' execution metrics with evolving configurations or code (for **development**, CI/CD, etc).
-  - **learning**: it is a working example of how to use Spark Listeners for collecting Spark task metrics data.
+  - testing, measuring, and comparing Spark jobs' execution metrics with evolving configurations or code (use for **development**, CI/CD, etc).
+  - **learning**: sparkMeasure is a working example of how to use Spark Listeners for collecting Spark task metrics data.
   - Link to [documentation, examples and API reference](#one-tool-for-different-use-cases-links-to-documentation-and-examples)
    
 **Compatibility:**
   * SparkMeasure works with Spark 3.x and Spark 2.x
      * Use it from Scala, Python, and Java
-     * For Spark 2.4 and Spark 3.x with Scala 2.12 and 2.13, please use the latest version
-     * For Spark 2.4 and 2.3 with scala 2.11, use version 0.19
-     * For Spark 2.1 and 2.2, use version 0.16
 
 Main author and contact: Luca.Canali@cern.ch  
 
@@ -29,28 +26,31 @@ Dashboard using containers technology.
 
 ---
 ### Getting started with sparkMeasure
+Pick the suitable version:
+  * For Spark 2.4 and Spark 3.x with Scala 2.12 and 2.13, please use the latest version
+  * For Spark 2.4 and 2.3 with scala 2.11, use version 0.19
+  * For Spark 2.1 and 2.2, use version 0.16
+
+Examples:
  * Spark 3.x and 2.4 with Scala 2.12:
    - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22`
    - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
- 
  
  * Spark 3.3.x and higher with Scala 2.13:
    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.22`
    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.22`
      - note: `pip install sparkmeasure` to get the Python wrapper API
 
-
 * Spark 2.4 and 2.3 with Scala 2.11:
     - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
     - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
         - note: `pip install sparkmeasure==0.19` to get the Python wrapper API
 
-
  * Notes: 
-    * See the list of sparkMeasure versions available on [Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-    * You can find the latest jars built as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
-    * Bleeding edge: build sparkMeasure jar from master using sbt: `sbt +package` and use `--jars`
+    * See [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
+    * Latest jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
+    * Bleeding edge: build sparkMeasure from master using sbt: `sbt +package` and use it with Spark configs: `--jars`
    with the jar just built.
 
 ---
@@ -65,7 +65,7 @@ Dashboard using containers technology.
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/3856830937265976/442806354506758/latest.html)
 
   
-- Stage-level metrics from command line:
+- Stage-level metrics from the command line:
   ```
   # Scala CLI
   bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
@@ -146,8 +146,8 @@ Stage 3 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
 Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 ```
 
-- Task-level metrics, from command line:
-    - this is slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
+- Task-level metrics from the command line:
+    - this is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
   bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
@@ -166,23 +166,27 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   ```
 ---
 ### One tool for different use cases, links to documentation and examples
-  * **Interactive mode**: 
-    * Use sparkMeasure to collect and analyze Spark workload metrics in interactive mode when
-      working with shell or notebook environments, as `spark-shell` (Scala), `PySpark` (Python) and/or
-      from `jupyter-notebook`. You can use Python and Scala kernels.
-    - **[Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
-    - **[PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
+  * **Reference**
+    * **[SparkMeasure Reference Guide to the API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)**
+
+
+  * **Interactive mode**   
+    use sparkMeasure to collect and analyze Spark workload metrics in interactive mode when
+    working with shell or notebook environments, such as `spark-shell` (Scala), `PySpark` (Python) and/or
+    from `jupyter notebooks`.  
+    - **[SparkMeasure on PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
+    - **[SparkMeasure on Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
 
     
-  * **Batch and code instrumentation**: 
-    * Instrument your code with the sparkMeasure API, for collecting, saving,
-      and analyzing Spark workload metrics data.
-     - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
+  * **Batch and code instrumentation**  
+    Instrument your code with the sparkMeasure API, for collecting, saving,
+    and analyzing Spark workload metrics data.
      - **[Instrument Python code](docs/Instrument_Python_code.md)**
+     - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
  
     
-  * **Flight Recorder mode**: 
-    * SparkMeasure in flight recorder will collect metrics transparently, without any need for you 
+  * **Flight Recorder mode**:   
+    SparkMeasure in flight recorder will collect metrics transparently, without any need for you 
     to change your code. 
     * Metrics can be saved to a file, locally or to a Hadoop-compliant filesystem
     * or you can write metrics in near-realtime to an InfluxDB instance or to Apache Kafka
@@ -190,10 +194,6 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
       - **[Flight Recorder mode with file sink](docs/Flight_recorder_mode_FileSink.md)**
       - **[Flight Recorder mode with InfluxDB sink](docs/Flight_recorder_mode_InfluxDBSink.md)**
       - **[Flight Recorder mode with Apache Kafka sink](docs/Flight_recorder_mode_KafkaSink.md)**
-
-  
-  * **Reference**
-    * **[SparkMeasure API and configuration](docs/Reference_SparkMeasure_API_and_Configs.md)**  
 
 
   * **Additional documentation**:
@@ -204,6 +204,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
       - [2018: SparkMeasure, a tool for performance troubleshooting of Apache Spark workloads](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
       - [2017: SparkMeasure blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
   - [TODO list and known issues](docs/TODO_and_issues.md)
+
 
 ### Architecture diagram  
 ![sparkMeasure architecture diagram](docs/sparkMeasure_architecture_diagram.png)
