@@ -3,6 +3,7 @@ package ch.cern.sparkmeasure
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 
+import scala.collection.JavaConverters.mapAsJavaMap
 import scala.collection.mutable.{ListBuffer, LinkedHashMap}
 import scala.math.{min, max}
 
@@ -104,6 +105,11 @@ case class StageMetrics(sparkSession: SparkSession) {
     }
     agg("elapsedTime") = completionTime - submissionTime
     agg
+  }
+
+  // Transforms aggregateStageMetrics output in a Java Map, needed by the Python API
+  def aggregateStageMetricsJavaMap() : java.util.Map[String, Long] = {
+    mapAsJavaMap(aggregateStageMetrics())
   }
 
   // Extracts stages and their duration
