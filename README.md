@@ -3,6 +3,12 @@
 ![sparkMeasure CI](https://github.com/LucaCanali/sparkMeasure/workflows/sparkMeasure%20CI/badge.svg?branch=master&event=push)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12)
 
+### Contents:
+  - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
+  - [Documentation, API reference, and examples](#links-to-documentation-and-examples)
+  - [Architecture diagram](#architecture-diagram)
+  - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
+
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark jobs
 **Why:** Troubleshooting and understanding the root causes of issues and errors from Spark jobs is often complicated.  
 SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
@@ -12,32 +18,25 @@ Use sparkMeasure for:
   - **monitoring**, by sinking metrics to external systems like InfluxDB, Apache Kafka, Prometheus gateway.
   - testing, measuring, and comparing Spark jobs' execution metrics with evolving configurations or code (use for **development**, CI/CD, etc).
   - **learning**: sparkMeasure is a working example of how to use Spark Listeners for collecting Spark task metrics data.
-  - Link to [documentation, examples and API reference](#one-tool-for-different-use-cases-links-to-documentation-and-examples)
-   
-**Compatibility:**
-  * SparkMeasure works with Spark 3.x and Spark 2.x
-     * Use it from Scala, Python, and Java
+  - use it with Scala, Java, and Python
 
 Main author and contact: Luca.Canali@cern.ch  
-
-Related work: **[Spark Dashboard](https://github.com/cerndb/spark-dashboard)**
-provides the tooling and configuration for deploying an Apache Spark Performance
-Dashboard using containers technology.
+See also: [Spark Dashboard](https://github.com/cerndb/spark-dashboard)  
 
 ---
 ### Getting started with sparkMeasure
-Pick the suitable version:
-  * For Spark 2.4 and Spark 3.x with Scala 2.12 and 2.13, please use the latest version
-  * For Spark 2.4 and 2.3 with scala 2.11, use version 0.19
+Pick a suitable version for your environment:
+  * For Spark 3.x, please use the latest version
+  * For Spark 2.4 and 2.3, use version 0.19
   * For Spark 2.1 and 2.2, use version 0.16
 
 Examples:
- * Spark 3.x and 2.4 with Scala 2.12:
+ * Spark 3.x with Scala 2.12:
    - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22`
    - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
  
- * Spark 3.3.x and higher with Scala 2.13:
+ * Spark 3.x with Scala 2.13:
    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.22`
    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.22`
      - note: `pip install sparkmeasure` to get the Python wrapper API
@@ -54,7 +53,7 @@ Examples:
    with the jar just built.
 
 ---
-### Examples of interactive use of sparkMeasure, using notebooks and CLI
+### Examples of interactive use of sparkMeasure
 
 - [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="50"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
@@ -165,9 +164,10 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
   ```
 ---
-### One tool for different use cases, links to documentation and examples
-  * **Reference**
-    * **[SparkMeasure Reference Guide to the API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)**
+### Links to documentation and examples 
+One tool for different use cases, languages and environments:
+  * <span style="color:red">**API Reference**</span>
+    * **[SparkMeasure guide to the API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)**
 
 
   * **Interactive mode**   
@@ -205,7 +205,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
       - [2017: SparkMeasure blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
   - [TODO list and known issues](docs/TODO_and_issues.md)
 
-
+---
 ### Architecture diagram  
 ![sparkMeasure architecture diagram](docs/sparkMeasure_architecture_diagram.png)
 
@@ -217,14 +217,15 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   They are a standard part of Spark instrumentation, used by the Spark Web UI and History Server for example.     
 * The tool is built on multiple modules implemented as classes
     * metrics collection and processing can be at the Stage-level or Task-level. The user chooses which mode to use with the API. 
-    * metrics are can be buffered into memory for real-time reporting or they can be dumped to an external
+    * metrics are can be buffered into memory for real-time reporting, or they can be dumped to an external
     system in the "flight recorder mode".
     * supported external systems are File Systems supported by the Hadoop API, InfluxDB, and Apache Kafka.
 * Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).
   * sparkMeasure in flight recorder mode with InfluxDB sink and Apache Kafka do not buffer,
   but rather write the collected metrics directly 
 * Metrics processing:
-  * metrics can be aggregated into a report showing the cumulative values (see example above) 
+  * metrics can be aggregated into a report showing the cumulative values for each metric
+  * aggregated metrics can also be returned as a Scala Map or Python dictionary
   * metrics can be converted into a Spark DataFrame for custom querying  
 * Metrics data and reports can be saved for offline analysis.
 
