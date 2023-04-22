@@ -142,26 +142,37 @@ stagemetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(100
 ```
 Methods: 
 ```
+# Marks the beginning of data collection
 def begin(self):
 
+# Marks the end of data collection
 def end(self):
 
+# Custom aggregations and post-processing of metrics data
 def report(self):
 
+# Returns a dictionary of the aggregated stage metrics data.
 def aggregate_stagemetrics(self):
 
+# Runs report and prints it
 def print_report(self):
 
+# Return the collected stage metrics data for memory usage.
 def report_memory(self):
 
+# Runs the memory report and prints it
 def print_memory_report(self):
 
+# Runs the code and measures the metrics for Spark execution
 def runandmeasure(self, env, codetorun):
 
+# Creates a Spark Dataframe from the collected stage metrics data.
 def create_stagemetrics_DF(self, viewname="PerfStageMetrics"):
 
+# Saves the collected stage metrics data to a file.
 def save_data(self, df, filepathandname, fileformat="json"):
 
+# Removes the listener from the SparkContext
 def remove_listener(self):
 ```
 
@@ -259,25 +270,35 @@ taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000
 ```
 Methods:
 ```
+# Marks the beginning of data collection
 def begin(self):
 
+# Marks the end of data collection
 def end(self):
 
+# Custom aggregations and post-processing of metrics data
 def report(self):
 
+# Returns a dictionary of the aggregated task metrics data.
 def aggregate_taskmetrics(self):
 
+# Runs report and prints it
 def print_report(self):
 
+# Runs the code and measures the metrics for Spark execution
 def runandmeasure(self, env, codetorun):
 
+# Creates a Spark Dataframe from the collected task metrics data.
 def create_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
 
-def create_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
+# Creates a Spark Dataframe from the aggregated task metrics data.
+def aggregate_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
 
-def create_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
+# Saves the collected task metrics data to a file.
+def save_data(self, df, filepathandname, fileformat):
 
-def create_taskmetrics_DF(self, viewname="PerfTaskMetrics"):
+# Removes the listener from the SparkContext
+def remove_listener(self):
 ```
 
 ## Flight Recorder Mode - File Sink
