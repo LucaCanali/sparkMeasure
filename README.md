@@ -2,6 +2,7 @@
 
 ![sparkMeasure CI](https://github.com/LucaCanali/sparkMeasure/workflows/sparkMeasure%20CI/badge.svg?branch=master&event=push)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12)
+![PyPI Downloads/month](https://static.pepy.tech/personalized-badge/sparkmeasure?period=month&units=international_system&left_color=black&right_color=orange&left_text=PyPI%20downloads/month)
 
 ### Contents:
   - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
