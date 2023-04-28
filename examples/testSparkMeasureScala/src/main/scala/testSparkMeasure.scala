@@ -13,6 +13,7 @@ object testSparkMeasure {
 
     val spark = SparkSession.
       builder().
+      master("local[*]").
       appName("testSparkMeasure").
       getOrCreate()
 
