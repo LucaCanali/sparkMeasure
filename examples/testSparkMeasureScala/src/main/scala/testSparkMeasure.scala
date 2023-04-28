@@ -4,7 +4,7 @@ import org.apache.spark.sql._
 
 /**
   * Test sparkMeasure (https://github.com/LucaCanali/sparkMeasure). Use:
-  * bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.21 \
+  * bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 \
   * --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.12-0.1.jar
   */
 object testSparkMeasure {
@@ -24,7 +24,11 @@ object testSparkMeasure {
     // print report to standard output
     stageMetrics.printReport()
 
-    //save session metrics data
+    // return the metrics as a Scala map
+    val metrics = stageMetrics.aggregateStageMetrics()
+    println(s"Metric elapsed time = ${metrics("elapsedTime")}")
+
+    // save session metrics data
     val df = stageMetrics.createStageMetricsDF("PerfStageMetrics")
     stageMetrics.saveData(df.orderBy("jobId", "stageId"), "/tmp/stagemetrics_test1")
 
