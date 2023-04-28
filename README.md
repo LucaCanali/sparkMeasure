@@ -3,7 +3,7 @@
 ![sparkMeasure CI](https://github.com/LucaCanali/sparkMeasure/workflows/sparkMeasure%20CI/badge.svg?branch=master&event=push)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12)
 
-Contents:
+### Contents:
   - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
   - [Documentation, API reference, and examples](#links-to-documentation-and-examples)
   - [Architecture diagram](#architecture-diagram)
@@ -170,8 +170,8 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 ---
 ### Links to documentation and examples 
 One tool for different use cases, languages and environments:
-  * <span style="color:red">**SparkMeasure API Reference**</span>
-    * **[SparkMeasure Reference Guide to the API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)**
+  * <span style="color:red">**API Reference**</span>
+    * **[SparkMeasure guide to the API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)**
 
 
   * **Interactive mode**   
