@@ -232,10 +232,10 @@ One tool for different use cases, languages and environments:
 
 ### FAQ:  
   - Why measuring performance with workload metrics instrumentation rather than just using execution time measurements?
-    - Measuring elapsed time, treats your workload as "a black box" and most often does not allow you
-     to understand the root causes of the performance regression.   
-     With workload metrics you can (attempt to) go further in understanding  with root cause analysis,
-     bottleneck identification, and resource usage measurement. 
+    - When measuring just the jobs' elapsed time, you treat your workload as "a black box" and most often this does
+      not allow you to understand the root causes of performance regression.   
+      With workload metrics you can (attempt to) go further in understanding and perform root cause analysis,
+      bottleneck identification, and resource usage measurement. 
 
   - What are Apache Spark task metrics and what can I use them for?
      - Apache Spark measures several details of each task execution, including run time, CPU time,
@@ -244,39 +244,44 @@ One tool for different use cases, languages and environments:
      [Spark Task Metrics](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
 
   - How is sparkMeasure different from Web UI/Spark History Server and EventLog?
-     - sparkMeasure uses the same ListenerBus infrastructure used to collect data for the Web UI and Spark EventLog.
+     - parkMeasure uses the same ListenerBus infrastructure used to collect data for the Web UI and Spark EventLog.
        - Spark collects metrics and other execution details and exposes them via the Web UI.
-       - Notably Task execution metrics are also available through the [REST API](https://spark.apache.org/docs/latest/monitoring.html#rest-api)
+       - Notably, Task execution metrics are also available through the [REST API](https://spark.apache.org/docs/latest/monitoring.html#rest-api)
        - In addition, Spark writes all details of the task execution in the EventLog file 
        (see config of `spark.eventlog.enabled` and `spark.eventLog.dir`)
-       - The EventLog is used by the Spark History server + other tools and programs can read and parse
+       - The EventLog is used by the Spark History server + other tools and programs that can read and parse
         the EventLog file(s) for workload analysis and performance troubleshooting, see a [proof-of-concept example of reading the EventLog with Spark SQL](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_EventLog.md)  
      - There are key differences that motivate this development: 
         - sparkMeasure can collect data at the stage completion-level, which is more lightweight than measuring
         all the tasks, in case you only need to compute aggregated performance metrics. When needed, 
         sparkMeasure can also collect data at the task granularity level.
         - sparkMeasure has an API that makes it simple to add instrumentation/performance measurements
-         in notebooks and application code. 
+         in notebooks and in application code for Scala, Java, and Python. 
         - sparkMeasure collects data in a flat structure, which makes it natural to use Spark SQL for 
-        workload data processing, which provides a simple and powerful interface
+        workload data analysis/
         - sparkMeasure can sink metrics data into external systems (Filesystem, InfluxDB, Apache Kafka)
 
   - What are known limitations and gotchas?
     - sparkMeasure does not collect all the data available in the EventLog
     - See also the [TODO and issues doc](docs/TODO_and_issues.md)
     - The currently available Spark task metrics can give you precious quantitative information on 
-     resources used by the executors, however there do not allow to fully perform time-based analysis of
-     the workload performance, notably they do not expose the time spent doing I/O or network traffic.
-    - Metrics are collected on the driver, which can be quickly become a bottleneck. This is true
-     in general for ListenerBus instrumentation, in addition sparkMeasure in the current version buffers
-     all data in the driver memory. The notable exception is the Flight recorder mode with InfluxDB and 
-     Apache Kafka sink, in this case metrics are directly sent to InfluxDB/Kafka
+      resources used by the executors, however there do not allow to fully perform time-based analysis of
+      the workload performance, notably they do not expose the time spent doing I/O or network traffic.
+    - Metrics are collected on the driver, which could become a bottleneck. This is an issues affecting tools 
+      based on Spark ListenerBus instrumentation, such as the Spark WebUI.
+      In addition, note that sparkMeasure in the current version buffers all data in the driver memory.
+      The notable exception is when using the Flight recorder mode with InfluxDB and 
+      Apache Kafka sink, in this case metrics are directly sent to InfluxDB/Kafka
     - Task metrics values are collected by sparkMeasure only for successfully executed tasks. Note that 
-     resources used by failed tasks are not collected in the current version. The notable exception is
-     with the Flight recorder mode with InfluxDB sink and with Apache Kafka.
+      resources used by failed tasks are not collected in the current version. The notable exception is
+      with the Flight recorder mode with InfluxDB sink and with Apache Kafka.
+    - sparkMeasure collects and processes data in order of stage and/or task completion. This means that
+      the metrics data is not available in real-time, but rather with a delay that depends on the workload
+      and the size of the data. Moreover, performance data of jobs executing at the same time can be mixed.
+      This can be a noticeable issue if you run workloads with many concurrent jobs.
     - Task metrics are collected by Spark executors running on the JVM, resources utilized outside the
       JVM are currently not directly accounted for (notably the resources used when running Python code
-      inside the python.daemon in the case of PySpark).
+      inside the python.daemon in the case of Python UDFs with PySpark).
 
   - When should I use Stage-level metrics and when should I use Task-level metrics?
      - Use stage metrics whenever possible as they are much more lightweight. Collect metrics at
