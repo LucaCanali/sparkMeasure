@@ -17,9 +17,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Build and run tests for all scala versions supported
-      run: sbt +test
-    - name: Package
+    - name: Build using sbt for all Scala versions supported
       run: sbt +package
     - uses: actions/upload-artifact@v2
       with:
@@ -29,3 +27,5 @@ jobs:
       with:
         name: sparkMeasure package scala 2.12
         path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.12/*.jar
+    - name: Run tests for all Scala versions supported
+      run: sbt +test
