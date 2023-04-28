@@ -172,7 +172,7 @@ One tool for different use cases, languages and environments:
 
 
   * **Interactive mode**   
-    use sparkMeasure to collect and analyze Spark workload metrics in interactive mode when
+    Use sparkMeasure to collect and analyze Spark workload metrics in interactive mode when
     working with shell or notebook environments, such as `spark-shell` (Scala), `PySpark` (Python) and/or
     from `jupyter notebooks`.  
     - **[SparkMeasure on PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
@@ -182,8 +182,10 @@ One tool for different use cases, languages and environments:
   * **Batch and code instrumentation**  
     Instrument your code with the sparkMeasure API, for collecting, saving,
     and analyzing Spark workload metrics data.
-     - **[Instrument Python code](docs/Instrument_Python_code.md)**
-     - **[Instrument Scala code](docs/Instrument_Scala_code.md)**
+     - **[Example of how to instrument Python code](docs/Instrument_Python_code.md)**
+     - **[Example of how to instrument Scala code](docs/Instrument_Scala_code.md)**
+     - See also **[Spark_CPU_memory_load_testkit](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/Spark_CPU_memory_load_testkit)**
+       as an example of how to use sparkMeasure to instrument Spark code for performance testing.
  
     
   * **Flight Recorder mode**:   
