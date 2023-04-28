@@ -3,6 +3,12 @@
 ![sparkMeasure CI](https://github.com/LucaCanali/sparkMeasure/workflows/sparkMeasure%20CI/badge.svg?branch=master&event=push)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12)
 
+Contents:
+  - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
+  - [Documentation, API reference, and examples](#links-to-documentation-and-examples)
+  - [Architecture diagram](#architecture-diagram)
+  - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
+
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark jobs
 **Why:** Troubleshooting and understanding the root causes of issues and errors from Spark jobs is often complicated.  
 SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
@@ -12,7 +18,6 @@ Use sparkMeasure for:
   - **monitoring**, by sinking metrics to external systems like InfluxDB, Apache Kafka, Prometheus gateway.
   - testing, measuring, and comparing Spark jobs' execution metrics with evolving configurations or code (use for **development**, CI/CD, etc).
   - **learning**: sparkMeasure is a working example of how to use Spark Listeners for collecting Spark task metrics data.
-  - Link to [documentation, examples and API reference](#one-tool-for-different-use-cases-links-to-documentation-and-examples)
    
 **Compatibility:**
   * SparkMeasure works with Spark 3.x and Spark 2.x
@@ -216,14 +221,15 @@ One tool for different use cases, languages and environments:
   They are a standard part of Spark instrumentation, used by the Spark Web UI and History Server for example.     
 * The tool is built on multiple modules implemented as classes
     * metrics collection and processing can be at the Stage-level or Task-level. The user chooses which mode to use with the API. 
-    * metrics are can be buffered into memory for real-time reporting or they can be dumped to an external
+    * metrics are can be buffered into memory for real-time reporting, or they can be dumped to an external
     system in the "flight recorder mode".
     * supported external systems are File Systems supported by the Hadoop API, InfluxDB, and Apache Kafka.
 * Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).
   * sparkMeasure in flight recorder mode with InfluxDB sink and Apache Kafka do not buffer,
   but rather write the collected metrics directly 
 * Metrics processing:
-  * metrics can be aggregated into a report showing the cumulative values (see example above) 
+  * metrics can be aggregated into a report showing the cumulative values for each metric
+  * aggregated metrics can also be returned as a Scala Map or Python dictionary
   * metrics can be converted into a Spark DataFrame for custom querying  
 * Metrics data and reports can be saved for offline analysis.
 
