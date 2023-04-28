@@ -13,7 +13,7 @@ How to run the example:
 # build the example jar
 sbt package
 
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22 --class ch.cern.testSparkMeasure.testSparkMeasure <path_to_the_example_jar>/testsparkmeasurescala_2.12-0.1.jar
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 --class ch.cern.testSparkMeasure.testSparkMeasure <path_to_the_example_jar>/testsparkmeasurescala_2.12-0.1.jar
  ```
  
 ### Collect and save Stage Metrics
@@ -67,10 +67,10 @@ See details at: [Prometheus Pushgateway](Prometheus.md)
 
 - This is how to run sparkMeasure using a packaged version in Maven Central
     ```
-    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
+    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
 
     // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.22.jar ...
+    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.23.jar ...
    ```
 - The alternative, see paragraph above, is to build a jar from master (See below).
 
@@ -87,5 +87,5 @@ See details at: [Prometheus Pushgateway](Prometheus.md)
    bin/spark-submit --jars path>/spark-measure_2.12-0.23-SNAPSHOT.jar
    
    # alternative, set classpath for the driver (it is only needed in the driver)
-   bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.22-SNAPSHOT.jar ...
+   bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.23-SNAPSHOT.jar ...
    ```

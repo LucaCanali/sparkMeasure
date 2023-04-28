@@ -33,13 +33,13 @@ Pick a suitable version for your environment:
 
 Examples:
  * Spark 3.x with Scala 2.12:
-   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22`
-   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22`
+   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23`
+   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
  
  * Spark 3.x with Scala 2.13:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.22`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.22`
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.23`
+   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.23`
      - note: `pip install sparkmeasure` to get the Python wrapper API
 
 * Spark 2.4 and 2.3 with Scala 2.11:
@@ -68,7 +68,7 @@ Examples:
 - Stage-level metrics from the command line:
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -76,7 +76,7 @@ Examples:
   ```
   # Python CLI
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
@@ -150,7 +150,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
     - this is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -158,7 +158,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   ```
   # Python CLI
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
 
   from sparkmeasure import TaskMetrics
   taskmetrics = TaskMetrics(spark)
