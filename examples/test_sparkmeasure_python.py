@@ -3,7 +3,7 @@ A simple example demonstrating the use of sparkMeasure to instrument Python code
 Prerequisite:
    pip install sparkmeasure
 Run with:
-  ./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22 test_sparkmeasure_python.py
+  ./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 test_sparkmeasure_python.py
 """
 
 from pyspark.sql import SparkSession
@@ -19,6 +19,10 @@ def run_my_workload(spark):
 
     # print report to standard output
     stagemetrics.print_report()
+
+    # get metrics data as a dictionary
+    metrics = stagemetrics.aggregate_stagemetrics()
+    print(f"metrics elapsedTime = {metrics.get('elapsedTime')}")
 
     # save session metrics data in json format (default)
     df = stagemetrics.create_stagemetrics_DF("PerfStageMetrics")

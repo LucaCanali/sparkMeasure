@@ -11,7 +11,7 @@ You can find an example of how to instrument a Scala application running Apache 
  
 How to run the example:
  ```
-bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22 <path_to_examples>/test_sparkmeasure_python.py
+bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 <path_to_examples>/test_sparkmeasure_python.py
  ```
 
  Some relevant snippet of code are:
@@ -50,10 +50,10 @@ The details are discussed in the [examples for Python shell and notebook](docs/P
 
 - This is how to run sparkMeasure using a packaged version in Maven Central
   ```
-  bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.22 your_python_code.py
+  bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 your_python_code.py
 
   // alternative: just download and use the jar (it is only needed in the driver) as in:
-  bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.22.jar ...
+  bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.23.jar ...
   ```
 
 ### Download and build sparkMeasure (optional)
