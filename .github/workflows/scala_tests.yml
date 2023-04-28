@@ -12,18 +12,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK 11
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v3
       with:
+        distribution: 'adopt'
         java-version: 11
     - name: Build using sbt for all Scala versions supported
       run: sbt +package
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: sparkMeasure package scala 2.13
         path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.13/*.jar
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: sparkMeasure package scala 2.12
         path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.12/*.jar
