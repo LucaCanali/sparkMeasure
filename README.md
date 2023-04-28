@@ -18,14 +18,10 @@ Use sparkMeasure for:
   - **monitoring**, by sinking metrics to external systems like InfluxDB, Apache Kafka, Prometheus gateway.
   - testing, measuring, and comparing Spark jobs' execution metrics with evolving configurations or code (use for **development**, CI/CD, etc).
   - **learning**: sparkMeasure is a working example of how to use Spark Listeners for collecting Spark task metrics data.
-   
-**Compatibility:**
-  * SparkMeasure works with Spark 3.x and Spark 2.x
-     * Use it from Scala, Python, and Java
+  - use it with Scala, Java, and Python
 
 Main author and contact: Luca.Canali@cern.ch  
-See also: [Spark Dashboard](https://github.com/cerndb/spark-dashboard) - 
-tooling and configuration for deploying a performance dashboard for Apache Spark.
+See also: [Spark Dashboard](https://github.com/cerndb/spark-dashboard)  
 
 ---
 ### Getting started with sparkMeasure
