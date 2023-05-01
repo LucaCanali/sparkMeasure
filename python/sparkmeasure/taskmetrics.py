@@ -3,13 +3,10 @@ It simplifies the collection and analysis of Spark task metrics data.
 See details at https://github.com/LucaCanali/sparkMeasure
 """
 
-from __future__ import print_function
-
-"""TaskMetrics class provides the API to collect and process task metrics data aggregated by task execution
-This is a finer granularity than StageMetrics and potentially collects much more data.
-This is a Python wrapper class to the corresponding Scala class of sparkMeasure.
-"""
 class TaskMetrics:
+    """TaskMetrics class provides the API to collect and process task metrics data aggregated by task execution
+       This is a finer granularity than StageMetrics and potentially collects much more data.
+       This is a Python wrapper class to the corresponding Scala class of sparkMeasure."""
     def __init__(self, sparksession):
         self.sparksession = sparksession
         self.sc = self.sparksession.sparkContext
