@@ -13,26 +13,27 @@ jobs:
     strategy:
       matrix:
         python-version: [ 3.9, 3.10 ]
+        java-version: [ 8, 11 ]
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up JDK 11
+    - name: Set up Java ${{ matrix.java-version }}
       uses: actions/setup-java@v3
       with:
         distribution: 'adopt'
-        java-version: 11
+        java-version: ${{ matrix.java-version }}
 
     - name: Build using sbt for all Scala versions supported
       run: sbt +package
     - uses: actions/upload-artifact@v3
       with:
         name: sparkMeasure package scala 2.13
-        path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.13/*.jar
+        path: target/scala-2.13/*.jar
     - uses: actions/upload-artifact@v3
       with:
         name: sparkMeasure package scala 2.12
-        path: /home/runner/work/sparkMeasure/sparkMeasure/target/scala-2.12/*.jar
+        path: target/scala-2.12/*.jar
 
     - name: Run tests for all Scala versions supported
       run: sbt +test
