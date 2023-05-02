@@ -104,7 +104,7 @@ case class TaskMetrics(sparkSession: SparkSession) {
   }
 
   // Transforms aggregateTaskMetrics output in a Java Map, needed by the Python API
-  def aggregateStageMetricsJavaMap(): java.util.Map[String, Long] = {
+  def aggregateTaskMetricsJavaMap(): java.util.Map[String, Long] = {
     mapAsJavaMap(aggregateTaskMetrics())
   }
 

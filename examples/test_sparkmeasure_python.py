@@ -33,11 +33,13 @@ def run_my_workload(spark):
 
 
 if __name__ == "__main__":
-    # create spark session
-    spark = SparkSession \
-        .builder \
-        .appName("Test sparkmeasure instrumentation of Python/PySpark code") \
-        .getOrCreate()
+    # The Spark session is expected to be already up, created by spark-submit,
+    # which handles also adding the sparkmeasure jar we just need to get a reference to it
+    spark = (SparkSession
+             .builder
+             .appName("Test sparkmeasure instrumentation of Python/PySpark code")
+             .getOrCreate()
+            )
     # run Spark workload with instrumentation
     run_my_workload(spark)
     spark.stop()
