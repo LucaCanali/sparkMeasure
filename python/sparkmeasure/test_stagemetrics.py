@@ -9,7 +9,7 @@ import pytest
 def setup_sparksession():
     # Note this is supposed to run after sbt package on the sparkmeasure project
     # so that we can get the jar file from the target folder
-    SPARKMEASURE_JAR_FOLDER = "../../target/scala-2.12/"
+    SPARKMEASURE_JAR_FOLDER = "target/scala-2.12/"
     spark = (SparkSession.builder
             .appName("Test sparkmeasure instrumentation of Python/PySpark code")
             .master("local[*]")
