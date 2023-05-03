@@ -31,7 +31,7 @@ class StageMetricsTest extends FunSuite with BeforeAndAfterAll {
   }
 
   test("test StageMetrics") {
-    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
+    val stageMetrics = StageMetrics(spark)
     stageMetrics.runAndMeasure {
       spark.sql("select count(*) from range(100) cross join range(100) cross join range(100)").show()
     }

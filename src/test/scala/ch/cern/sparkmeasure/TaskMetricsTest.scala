@@ -31,7 +31,7 @@ class TaskMetricsTest extends FunSuite with BeforeAndAfterAll {
   }
 
   test("test TaskMetrics") {
-    val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
+    val taskMetrics = TaskMetrics(spark)
     taskMetrics.runAndMeasure {
       spark.sql("select count(*) from range(100) cross join range(100) cross join range(100)").show()
     }
