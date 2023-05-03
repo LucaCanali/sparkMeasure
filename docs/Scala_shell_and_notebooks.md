@@ -38,6 +38,9 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     
     val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
     stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
+
+    // get metrics as a Map
+    val metrics = stageMetrics.aggregateStageMetrics
     ```
 
     Example output:

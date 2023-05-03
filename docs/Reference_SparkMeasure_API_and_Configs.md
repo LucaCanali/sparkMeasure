@@ -2,9 +2,11 @@
 
 This doc is a reference to the sparkMeasure API, modules, and configuration parameters.  
 Contents:  
+- [StageMetrics - metrics](#stagemetrics---metrics)
 - [StageMetrics - Scala](#stagemetrics---scala)
 - [StageMetrics - Python](#stagemetrics---python)
 - [StageInfoRecorderListener](#stageinforecorderlistener)
+- [TaskMetrics - metrics](#taskmetrics---metrics)
 - [TaskMetrics - Scala](#taskmetrics---scala)
 - [TaskInfoRecorderListener](#taskinforecorderlistener)
 - [TaskMetrics - Python](#taskmetrics---python)
@@ -13,6 +15,17 @@ Contents:
 - [KafkaSink and KafkaSinkExtended](#kafkasink-and-kafkasinkextended)
 - [IOUtils](#ioutils)
 - [Utils](#utils)
+
+## StageMetrics - metrics
+These are the metrics collected by StageMetrics. 
+For a description of each metric, see the [Spark documentation](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
+```
+numStages, numTasks, elapsedTime, stageDuration, executorRunTime, executorCpuTime, executorDeserializeTime,
+executorDeserializeCpuTime, resultSerializationTime, jvmGCTime, shuffleFetchWaitTime, shuffleWriteTime, resultSize,
+diskBytesSpilled, memoryBytesSpilled, peakExecutionMemory, recordsRead, bytesRead, recordsWritten, bytesWritten,
+shuffleRecordsRead, shuffleTotalBlocksFetched, shuffleLocalBlocksFetched, shuffleRemoteBlocksFetched, shuffleTotalBytesRead,
+shuffleLocalBytesRead, shuffleRemoteBytesRead, shuffleRemoteBytesReadToDisk, shuffleBytesWritten, shuffleRecordsWritten
+```
 
 ## StageMetrics - Scala
 
@@ -174,6 +187,18 @@ def save_data(self, df, filepathandname, fileformat="json"):
 
 # Removes the listener from the SparkContext
 def remove_listener(self):
+```
+
+## TaskMetrics - metrics
+These are the metrics collected by TaskMetrics.
+For a description of each metric, see the [Spark documentation](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
+```
+numTasks, successful tasks, speculative tasks, taskDuration, schedulerDelayTime, executorRunTime, executorCpuTime,
+executorDeserializeTime, executorDeserializeCpuTime, resultSerializationTime, jvmGCTime, shuffleFetchWaitTime,
+shuffleWriteTime, gettingResultTime, resultSize, diskBytesSpilled, memoryBytesSpilled, peakExecutionMemory,
+recordsRead, bytesRead, recordsWritten, bytesWritten, shuffleRecordsRead, shuffleTotalBlocksFetched, 
+shuffleLocalBlocksFetched, shuffleRemoteBlocksFetched, shuffleTotalBytesRead, shuffleLocalBytesRead,
+shuffleRemoteBytesRead, shuffleRemoteBytesReadToDisk, shuffleBytesWritten, shuffleRecordsWritten
 ```
 
 ## TaskMetrics - Scala
