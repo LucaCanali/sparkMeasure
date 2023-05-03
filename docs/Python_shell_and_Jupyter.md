@@ -23,10 +23,10 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     pip install .
     
     # Run as in one of these examples:
-    bin/pyspark --jars path>/spark-measure_2.12-0.23-SNAPSHOT.jar
+    bin/pyspark --jars path>/spark-measure_2.12-0.24-SNAPSHOT.jar
     
     #alternative:
-    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.20-SNAPSHOT.jar
+    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.24-SNAPSHOT.jar
     ```
    
    
@@ -42,6 +42,9 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 
     stagemetrics.print_report()
     stageMetrics.print_memory_report()
+   
+    # get metrics as a dictionary
+    metrics = stagemetrics.aggregate_stage_metrics()
    ```
 2. Similar to example 1, but with a shortcut to run code and measure it with one command line:
     ```python

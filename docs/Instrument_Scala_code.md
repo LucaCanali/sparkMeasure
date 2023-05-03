@@ -33,6 +33,10 @@ Some relevant snippet of code are:
      // print report to standard output
      stageMetrics.printReport()
 
+     // get metric values as a Map
+     val metrics = stageMetrics.aggregateStageMetrics()
+     assert(metrics("numStages") > 1)
+
      // Introduced in sparkMeasure v0.21, memory metrics report:
      stageMetrics.printMemoryReport()
  

@@ -32,6 +32,10 @@ bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 <path_t
     # print report to standard output
     stagemetrics.print_report()
     
+    # get metric values as a dictionary
+    metrics = stagemetrics.aggregate_stagemetrics()
+    print(f"metrics elapsedTime = {metrics.get('elapsedTime')}")
+    
     # Introduced in sparkMeasure v0.21, memory metrics report:
     stageMetrics.print_memory_report()
 
@@ -69,8 +73,8 @@ The details are discussed in the [examples for Python shell and notebook](docs/P
      pip install .
   
      # Run as in one of these examples:
-     bin/spark-submit --jars path>/spark-measure_2.12-0.23-SNAPSHOT.jar ...
+     bin/spark-submit --jars path>/spark-measure_2.12-0.24-SNAPSHOT.jar ...
      
      # alternative, set classpath for the driver (sparkmeasure code runs only in the driver)
-     bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.23-SNAPSHOT.jar ...
+     bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.24-SNAPSHOT.jar ...
      ```
