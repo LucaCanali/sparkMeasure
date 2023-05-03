@@ -2,6 +2,7 @@
 
 ![sparkMeasure CI](https://github.com/LucaCanali/sparkMeasure/workflows/sparkMeasure%20CI/badge.svg?branch=master&event=push)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12)
+[![DOI](https://zenodo.org/badge/85240663.svg)](https://zenodo.org/badge/latestdoi/85240663)
 ![PyPI Downloads/month](https://static.pepy.tech/personalized-badge/sparkmeasure?period=month&units=international_system&left_color=black&right_color=orange&left_text=PyPI%20downloads/month)
 
 ### Contents:
@@ -21,8 +22,10 @@ Use sparkMeasure for:
   - **learning**: sparkMeasure is a working example of how to use Spark Listeners for collecting Spark task metrics data.
   - use it with Scala, Java, and Python
 
-Main author and contact: Luca.Canali@cern.ch  
-See also: [Spark Dashboard](https://github.com/cerndb/spark-dashboard)  
+Main author and contact: Luca.Canali@cern.ch    
+See also:   
+  - notes and code on how to deploy a [Spark monitoring dashboard](https://github.com/cerndb/spark-dashboard)
+  - an introductory [course on Apache Spark](https://sparktraining.web.cern.ch/)
 
 ---
 ### Getting started with sparkMeasure
