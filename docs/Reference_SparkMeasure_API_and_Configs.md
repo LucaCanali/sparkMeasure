@@ -19,9 +19,6 @@ Contents:
 ## StageMetrics - metrics
 These are the metrics collected by StageMetrics. 
 For a description of each metric, see the [Spark documentation](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)  
-Please note that the timing metrics 'executorCpuTime', 'executorDeserializeCpuTime', and 'shuffleWriteTime' have been converted 
-to milliseconds to ensure uniformity with other timing metrics, namely: 'stageDuration', 'executorRunTime', 'executorDeserializeTime', 'jvmGCTime', 'resultSerializationTime', and 'shuffleFetchWaitTime'.
-
 ```
 numStages, numTasks, elapsedTime, stageDuration, executorRunTime, executorCpuTime, executorDeserializeTime,
 executorDeserializeCpuTime, resultSerializationTime, jvmGCTime, shuffleFetchWaitTime, shuffleWriteTime, resultSize,
@@ -29,6 +26,9 @@ diskBytesSpilled, memoryBytesSpilled, peakExecutionMemory, recordsRead, bytesRea
 shuffleRecordsRead, shuffleTotalBlocksFetched, shuffleLocalBlocksFetched, shuffleRemoteBlocksFetched, shuffleTotalBytesRead,
 shuffleLocalBytesRead, shuffleRemoteBytesRead, shuffleRemoteBytesReadToDisk, shuffleBytesWritten, shuffleRecordsWritten
 ```
+Please note that the timing metrics `executorCpuTime`, `executorDeserializeCpuTime`, and `shuffleWriteTime` have been converted
+to milliseconds to ensure uniformity with other timing metrics, namely: 
+`stageDuration`, `executorRunTime`, `executorDeserializeTime`, `jvmGCTime`, `resultSerializationTime`, and `shuffleFetchWaitTime`.
 
 ## StageMetrics - Scala
 
@@ -203,8 +203,9 @@ recordsRead, bytesRead, recordsWritten, bytesWritten, shuffleRecordsRead, shuffl
 shuffleLocalBlocksFetched, shuffleRemoteBlocksFetched, shuffleTotalBytesRead, shuffleLocalBytesRead,
 shuffleRemoteBytesRead, shuffleRemoteBytesReadToDisk, shuffleBytesWritten, shuffleRecordsWritten
 ```
-Please note that the timing metrics 'executorCpuTime', 'executorDeserializeCpuTime', and 'shuffleWriteTime' have been converted
-to milliseconds to ensure uniformity with other timing metrics, namely: 'stageDuration', 'executorRunTime', 'executorDeserializeTime', 'jvmGCTime', 'resultSerializationTime', and 'shuffleFetchWaitTime'.
+Please note that the timing metrics `executorCpuTime`, `executorDeserializeCpuTime`, and `shuffleWriteTime` have been converted
+to milliseconds to ensure uniformity with other timing metrics, namely:
+`stageDuration`, `executorRunTime`, `executorDeserializeTime`, `jvmGCTime`, `resultSerializationTime`, and `shuffleFetchWaitTime`.
 
 ## TaskMetrics - Scala
 
