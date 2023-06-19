@@ -250,7 +250,7 @@ One tool for different use cases, languages and environments:
      [Spark Task Metrics](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
 
   - How is sparkMeasure different from Web UI/Spark History Server and EventLog?
-     - parkMeasure uses the same ListenerBus infrastructure used to collect data for the Web UI and Spark EventLog.
+     - sparkMeasure uses the same ListenerBus infrastructure used to collect data for the Web UI and Spark EventLog.
        - Spark collects metrics and other execution details and exposes them via the Web UI.
        - Notably, Task execution metrics are also available through the [REST API](https://spark.apache.org/docs/latest/monitoring.html#rest-api)
        - In addition, Spark writes all details of the task execution in the EventLog file 
