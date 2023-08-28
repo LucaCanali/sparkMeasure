@@ -8,9 +8,11 @@
 
 ### Contents:
   - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
-  - [Documentation, API reference, and examples](#links-to-documentation-and-examples)
+  - [Documentation and API reference](#links-to-documentation-and-examples)
   - [Architecture diagram](#architecture-diagram)
   - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
+
+---
 
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark jobs
 **Why:** Troubleshooting and understanding the root causes of issues and errors from Spark jobs is often complicated.  
@@ -170,9 +172,9 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   ```
 ---
 ### Links to documentation and examples 
-One tool for different use cases, languages and environments:
-  * <span style="color:red">**API Reference**</span>
-    * **[SparkMeasure guide to the API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)**
+SparkMeasure is one tool for many different use cases, languages, and environments:
+  * [![API Documentation](https://img.shields.io/badge/API-Documentation-brightgreen)](docs/Reference_SparkMeasure_API_and_Configs.md) 
+    - [SparkMeasure's API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)
 
 
   * **Interactive mode**   
@@ -185,10 +187,10 @@ One tool for different use cases, languages and environments:
     
   * **Batch and code instrumentation**  
     Instrument your code with the sparkMeasure API, for collecting, saving,
-    and analyzing Spark workload metrics data.
-     - **[Example of how to instrument Python code](docs/Instrument_Python_code.md)**
-     - **[Example of how to instrument Scala code](docs/Instrument_Scala_code.md)**
-     - See also **[Spark_CPU_memory_load_testkit](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/Spark_CPU_memory_load_testkit)**
+    and analyzing Spark workload metrics data. Examples and how-to guides:
+     - **[Instrument Spark-Python code](docs/Instrument_Python_code.md)**
+     - **[Instrument Spark-Scala code](docs/Instrument_Scala_code.md)**
+     - See also [Spark_CPU_memory_load_testkit](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/Spark_CPU_memory_load_testkit)
        as an example of how to use sparkMeasure to instrument Spark code for performance testing.
  
     
