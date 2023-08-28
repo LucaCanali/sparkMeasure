@@ -5,7 +5,7 @@ import java.nio.file.Paths
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.{DefaultScalaModule,ScalaObjectMapper}
+import com.fasterxml.jackson.module.scala.{DefaultScalaModule,ClassTagExtensions}
 
 import org.apache.spark.SparkConf
 
@@ -19,7 +19,7 @@ import scala.collection.mutable.ListBuffer
  */
 object IOUtils {
 
-  val objectMapper = new ObjectMapper with ScalaObjectMapper
+  val objectMapper = new ObjectMapper() with ClassTagExtensions
   objectMapper.registerModule(DefaultScalaModule)
   val objectWriter = objectMapper.writer(new DefaultPrettyPrinter())
 
