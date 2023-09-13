@@ -6,33 +6,33 @@
 [![PyPI](https://img.shields.io/pypi/v/sparkmeasure.svg)](https://pypi.org/project/sparkmeasure/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/sparkmeasure)](https://pypistats.org/packages/sparkmeasure)
 
-### Contents:
-  - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
-  - [Documentation and API reference](#links-to-documentation-and-examples)
-  - [Architecture diagram](#architecture-diagram)
-  - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
-
----
-
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark jobs
-**Why:** Troubleshooting and understanding the root causes of issues and errors from Spark jobs is often complicated.  
+Troubleshooting and understanding the root causes of issues and errors from Spark jobs is often complicated.  
 SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
-Use sparkMeasure for:
+**Use sparkMeasure for:**
   - troubleshooting **interactive** Spark workloads (use with notebooks and spark-shell/pyspark).
+  - **development and, CI/CD** by testing, measuring, and comparing Spark jobs' execution metrics with evolving configurations or code.
   - troubleshooting **batch** jobs using the "flight recorder" mode.
   - **monitoring**, by sinking metrics to external systems like InfluxDB, Apache Kafka, Prometheus gateway.
-  - testing, measuring, and comparing Spark jobs' execution metrics with evolving configurations or code (use for **development**, CI/CD, etc).
   - **learning**: sparkMeasure is a working example of how to use Spark Listeners for collecting Spark task metrics data.
-  - use it with Scala, Java, and Python
+  - use it with Scala, Java, and Python.
+
+### Contents:
+- [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
+- [Documentation and API reference](#documentation-api-and-examples)
+- [Architecture diagram](#architecture-diagram)
+- [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
+
 
 Main author and contact: Luca.Canali@cern.ch    
 See also:   
-  - notes and code on how to deploy a [Spark monitoring dashboard](https://github.com/cerndb/spark-dashboard)
-  - an introductory [course on Apache Spark](https://sparktraining.web.cern.ch/)
+  - [Spark monitoring dashboard](https://github.com/cerndb/spark-dashboard)
+  - [Introductory course on Apache Spark](https://sparktraining.web.cern.ch/)
+  - [Notes on Apache Spark](https://github.com/LucaCanali/Miscellaneous/tree/master/Spark_Notes)
 
 ---
 ### Getting started with sparkMeasure
-Pick a suitable version for your environment:
+Choose the sparkMeasure version for your environment:
   * For Spark 3.x, please use the latest version
   * For Spark 2.4 and 2.3, use version 0.19
   * For Spark 2.1 and 2.2, use version 0.16
@@ -171,7 +171,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
   ```
 ---
-### Links to documentation and examples 
+### Documentation, API, and examples 
 SparkMeasure is one tool for many different use cases, languages, and environments:
   * [![API Documentation](https://img.shields.io/badge/API-Documentation-brightgreen)](docs/Reference_SparkMeasure_API_and_Configs.md) 
     - [SparkMeasure's API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)
