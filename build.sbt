@@ -2,8 +2,8 @@ name := "spark-measure"
 
 version := "0.24-SNAPSHOT"
 
-scalaVersion := "2.12.17"
-crossScalaVersions := Seq("2.12.17", "2.13.8")
+scalaVersion := "2.12.18"
+crossScalaVersions := Seq("2.12.18", "2.13.8")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
@@ -11,11 +11,11 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 publishMavenStyle := true
 isSnapshot := true
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.4.1"
-libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.3"
-libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.36"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.0"
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2"
+libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.7"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
-libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.2.1"
+libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.5.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.9" % "test"
 libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.27.2" % "test"
 
