@@ -13,7 +13,7 @@ making it a practical choice for both developers and data engineers.
 With sparkMeasure, users can obtain a clearer understanding of their Spark job performance, 
 facilitating smoother and more reliable data processing operations.
 
-**Key Features:**
+### Key Features
 - **Interactive Troubleshooting:** Ideal for real-time analysis of Spark workloads in notebooks 
 and spark-shell/pyspark environments.
 - **Development & CI/CD Integration:** Facilitates testing, measuring, and comparing execution metrics
@@ -22,12 +22,12 @@ and spark-shell/pyspark environments.
   for thorough inspection.
 - **Monitoring Capabilities:** Seamlessly integrates with external systems like InfluxDB, Apache Kafka,
   and Prometheus Gateway for extensive monitoring.
-**Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
+- **Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
   of detailed Spark task metrics.
-**Language Compatibility:** Fully supports Scala, Java, and Python, making it versatile for a wide range
+- **Language Compatibility:** Fully supports Scala, Java, and Python, making it versatile for a wide range
   of Spark applications.
 
-### Contents:
+### Contents
 - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
 - [Documentation and API reference](#documentation-api-and-examples)
 - [Architecture diagram](#architecture-diagram)
