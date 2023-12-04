@@ -7,15 +7,25 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/sparkmeasure)](https://pypistats.org/packages/sparkmeasure)
 
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark jobs
-Troubleshooting and understanding the root causes of issues and errors from Spark jobs is often complicated.  
-SparkMeasure simplifies the collection and analysis of Spark performance metrics.  
-**Use sparkMeasure for:**
-  - troubleshooting **interactive** Spark workloads (use with notebooks and spark-shell/pyspark).
-  - **development and, CI/CD** by testing, measuring, and comparing Spark jobs' execution metrics with evolving configurations or code.
-  - troubleshooting **batch** jobs using the "flight recorder" mode.
-  - **monitoring**, by sinking metrics to external systems like InfluxDB, Apache Kafka, Prometheus gateway.
-  - **learning**: sparkMeasure is a working example of how to use Spark Listeners for collecting Spark task metrics data.
-  - use it with Scala, Java, and Python.
+SparkMeasure is a tool and library designed for efficient analysis and troubleshooting of 
+Apache Spark jobs. It focuses on easing the collection and examination of Spark metrics, 
+making it a practical choice for both developers and data engineers.
+With sparkMeasure, users can obtain a clearer understanding of their Spark job performance, 
+facilitating smoother and more reliable data processing operations.
+
+**Key Features:**
+- **Interactive Troubleshooting:** Ideal for real-time analysis of Spark workloads in notebooks 
+and spark-shell/pyspark environments.
+- **Development & CI/CD Integration:** Facilitates testing, measuring, and comparing execution metrics
+  of Spark jobs under various configurations or code changes.
+- **Batch Job Analysis:** With Flight Recorder mode sparkMeasure records and analyzes batch job metrics
+  for thorough inspection.
+- **Monitoring Capabilities:** Seamlessly integrates with external systems like InfluxDB, Apache Kafka,
+  and Prometheus Gateway for extensive monitoring.
+**Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
+  of detailed Spark task metrics.
+**Language Compatibility:** Fully supports Scala, Java, and Python, making it versatile for a wide range
+  of Spark applications.
 
 ### Contents:
 - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
