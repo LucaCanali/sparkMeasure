@@ -12,10 +12,10 @@ publishMavenStyle := true
 isSnapshot := true
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.0"
-libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2"
-libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.7"
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.4"
+libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.12"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
-libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.5.1"
+libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.5.2"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.4" % "test"
 libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.27.2" % "test"
 
