@@ -39,6 +39,7 @@ See also:
   - [Spark monitoring dashboard](https://github.com/cerndb/spark-dashboard)
   - [Introductory course on Apache Spark](https://sparktraining.web.cern.ch/)
   - [Notes on Apache Spark](https://github.com/LucaCanali/Miscellaneous/tree/master/Spark_Notes)
+  - [TPCDS PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark) 
 
 ---
 ### Getting started with sparkMeasure
@@ -215,7 +216,7 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
       - **[Flight Recorder mode with Apache Kafka sink](docs/Flight_recorder_mode_KafkaSink.md)**
 
 
-  * **Additional documentation**:
+  * **Additional documentation and examples**:
     - Presentations at Spark/Data+AI Summit:
       - [Performance Troubleshooting Using Apache Spark Metrics](https://databricks.com/session_eu19/performance-troubleshooting-using-apache-spark-metrics)
       - [Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies](http://canali.web.cern.ch/docs/Spark_Summit_2017EU_Performance_Luca_Canali_CERN.pdf)
@@ -223,6 +224,8 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
       - [2018: SparkMeasure, a tool for performance troubleshooting of Apache Spark workloads](https://db-blog.web.cern.ch/blog/luca-canali/2018-08-sparkmeasure-tool-performance-troubleshooting-apache-spark-workloads),
       - [2017: SparkMeasure blog post](http://db-blog.web.cern.ch/blog/luca-canali/2017-03-measuring-apache-spark-workload-metrics-performance-troubleshooting)
   - [TODO list and known issues](docs/TODO_and_issues.md)
+  - [TPCDS-PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark) 
+    a tool for running the TPCDS benchmark workload with PySpark and instrumented with sparkMeasure
 
 ---
 ### Architecture diagram  
