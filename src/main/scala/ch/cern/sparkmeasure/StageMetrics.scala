@@ -9,18 +9,18 @@ import scala.math.{min, max}
 
 /**
  *  Stage Metrics: collects stage-level metrics with Stage granularity
- *                 and provides aggregation and reporting functions for the end-user
+ *  and provides aggregation and reporting functions for the end-user
  *
- * Example usage for stage metrics:
+ * Example:
  * val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
  * stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
  *
- * The tool is based on using Spark Listeners as data source and collecting metrics in a ListBuffer of
+ * The tool is based on using Spark Listeners as the data source and collecting metrics into a ListBuffer of
  * a case class that encapsulates Spark task metrics.
- * The List Buffer is then transformed into a DataFrame for ease of reporting and analysis.
+ * The List Buffer may optionally be transformed into a DataFrame for ease of reporting and analysis.
  *
- * Stage metrics are stored in memory and use to produce a report that aggregates resource consumption
- * they can also be consumed "raw" (transformed into a DataFrame and/or saved to a file)
+ * Stage metrics are stored in memory and used to produce a report. The report shows aggregated resource consumption
+ * on the measured period.
  *
  */
 case class StageMetrics(sparkSession: SparkSession) {
@@ -61,8 +61,8 @@ case class StageMetrics(sparkSession: SparkSession) {
     sparkSession.sparkContext.removeSparkListener(listenerStage)
   }
 
-  // Compute basic aggregation on the Stage metrics for the metrics report
-  // also filter on the time boundaries for the report
+  // Compute basic aggregations of the Stage metrics for the metrics report
+  // also filter op the time boundaries for the report
   def aggregateStageMetrics() : LinkedHashMap[String, Long] = {
 
     val agg = Utils.zeroMetricsStage()
@@ -136,9 +136,16 @@ case class StageMetrics(sparkSession: SparkSession) {
     aggregatedMetrics.foreach {
       case (metric: String, value: Long) =>
         result = result :+ Utils.prettyPrintValues(metric, value)
-      case (_, _) => // We should no get here, in case add code to handle this
+      case (_, _) => // We should not get here
     }
     result.mkString("\n")
+
+    // Compute the average number of active tasks
+    // This provide a quantitative view of how parallelism is used by Spark jobs
+    val avg_active_tasks = BigDecimal(aggregatedMetrics("executorRunTime").toDouble
+      / aggregatedMetrics("elapsedTime").toDouble)
+      .setScale(1, BigDecimal.RoundingMode.HALF_UP).toDouble
+    result = result :+ s"\nAverage number of active tasks => ${avg_active_tasks}"
 
     // additional details on stages and their duration
     // can be switched off with a configuration
@@ -164,7 +171,7 @@ case class StageMetrics(sparkSession: SparkSession) {
     var result = ListBuffer[String]()
     val stages = {for (metrics <- listenerStage.stageMetricsData) yield metrics.stageId}.sorted
 
-    // additional details on executor (memory) metrics
+    // Additional details on executor (memory) metrics
     result = result :+ "\nAdditional stage-level executor metrics (memory usage info):\n"
 
     stages.foreach {
@@ -172,7 +179,7 @@ case class StageMetrics(sparkSession: SparkSession) {
         for (metric <- executorMetricsNames) {
           val stageExecutorMetricsRaw = listenerStage.stageIdtoExecutorMetrics(stageId, metric)
 
-          // find maximum metric value and corresponding executor
+          // Find maximum metric value and corresponding executor
           val (executorMaxVal, maxVal) = stageExecutorMetricsRaw.maxBy(_._2)
 
           // This code is commented on purpose
@@ -207,7 +214,7 @@ case class StageMetrics(sparkSession: SparkSession) {
       println(reportMemory())
     }
     else {
-      println("Collecting data for the memory is off")
+      println("Collecting verbose memory-related data is off")
       println("Check the value of spark.sparkmeasure.stageinfo.verbose")
     }
   }
