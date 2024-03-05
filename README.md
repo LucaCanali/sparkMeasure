@@ -5,6 +5,7 @@
 [![DOI](https://zenodo.org/badge/85240663.svg)](https://zenodo.org/badge/latestdoi/85240663)
 [![PyPI](https://img.shields.io/pypi/v/sparkmeasure.svg)](https://pypi.org/project/sparkmeasure/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/sparkmeasure)](https://pypistats.org/packages/sparkmeasure)
+[![API Documentation](https://img.shields.io/badge/API-Documentation-brightgreen)](docs/Reference_SparkMeasure_API_and_Configs.md)
 
 ### SparkMeasure is a tool for performance troubleshooting of Apache Spark jobs
 SparkMeasure is a tool and library designed for efficient analysis and troubleshooting of 
@@ -34,12 +35,13 @@ and spark-shell/pyspark environments.
 - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
 
 
-Main author and contact: Luca.Canali@cern.ch    
-See also:   
-  - [Spark monitoring dashboard](https://github.com/cerndb/spark-dashboard)
+### Resources   
+  - [TPCDS PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark) - A tool you can use run TPCDS with PySpark, instrumented with sparkMeasure
+  - [Spark monitoring dashboard](https://github.com/cerndb/spark-dashboard) - A custom monitoring pipeline and dashboard for Spark  
   - [Introductory course on Apache Spark](https://sparktraining.web.cern.ch/)
   - [Notes on Apache Spark](https://github.com/LucaCanali/Miscellaneous/tree/master/Spark_Notes)
-  - [TPCDS PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark) 
+
+Main author and contact: Luca.Canali@cern.ch
 
 ---
 ### Getting started with sparkMeasure
@@ -49,12 +51,12 @@ Choose the sparkMeasure version for your environment:
   * For Spark 2.1 and 2.2, use version 0.16
 
 Examples:
- * Spark 3.x with Scala 2.12:
+ * Spark with Scala 2.12:
    - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23`
    - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
  
- * Spark 3.x with Scala 2.13:
+ * Spark with Scala 2.13:
    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.23`
    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.23`
      - note: `pip install sparkmeasure` to get the Python wrapper API
@@ -64,11 +66,17 @@ Examples:
     - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
         - note: `pip install sparkmeasure==0.19` to get the Python wrapper API
 
- * Notes: 
-    * See [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-    * Latest jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
-    * Bleeding edge: build sparkMeasure from master using sbt: `sbt +package` and use it with Spark configs: `--jars`
-   with the jar just built.
+ * Where to get sparkMeasure: 
+    * [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
+    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.23) 
+    * Bleeding edge jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
+    * Build jars from master using sbt: `sbt +package` 
+  
+* Some practical examples of how to set the configuration to use sparkMeasure with Spark
+  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.23` 
+  * `--jars /path/to/spark-measure_2.12-0.23.jar`
+  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.23/spark-measure_2.12-0.23.jar`
+  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.23.jar`
 
 ---
 ### Examples of interactive use of sparkMeasure

@@ -15,3 +15,4 @@ If you plan to contribute to sparkMeasure development, please start by reviewing
   * TODO: add code/exceptions to  handle error conditions that can arise in sparkMeasure code.
   * TODO: add more statistics related to job execution, for example report start/min/max.number of executors
     the job had, which is useful in the case of yarn with spark dynamic allocation.
+  * TODO: add a Prometheus-compatible sink for the flight recorder mode
