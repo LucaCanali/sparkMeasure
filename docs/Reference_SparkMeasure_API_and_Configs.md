@@ -400,7 +400,7 @@ spark.sparkmeasure.influxdbEnableBatch, boolean, default true
 
 This code depends on "influxdb.java", you may need to add the dependency explicitly:
   --packages org.influxdb:influxdb-java:2.14
-  Note currently we need to use version 2.14 as newer versions generate jar conflicts (tested up to Spark 3.3.0)
+  Note currently we need to use version 2.14 as newer versions generate jar conflicts
 ```
 
 ## KafkaSink and KafkaSinkExtended
@@ -428,8 +428,25 @@ Configuration - KafkaSink parameters:
        Example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
        Note: the topic will be created if it does not yet exist
 
-This code depends on "kafka-clients", you may need to add the dependency explicitly:
-  --packages org.apache.kafka:kafka-clients:3.2.1
+This code depends on "kafka-clients", you may need to add the dependency explicitly, example:
+  --packages org.apache.kafka:kafka-clients:3.7.0
+```
+
+## PushGatewaySink
+```
+class PushGatewaySink(conf: SparkConf) extends SparkListener
+
+**PushGatewaySink** is a class that extends the SparkListener infrastructure.
+It collects and writes Spark metrics and application info in near real-time to a Prometheus Pushgateway instance
+provided by the user. Use this mode to monitor Spark execution workload.
+Notes, the amount of data generated is relatively small in most applications: O(number_of_stages)
+* How to use: attach the PrometheusGatewaySink to a Spark Context using the listener infrastructure. Example:
+*  --conf spark.extraListeners=ch.cern.sparkmeasure.PushGatewaySink
+
+Configuration - PushGatewaySink parameters
+--conf spark.sparkmeasure.pushgateway=SERVER:PORT 
+       Example: --conf spark.sparkmeasure.pushgateway=localhost:9091
+--conf spark.sparkmeasure.pushgateway.jobname=JOBNAME // default is pushgateway
 ```
 
 ## IOUtils
@@ -480,4 +497,5 @@ def parseInfluxDBCredentials(conf: SparkConf, logger: Logger) : (String,String)
 def parseInfluxDBName(conf: SparkConf, logger: Logger) : String
 def parseInfluxDBStagemetrics(conf: SparkConf, logger: Logger) : Boolean
 def parseKafkaConfig(conf: SparkConf, logger: Logger) : (String,String)
+def parsePushGatewayConfig(conf: SparkConf, logger: Logger): (String, String)
 ```

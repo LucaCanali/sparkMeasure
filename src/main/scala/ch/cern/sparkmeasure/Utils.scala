@@ -237,7 +237,7 @@ object Utils {
   }
 
   def parseKafkaConfig(conf: SparkConf, logger: Logger) : (String,String) = {
-    // handle InfluxDB username and password
+    // handle Kafka broker and topic
     val broker = conf.get("spark.sparkmeasure.kafkaBroker", "")
     val topic = conf.get("spark.sparkmeasure.kafkaTopic", "")
     if (broker.isEmpty || topic.isEmpty) {
@@ -247,6 +247,19 @@ object Utils {
       logger.info(s"Kafka topic: $topic")
     }
     (broker, topic)
+  }
+
+  def parsePushGatewayConfig(conf: SparkConf, logger: Logger): (String, String) = {
+    // handle Push Gateway URL
+    val URL = conf.get("spark.sparkmeasure.pushgateway", "")
+    if (URL.isEmpty) {
+      throw new IllegalArgumentException("SERVER:PORT configuration for the Prometheus Push Gateway is required, use --conf spark.sparkmeasure.pushgateway=SERVER:PORT")
+    } else {
+      logger.info(s"Prometheus Push Gateway server and port: $URL")
+    }
+    // sets the value for the label "job" reported with each metrics point
+    val job = conf.get("spark.sparkmeasure.pushgateway.jobname", "pushgateway")
+    (URL, job)
   }
 
   // handle list of metrics to process by the listener onExecutorMetricsUpdate

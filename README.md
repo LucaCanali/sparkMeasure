@@ -22,7 +22,7 @@ and spark-shell/pyspark environments.
 - **Batch Job Analysis:** With Flight Recorder mode sparkMeasure records and analyzes batch job metrics
   for thorough inspection.
 - **Monitoring Capabilities:** Seamlessly integrates with external systems like InfluxDB, Apache Kafka,
-  and Prometheus Gateway for extensive monitoring.
+  and Prometheus PushPushgateway for extensive monitoring.
 - **Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
   of detailed Spark task metrics.
 - **Language Compatibility:** Fully supports Scala, Java, and Python, making it versatile for a wide range
@@ -216,12 +216,13 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
   * **Flight Recorder mode**:   
     SparkMeasure in flight recorder will collect metrics transparently, without any need for you 
     to change your code. 
-    * Metrics can be saved to a file, locally or to a Hadoop-compliant filesystem
-    * or you can write metrics in near-realtime to an InfluxDB instance or to Apache Kafka
+    * Metrics can be saved to a file, locally, or to a Hadoop-compliant filesystem
+    * or you can write metrics in near-realtime to the followingsinks: InfluxDB, Apache Kafka, Prometheus PushPushgateway
     * More details:
       - **[Flight Recorder mode with file sink](docs/Flight_recorder_mode_FileSink.md)**
       - **[Flight Recorder mode with InfluxDB sink](docs/Flight_recorder_mode_InfluxDBSink.md)**
       - **[Flight Recorder mode with Apache Kafka sink](docs/Flight_recorder_mode_KafkaSink.md)**
+      - **[Flight Recorder mode with Prometheus Pushgateway sink](docs/Flight_recorder_mode_PrometheusPushgatewaySink.md)**
 
 
   * **Additional documentation and examples**:
@@ -249,10 +250,10 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
     * metrics collection and processing can be at the Stage-level or Task-level. The user chooses which mode to use with the API. 
     * metrics are can be buffered into memory for real-time reporting, or they can be dumped to an external
     system in the "flight recorder mode".
-    * supported external systems are File Systems supported by the Hadoop API, InfluxDB, and Apache Kafka.
+    * supported external systems are File Systems supported by the Hadoop API, InfluxDB, Apache Kafka, Prometheus Pushgateway.
 * Metrics are flattened and collected into local memory structures in the driver (ListBuffer of a custom case class).
-  * sparkMeasure in flight recorder mode with InfluxDB sink and Apache Kafka do not buffer,
-  but rather write the collected metrics directly 
+  * sparkMeasure in flight recorder mode when using one between the InfluxDB sink, Apache Kafka sink, and Prometheus Pushgateway sink, does not buffer,
+  but rather writes the collected metrics directly 
 * Metrics processing:
   * metrics can be aggregated into a report showing the cumulative values for each metric
   * aggregated metrics can also be returned as a Scala Map or Python dictionary
@@ -288,7 +289,7 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
          in notebooks and in application code for Scala, Java, and Python. 
         - sparkMeasure collects data in a flat structure, which makes it natural to use Spark SQL for 
         workload data analysis/
-        - sparkMeasure can sink metrics data into external systems (Filesystem, InfluxDB, Apache Kafka)
+        - sparkMeasure can sink metrics data into external systems (Filesystem, InfluxDB, Apache Kafka, Prometheus Pushgateway)
 
   - What are known limitations and gotchas?
     - sparkMeasure does not collect all the data available in the EventLog
@@ -299,11 +300,11 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
     - Metrics are collected on the driver, which could become a bottleneck. This is an issues affecting tools 
       based on Spark ListenerBus instrumentation, such as the Spark WebUI.
       In addition, note that sparkMeasure in the current version buffers all data in the driver memory.
-      The notable exception is when using the Flight recorder mode with InfluxDB and 
-      Apache Kafka sink, in this case metrics are directly sent to InfluxDB/Kafka
+      The notable exception is when using the Flight recorder mode with InfluxDB or 
+      Apache Kafka or Prometheus Pushgateway sink, in this case metrics are directly sent to InfluxDB/Kafka/Prometheus Pushgateway.
     - Task metrics values are collected by sparkMeasure only for successfully executed tasks. Note that 
       resources used by failed tasks are not collected in the current version. The notable exception is
-      with the Flight recorder mode with InfluxDB sink and with Apache Kafka.
+      with the Flight recorder mode with InfluxDB or Apache Kafka or Prometheus Pushgateway sink.
     - sparkMeasure collects and processes data in order of stage and/or task completion. This means that
       the metrics data is not available in real-time, but rather with a delay that depends on the workload
       and the size of the data. Moreover, performance data of jobs executing at the same time can be mixed.
@@ -320,8 +321,8 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
   - How can I save/sink the collected metrics?
      - You can print metrics data and reports to standard output or save them to files, using
       a locally mounted filesystem or a Hadoop compliant filesystem (including HDFS).
-     Additionally, you can sink metrics to external systems (such as Prometheus). 
-     The Flight Recorder mode can sink to InfluxDB and Apache Kafka. 
+     Additionally, you can sink metrics to external systems (such as Prometheus Pushgateway). 
+     The Flight Recorder mode can sink to InfluxDB, Apache Kafka or Prometheus Pushgateway. 
 
   - How can I process metrics data?
      - You can use Spark to read the saved metrics data and perform further post-processing and analysis.

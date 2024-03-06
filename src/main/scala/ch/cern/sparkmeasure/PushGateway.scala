@@ -144,7 +144,7 @@ case class PushGateway(serverIPnPort: String, metricsJob: String) {
       val responseCode = connection.getResponseCode()
       val responseMessage = connection.getResponseMessage()
       connection.disconnect();
-      if (responseCode != 202) // 202 Accepted, 400 Bad Request
+      if (responseCode != 200 && responseCode != 202) // 200 and 202 Accepted, 400 Bad Request
         logger.error(s"Data sent error, url: '$urlFull', response: $responseCode '$responseMessage'")
     } catch {
       case ste: java.net.SocketTimeoutException =>
