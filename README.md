@@ -31,6 +31,7 @@ and spark-shell/pyspark environments.
 ### Contents
 - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
 - [Documentation and API reference](#documentation-api-and-examples)
+- [Notes on Metrics](#notes-on-metrics)
 - [Architecture diagram](#architecture-diagram)
 - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
 
@@ -189,6 +190,22 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   taskmetrics = TaskMetrics(spark)
   taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
   ```
+---
+### Notes on Metrics
+Spark is instrumented with several metrics, collected at task execution, they are described in the documentation:  
+- [Spark Task Metrics docs](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
+
+Some of the key metrics when looking at a sparkMeasure report are:
+- **elapsedTime:** the time taken by the stage or task to complete (in millisec)
+- **executorRunTime:** the time the executors spent running the task, (in millisec). Note this time is cumulative across all tasks executed by the executor.
+- **executorCpuTime:** the time the executors spent running the task, (in millisec). Note this time is cumulative across all tasks executed by the executor.
+- **jvmGCTime:** the time the executors spent in garbage collection, (in millisec).
+- shuffle metrics: several metrics with details on the I/O and time spend on shuffle
+- I/O metrics: details on the I/O (reads and writes). Note, currently there are no time-based metrics for I/O operations.
+
+To learn more about hte metrics, I advise you set up your lab environment and run some tests to see the metrics in action.
+A good place to start with is [TPCDS PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark) - A tool you can use run TPCDS with PySpark, instrumented with sparkMeasure
+
 ---
 ### Documentation, API, and examples 
 SparkMeasure is one tool for many different use cases, languages, and environments:

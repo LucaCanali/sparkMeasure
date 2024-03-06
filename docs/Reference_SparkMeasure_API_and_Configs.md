@@ -13,6 +13,7 @@ Contents:
 - [Flight Recorder Mode - File Sink](#flight-recorder-mode---file-sink)
 - [InfluxDBSink and InfluxDBSinkExtended](#influxdbsink-and-influxdbsinkextended)
 - [KafkaSink and KafkaSinkExtended](#kafkasink-and-kafkasinkextended)
+- [Prometheus PushGatewaySink](#prometheus-pushgatewaysink)
 - [IOUtils](#ioutils)
 - [Utils](#utils)
 
@@ -432,7 +433,7 @@ This code depends on "kafka-clients", you may need to add the dependency explici
   --packages org.apache.kafka:kafka-clients:3.7.0
 ```
 
-## PushGatewaySink
+## Prometheus PushGatewaySink
 ```
 class PushGatewaySink(conf: SparkConf) extends SparkListener
 
