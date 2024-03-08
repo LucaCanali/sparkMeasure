@@ -8,10 +8,10 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 
 - The alternative, see paragraph above, is to build a jar from master.
     ```
-    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
     // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.23.jar
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.24.jar
    ```
 
 ### Download and build sparkMeasure (optional)
@@ -24,17 +24,17 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     ls -l target/scala-2.12/spark-measure*.jar  # location of the compiled jar
  
     # Run as in one of these examples:
-    bin/spark-shell --jars <path>/spark-measure_2.12-0.23-SNAPSHOT.jar
+    bin/spark-shell --jars <path>/spark-measure_2.12-0.24-SNAPSHOT.jar
     
     # alternative, set classpath for the driver (the jar is only needed in the driver)
-    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.23-SNAPSHOT.jar
+    bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.24-SNAPSHOT.jar
     ```
 
 ### Example: collect and print stage metrics with sparkMeasure
  
 1. Measure metrics at the Stage level, a basic example:
     ```
-    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+    bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
     
     val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
     stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
@@ -45,23 +45,31 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
 
     Example output:
 ```
++----------+
+|  count(1)|
++----------+
+|1000000000|
++----------+
+
+Time taken: 3833 ms
+
 Scheduling mode = FIFO
 Spark Context default degree of parallelism = 8
 
 Aggregated Spark stage metrics:
 numStages => 3
 numTasks => 17
-elapsedTime => 1218 (1 s)
-stageDuration => 994 (1.0 s)
-executorRunTime => 2625 (3 s)
-executorCpuTime => 2224 (2 s)
-executorDeserializeTime => 2945 (3 s)
-executorDeserializeCpuTime => 1153 (1 s)
-resultSerializationTime => 8 (8 ms)
-jvmGCTime => 80 (80 ms)
+elapsedTime => 1112 (1 s)
+stageDuration => 864 (0.9 s)
+executorRunTime => 3358 (3 s)
+executorCpuTime => 2168 (2 s)
+executorDeserializeTime => 892 (0.9 s)
+executorDeserializeCpuTime => 251 (0.3 s)
+resultSerializationTime => 72 (72 ms)
+jvmGCTime => 0 (0 ms)
 shuffleFetchWaitTime => 0 (0 ms)
-shuffleWriteTime => 30 (30 ms)
-resultSize => 16220 (15.0 KB)
+shuffleWriteTime => 36 (36 ms)
+resultSize => 16295 (15.9 KB)
 diskBytesSpilled => 0 (0 Bytes)
 memoryBytesSpilled => 0 (0 Bytes)
 peakExecutionMemory => 0
@@ -80,10 +88,12 @@ shuffleRemoteBytesReadToDisk => 0 (0 Bytes)
 shuffleBytesWritten => 472 (472 Bytes)
 shuffleRecordsWritten => 8
 
+Average number of active tasks => 3.0
+
 Stages and their duration:
-Stage 0 duration => 573 (0.6 s)
-Stage 1 duration => 354 (0.4 s)
-Stage 3 duration => 67 (67 ms)
+Stage 0 duration => 355 (0.4 s)
+Stage 1 duration => 411 (0.4 s)
+Stage 3 duration => 98 (98 ms)
 ```
  
 - New in sparkMeasure v01: memory metrics report:

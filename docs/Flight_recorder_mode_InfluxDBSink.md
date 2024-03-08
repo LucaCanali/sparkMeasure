@@ -2,7 +2,9 @@
 
 Use sparkMeasure in flight recorder mode to instrument Spark applications without touching their code.
 Flight recorder mode attaches a Spark Listener that collects the metrics while the application runs.
-This describes how to sink Spark metrics to an InfluxDB instance.
+This describes how to sink Spark metrics to an InfluxDB instance.  
+Note this is for InfluxDB version 1.x, for version 2.x some changes are needed.  
+You can use this also with VictoriaMetrics, ingesting the InfluxDB line protocol.  
 
 ## InfluxDBSink and InfluxDBSinkExtended 
 
@@ -85,7 +87,7 @@ bin/spark-shell \
   --conf spark.sparkmeasure.influxdbURL="http://localhost:8086" \
   --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink,ch.cern.sparkmeasure.InfluxDBSinkExtended \
   --conf spark.sparkmeasure.influxdbStagemetrics=true
-  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
 // run a Spark job, this will produce metrics  
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show

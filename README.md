@@ -53,13 +53,13 @@ Choose the sparkMeasure version for your environment:
 
 Examples:
  * Spark with Scala 2.12:
-   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23`
-   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23`
+   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
+   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
  
  * Spark with Scala 2.13:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.23`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.23`
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
+   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
      - note: `pip install sparkmeasure` to get the Python wrapper API
 
 * Spark 2.4 and 2.3 with Scala 2.11:
@@ -69,15 +69,15 @@ Examples:
 
  * Where to get sparkMeasure: 
     * [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.23) 
+    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.24) 
     * Bleeding edge jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
     * Build jars from master using sbt: `sbt +package` 
   
 * Some practical examples of how to set the configuration to use sparkMeasure with Spark
-  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.23` 
-  * `--jars /path/to/spark-measure_2.12-0.23.jar`
-  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.23/spark-measure_2.12-0.23.jar`
-  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.23.jar`
+  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.24` 
+  * `--jars /path/to/spark-measure_2.12-0.24.jar`
+  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.24/spark-measure_2.12-0.24.jar`
+  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.24.jar`
 
 ---
 ### Examples of interactive use of sparkMeasure
@@ -94,7 +94,7 @@ Examples:
 - Stage-level metrics from the command line:
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -102,7 +102,7 @@ Examples:
   ```
   # Python CLI
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
@@ -110,23 +110,31 @@ Examples:
   ```
 The output should look like this:
 ```
++----------+
+|  count(1)|
++----------+
+|1000000000|
++----------+
+
+Time taken: 3833 ms
+
 Scheduling mode = FIFO
 Spark Context default degree of parallelism = 8
 
 Aggregated Spark stage metrics:
 numStages => 3
 numTasks => 17
-elapsedTime => 1291 (1 s)
-stageDuration => 1058 (1 s)
-executorRunTime => 2774 (3 s)
-executorCpuTime => 2004 (2 s)
-executorDeserializeTime => 2868 (3 s)
-executorDeserializeCpuTime => 1051 (1 s)
-resultSerializationTime => 5 (5 ms)
-jvmGCTime => 88 (88 ms)
+elapsedTime => 1112 (1 s)
+stageDuration => 864 (0.9 s)
+executorRunTime => 3358 (3 s)
+executorCpuTime => 2168 (2 s)
+executorDeserializeTime => 892 (0.9 s)
+executorDeserializeCpuTime => 251 (0.3 s)
+resultSerializationTime => 72 (72 ms)
+jvmGCTime => 0 (0 ms)
 shuffleFetchWaitTime => 0 (0 ms)
-shuffleWriteTime => 16 (16 ms)
-resultSize => 16091 (15.0 KB)
+shuffleWriteTime => 36 (36 ms)
+resultSize => 16295 (15.9 KB)
 diskBytesSpilled => 0 (0 Bytes)
 memoryBytesSpilled => 0 (0 Bytes)
 peakExecutionMemory => 0
@@ -145,10 +153,12 @@ shuffleRemoteBytesReadToDisk => 0 (0 Bytes)
 shuffleBytesWritten => 472 (472 Bytes)
 shuffleRecordsWritten => 8
 
+Average number of active tasks => 3.0
+
 Stages and their duration:
-Stage 0 duration => 593 (0.6 s)
-Stage 1 duration => 416 (0.4 s)
-Stage 3 duration => 49 (49 ms)
+Stage 0 duration => 355 (0.4 s)
+Stage 1 duration => 411 (0.4 s)
+Stage 3 duration => 98 (98 ms)
 ```
 
 - Stage metrics collection mode has an optional memory report command
@@ -176,7 +186,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
     - this is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -184,7 +194,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   ```
   # Python CLI
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   from sparkmeasure import TaskMetrics
   taskmetrics = TaskMetrics(spark)

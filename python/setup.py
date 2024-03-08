@@ -6,12 +6,12 @@ description = 'Python API for sparkMeasure, a tool for performance troubleshooti
 
 long_description = """SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads.  
 It simplifies the collection and analysis of Spark performance metrics. The bulk of sparkMeasure is written in Scala.
-This package contains the Python API for sparkMeasure and is intended to work Python and Spark.
-Use from PySpark, or in Jupyter notebook environments, or in general as a tool to instrument Spark jobs in your Python code.  
+This package contains the Python API for sparkMeasure.
+Use it from Python programs, PySpark, Jupyter notebooks, or in general as a tool to instrument and collect runtime metrics for your Spark jobs.  
 **[Link to sparkMeasure GitHub page and documentation](https://github.com/lucacanali/sparkMeasure)**"""
 
 setup(name='sparkmeasure',
-    version='0.23.2',
+    version='0.24.0',
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -22,7 +22,7 @@ setup(name='sparkmeasure',
     include_package_data=True,
     packages=find_packages(),
     zip_safe=False,
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=[],
     classifiers=[
     'Programming Language :: Python :: 3',

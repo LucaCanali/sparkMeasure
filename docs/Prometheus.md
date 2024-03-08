@@ -11,7 +11,7 @@ The Prometheus Pushgateway can accept collected data and keep it for Prometheus 
 
 **Parameters:**
 
-* serverIPnPort: String with prometheus pushgateway hostIP:Port,
+* serverIPnPort: String with Prometheus Pushgateway hostIP:Port,
 * metricsJob: job name,
 * labelName: metrics label name,
 * labelValue: metrics label value
@@ -35,7 +35,7 @@ https://prometheus.io/docs/instrumenting/exposition_formats/
 
 1. Measure metrics at the Stage level (example in Scala):
 ```
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.19 
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24 
 
 val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.begin()

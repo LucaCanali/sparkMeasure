@@ -12,17 +12,18 @@ import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 
 /**
- * InfluxDBSink: write Spark metrics and application info in near real-time to InfluxDB
+ * InfluxDBSink: write Spark metrics and application info in near real-time to InfluxDB v 1.x
  *  use this mode to monitor Spark execution workload
  *  use for Grafana dashboard and analytics of job execution
  *  How to use: attach the InfluxDBSInk to a Spark Context using the extra listener infrastructure.
+ *  Note: this is for InfluxDB v1.x
  *  Example:
  *  --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink
  *
  *  Configuration for InfluxDBSink is handled with Spark conf parameters:
  *
  * spark.sparkmeasure.influxdbURL (default "http://localhost:8086")
- * spark.sparkmeasure.influxdbUsername (default "", not this can be empty if InfluxDB is configured with no authentication)
+ * spark.sparkmeasure.influxdbUsername (default "", this can be empty if InfluxDB is configured with no authentication)
  * spark.sparkmeasure.influxdbPassword (default "")
  * spark.sparkmeasure.influxdbName (default "sparkmeasure")
  * spark.sparkmeasure.influxdbStagemetrics, (boolean, default is false)
