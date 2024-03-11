@@ -1,6 +1,6 @@
 name := "spark-measure"
 
-version := "0.24"
+version := "0.25-SNAPSHOT"
 
 scalaVersion := "2.12.18"
 crossScalaVersions := Seq("2.12.18", "2.13.8")
@@ -9,7 +9,7 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 // publishing to Sonatype Nexus repository and Maven
 publishMavenStyle := true
-isSnapshot := false
+isSnapshot := true
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.1"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.16.1"
