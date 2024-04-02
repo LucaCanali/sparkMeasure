@@ -22,7 +22,7 @@ and spark-shell/pyspark environments.
 - **Batch Job Analysis:** With Flight Recorder mode sparkMeasure records and analyzes batch job metrics
   for thorough inspection.
 - **Monitoring Capabilities:** Seamlessly integrates with external systems like InfluxDB, Apache Kafka,
-  and Prometheus PushPushgateway for extensive monitoring.
+  and Prometheus Push Gateway for extensive monitoring.
 - **Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
   of detailed Spark task metrics.
 - **Language Compatibility:** Fully supports Scala, Java, and Python, making it versatile for a wide range
@@ -30,8 +30,9 @@ and spark-shell/pyspark environments.
 
 ### Contents
 - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
-- [Documentation and API reference](#documentation-api-and-examples)
+- [Configuration and setup](#spark-configuration)
 - [Notes on Metrics](#notes-on-metrics)
+- [Documentation and API reference](#documentation-api-and-examples)
 - [Architecture diagram](#architecture-diagram)
 - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
 
@@ -47,41 +48,8 @@ Main author and contact: Luca.Canali@cern.ch
 
 ---
 ### Getting started with sparkMeasure
-Choose the sparkMeasure version for your environment:
-  * For Spark 3.x, please use the latest version
-  * For Spark 2.4 and 2.3, use version 0.19
-  * For Spark 2.1 and 2.2, use version 0.16
 
-Examples:
- * Spark with Scala 2.12:
-   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
-   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
-      - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
- 
- * Spark with Scala 2.13:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
-     - note: `pip install sparkmeasure` to get the Python wrapper API
-
-* Spark 2.4 and 2.3 with Scala 2.11:
-    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
-    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
-        - note: `pip install sparkmeasure==0.19` to get the Python wrapper API
-
- * Where to get sparkMeasure: 
-    * [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.24) 
-    * Bleeding edge jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
-    * Build jars from master using sbt: `sbt +package` 
-  
-* Some practical examples of how to set the configuration to use sparkMeasure with Spark
-  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.24` 
-  * `--jars /path/to/spark-measure_2.12-0.24.jar`
-  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.24/spark-measure_2.12-0.24.jar`
-  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.24.jar`
-
----
-### Examples of interactive use of sparkMeasure
+Examples of interactive use of sparkMeasure:
 
 - [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="50"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
@@ -91,7 +59,7 @@ Examples:
 
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2910895789597316/442806354506758/latest.html)
 
-  
+
 - Stage-level metrics from the command line:
   ```
   # Scala CLI
@@ -163,12 +131,12 @@ Stage 3 duration => 98 (98 ms)
 ```
 
 - Stage metrics collection mode has an optional memory report command
-  - this is new in sparkMeasure since version 0.21, it requires Spark versions 3.1 or higher 
-  - note: this report makes use of per-stage memory (executor metrics) data which is sent by the
-  executors at each heartbeat to the driver, there could be a small delay or the order of
-  a few seconds between the end of the job and the time the last metrics value is received. 
-  - If you receive the error message java.util.NoSuchElementException: key not found,
-  retry running the report after waiting for a few seconds.
+    - this is new in sparkMeasure since version 0.21, it requires Spark versions 3.1 or higher
+    - note: this report makes use of per-stage memory (executor metrics) data which is sent by the
+      executors at each heartbeat to the driver, there could be a small delay or the order of
+      a few seconds between the end of the job and the time the last metrics value is received.
+    - If you receive the error message java.util.NoSuchElementException: key not found,
+      retry running the report after waiting for a few seconds.
 ```
 (scala)> stageMetrics.printMemoryReport
 (python)> stagemetrics.print_memory_report()
@@ -194,15 +162,52 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
   ```
   ```
   # Python CLI
+  pip install pyspark
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   from sparkmeasure import TaskMetrics
   taskmetrics = TaskMetrics(spark)
   taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
   ```
+
+### Spark configuration
+
+* Choose the sparkMeasure version suitable for your environment:
+  * For Spark 3.x, please use the latest version
+  * For Spark 2.4 and 2.3, use version 0.19
+  * For Spark 2.1 and 2.2, use version 0.16
+
+* Where to get sparkMeasure:
+    * [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
+    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.24)
+    * Bleeding edge jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
+    * Build jars from master using sbt: `sbt +package`
+
+* Choose your preferred method to include sparkMeasure in your Spark environment:
+  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
+  * `--jars /path/to/spark-measure_2.12-0.24.jar`
+  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.24/spark-measure_2.12-0.24.jar`
+  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.24.jar`
+
+Examples:
+ * Spark with Scala 2.12:
+   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
+   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
+      - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
+ 
+ * Spark with Scala 2.13:
+   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
+   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
+     - note: `pip install sparkmeasure` to get the Python wrapper API
+
+* Spark 2.4 and 2.3 with Scala 2.11:
+    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
+    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
+        - note: `pip install sparkmeasure==0.19` to get the Python wrapper API
+
 ---
-### Notes on Metrics
+### Notes on Spark Metrics
 Spark is instrumented with several metrics, collected at task execution, they are described in the documentation:  
 - [Spark Task Metrics docs](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
 
@@ -214,7 +219,7 @@ Some of the key metrics when looking at a sparkMeasure report are:
 - shuffle metrics: several metrics with details on the I/O and time spend on shuffle
 - I/O metrics: details on the I/O (reads and writes). Note, currently there are no time-based metrics for I/O operations.
 
-To learn more about hte metrics, I advise you set up your lab environment and run some tests to see the metrics in action.
+To learn more about the metrics, I advise you set up your lab environment and run some tests to see the metrics in action.
 A good place to start with is [TPCDS PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark) - A tool you can use run TPCDS with PySpark, instrumented with sparkMeasure
 
 ---
