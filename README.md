@@ -30,6 +30,9 @@ and spark-shell/pyspark environments.
 
 ### Contents
 - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
+  - [Examples of sparkMeasure on notebooks](#examples-of-sparkmeasure-on-notebooks)  
+  - [Examples of sparkMeasure on the CLI](#examples-of-sparkmeasure-on-the-cli)
+  - [Command line example for Task Metrics](#command-line-example-for-task-metrics)
 - [Configuration and setup](#spark-configuration)
 - [Notes on Metrics](#notes-on-metrics)
 - [Documentation and API reference](#documentation-api-and-examples)
@@ -49,29 +52,33 @@ Main author and contact: Luca.Canali@cern.ch
 ---
 ### Getting started with sparkMeasure
 
-Examples of interactive use of sparkMeasure:
+#### Examples of sparkMeasure on notebooks
+- Run locally or on hosted resources like Google Colab, Databricks, GitHub Codespaces, etc on Jupyter notebooks
 
 - [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="50"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
 
+- [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2910895789597333/442806354506758/latest.html)  
+  
+- [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2910895789597316/442806354506758/latest.html)  
+  
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyter_Python_getting_started.ipynb)
-
-- [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Scala notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2910895789597333/442806354506758/latest.html)
-
-- [<img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Databricks_Logo.png" height="40"> Python notebook on Databricks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/2061385495597958/2910895789597316/442806354506758/latest.html)
-
-
-- Stage-level metrics from the command line:
+    
+  
+#### Examples of sparkMeasure on the CLI 
+  - Run locally or on hosted resources
+    - [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/LucaCanali/sparkMeasure)
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
   ```
   ```
   # Python CLI
+  # pip install pyspark
   pip install sparkmeasure
-  bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
@@ -151,18 +158,18 @@ Stage 3 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
 Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 ```
 
-- Task-level metrics from the command line:
-    - this is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
+#### Command line example for Task Metrics:
+This is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
   ```
   ```
   # Python CLI
-  pip install pyspark
+  # pip install pyspark
   pip install sparkmeasure
   pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
@@ -192,18 +199,18 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 
 Examples:
  * Spark with Scala 2.12:
-   - **Scala:** `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
-   - **Python:** `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
+   - **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
+   - **Python:** `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
  
  * Spark with Scala 2.13:
-   - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
-   - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
+   - Scala: `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
+   - Python: `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
      - note: `pip install sparkmeasure` to get the Python wrapper API
 
 * Spark 2.4 and 2.3 with Scala 2.11:
-    - Scala: `bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
-    - Python: `bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
+    - Scala: `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
+    - Python: `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
         - note: `pip install sparkmeasure==0.19` to get the Python wrapper API
 
 ---
