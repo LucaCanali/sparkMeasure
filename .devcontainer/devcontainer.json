@@ -1,0 +1,10 @@
+{
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "16gb"
+  },
+  "postCreateCommand": "pip install pyspark sparkmeasure",
+  "extensions": ["ms-python.python"]
+}
+
