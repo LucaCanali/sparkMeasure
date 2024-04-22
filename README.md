@@ -30,6 +30,7 @@ and spark-shell/pyspark environments.
 
 ### Contents
 - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
+  - [Demo](#demo) 
   - [Examples of sparkMeasure on notebooks](#examples-of-sparkmeasure-on-notebooks)  
   - [Examples of sparkMeasure on the CLI](#examples-of-sparkmeasure-on-the-cli)
   - [Command line example for Task Metrics](#command-line-example-for-task-metrics)
@@ -51,6 +52,10 @@ Main author and contact: Luca.Canali@cern.ch
 
 ---
 ### Getting started with sparkMeasure
+
+#### Demo
+
+[![Watch the video](https://www.youtube.com/s/desktop/050e6796/img/favicon_32x32.png) Watch the video on YouTube](https://www.youtube.com/watch?v=NEA1kkFcZWs)
 
 #### Examples of sparkMeasure on notebooks
 - Run locally or on hosted resources like Google Colab, Databricks, GitHub Codespaces, etc on Jupyter notebooks
