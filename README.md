@@ -55,7 +55,7 @@ Main author and contact: Luca.Canali@cern.ch
 
 #### Demo
 
-[![Watch the video](https://www.youtube.com/s/desktop/050e6796/img/favicon_32x32.png) Watch the video on YouTube](https://www.youtube.com/watch?v=NEA1kkFcZWs)
+[![Watch the video](https://www.youtube.com/s/desktop/050e6796/img/favicon_32x32.png) Watch sparkMeasure's getting started demo tutorial](https://www.youtube.com/watch?v=NEA1kkFcZWs)
 
 #### Examples of sparkMeasure on notebooks
 - Run locally or on hosted resources like Google Colab, Databricks, GitHub Codespaces, etc on Jupyter notebooks
