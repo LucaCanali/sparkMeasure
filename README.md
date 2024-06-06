@@ -263,7 +263,7 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
     SparkMeasure in flight recorder will collect metrics transparently, without any need for you 
     to change your code. 
     * Metrics can be saved to a file, locally, or to a Hadoop-compliant filesystem
-    * or you can write metrics in near-realtime to the followingsinks: InfluxDB, Apache Kafka, Prometheus PushPushgateway
+    * or you can write metrics in near-realtime to the following sinks: InfluxDB, Apache Kafka, Prometheus PushPushgateway
     * More details:
       - **[Flight Recorder mode with file sink](docs/Flight_recorder_mode_FileSink.md)**
       - **[Flight Recorder mode with InfluxDB sink](docs/Flight_recorder_mode_InfluxDBSink.md)**

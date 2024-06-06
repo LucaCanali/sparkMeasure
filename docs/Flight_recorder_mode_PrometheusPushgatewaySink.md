@@ -6,19 +6,24 @@ This describes how to sink Spark metrics to a Prometheus Gateway.
 
 ## PushGatewaySink 
 
-**PushGatewaySink** is a class that extends the SparkListener infrastructure.  
-It collects and writes Spark metrics and application info in near real-time to a Prometheus Gateway instance.
-provided by the user. Use this mode to monitor Spark execution workload.  
-Notes, the amount of data generated is relatively small in most applications: O(number_of_stages)
+**PushGatewaySink** is a class that extends the Spark listener infrastructure to collect metrics and 
+write them to a Prometheus Gateway endpoint. PushGatewaySink collects and writes Spark metrics
+and application info in near real-time to a Prometheus Gateway instance provided by the user.
+Use this mode to monitor Spark execution workload.
+Notes:
+ - Currently, PushGatewaySink collects data at the Stage level (StageMetrics). 
+   Task-level metrics are not collected.
+ - The amount of data generated is relatively small in most applications; it is O(number_of_stages)
   
 How to use: attach the PrometheusGatewaySink to a Spark Context using the listener infrastructure. Example:
   - `--conf spark.extraListeners=ch.cern.sparkmeasure.PushGatewaySink`
   
-Configuration for the  is handled with Spark configuration parameters.  
-Note: you can add configuration using --config option when using spark-submit  
-use the .config method when allocating the Spark Session in Scala/Python/Java).  
-Configurations:  
- ```
+Configuration for PushGatewaySink is handled using Spark configuration parameters.  
+Note: you can add configuration using `--config` options when using spark-submit  
+or use the `.config` method when allocating the Spark Session in Scala/Python/Java), as usual.  
+
+**Configurations:**    
+```
 Option 1 (recommended) Start the listener for PushGatewaySink: 
 --conf spark.extraListeners=ch.cern.sparkmeasure.PushGatewaySink
 
@@ -32,7 +37,7 @@ Configuration - PushGatewaySink parameters:
 
 ## Use case
 
-- The use case for this sink it to extend Spark monitoring, by writing execution metrics into Prometheus via the Pushgateway,
+- The use case for PushGatewaySink is to extend Spark monitoring, by writing execution metrics into Prometheus via the Pushgateway,
   as Prometheus has a pull-based architecture. You'll need to configure Prometheus to pull metrics from the Pushgateway.
   You'll also need to set up a performance dashboard from the metrics collected by Prometheus.
 
