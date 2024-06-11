@@ -84,6 +84,7 @@ docker run --name influx --network=host -d influxdb:1.8.10
 - Start Spark with the InfluxDBSink Listener
 ```
 bin/spark-shell \
+  --name MyAppName
   --conf spark.sparkmeasure.influxdbURL="http://localhost:8086" \
   --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink,ch.cern.sparkmeasure.InfluxDBSinkExtended \
   --conf spark.sparkmeasure.influxdbStagemetrics=true
@@ -112,11 +113,14 @@ Using database sparkmeasure
 name: measurements
 name
 ----
+applications_ended
+applications_started
 executors_started
 jobs_ended
 jobs_started
 queries_ended
 queries_started
+stage_metrics
 stages_ended
 stages_started
 task_metrics
@@ -126,34 +130,37 @@ tasks_started
 > show series
 key
 ---
-executors_started,applicationId=noAppId
-jobs_ended,applicationId=local-1660122150941
-jobs_started,applicationId=local-1660122150941
-queries_ended,applicationId=local-1660122150941
-queries_started,applicationId=local-1660122150941
-stage_metrics,applicationId=local-1660122150941
-stages_ended,applicationId=local-1660122150941
-stages_started,applicationId=local-1660122150941
-task_metrics,applicationId=local-1660122150941
-tasks_ended,applicationId=local-1660122150941
-tasks_started,applicationId=local-1660122150941
+applications_ended,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+applications_started,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+executors_started,applicationId=noAppId,spark.app.name=noAppName,spark.dynamicAllocation.enabled=false
+jobs_ended,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+jobs_started,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+queries_ended,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+queries_started,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+stage_metrics,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+stages_ended,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+stages_started,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+task_metrics,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+tasks_ended,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+tasks_started,applicationId=local-1718107775270,spark.app.name=MyAppName,spark.dynamicAllocation.enabled=false
+
 > select * from queries_started
 name: queries_started
-time                applicationId       description          queryId
-----                -------------       -----------          -------
-1660122211786000000 local-1660122150941 show at <console>:23 0
+time                applicationId       description          queryId spark.app.name spark.dynamicAllocation.enabled
+----                -------------       -----------          ------- -------------- -------------------------------
+1718107788602000000 local-1718107775270 show at <console>:23 0       MyAppName      false
 > select * from /executors/
 name: executors_started
-time                applicationId executorHost              executorId totalCores
-----                ------------- ------------              ---------- ----------
-1660122151091000000 noAppId       pcitdbgpu1.dyndns.cern.ch driver     8
+time                applicationId executorHost         executorId spark.app.name spark.dynamicAllocation.enabled totalCores
+----                ------------- ------------         ---------- -------------- ------------------------------- ----------
+1718107775713000000 noAppId       ais-dev1.alphonso.tv driver     noAppName      false                           32
 > select * from stage_metrics
 name: stage_metrics
-time                applicationId       attemptNumber bytesRead bytesWritten completionTime executorCpuTime executorDeserializeCpuTime executorDeserializeTime executorRunTime failureReason jvmGCTime memoryBytesSpilled peakExecutionMemory recordsRead recordsWritten resultSerializationTime resultSize shuffleBytesWritten shuffleFetchWaitTime shuffleLocalBlocksFetched shuffleLocalBytesRead shuffleRecordsRead shuffleRecordsWritten shuffleRemoteBlocksFetched shuffleRemoteBytesRead shuffleRemoteBytesReadToDisk shuffleTotalBlocksFetched shuffleTotalBytesRead shuffleWriteTime stageId submissionTime
-----                -------------       ------------- --------- ------------ -------------- --------------- -------------------------- ----------------------- --------------- ------------- --------- ------------------ ------------------- ----------- -------------- ----------------------- ---------- ------------------- -------------------- ------------------------- --------------------- ------------------ --------------------- -------------------------- ---------------------- ---------------------------- ------------------------- --------------------- ---------------- ------- --------------
-1660122213061000000 local-1660122150941 0             0         0            1660122213061  82265168        1039200151                 3171                    301                           144       0                  0                   1000        0              7                       12119      0                   0                    0                         0                     0                  0                     0                          0                      0                            0                         0                     0                0       1660122212450
-1660122213630000000 local-1660122150941 0             0         0            1660122213630  2180200879      49937229                   155                     2491                          0         0                  0                   1000        0              7                       16134      472                 0                    0                         0                     0                  8                     0                          0                      0                            0                         0                     65588303         1       1660122213240
-1660122213764000000 local-1660122150941 0             0         0            1660122213764  38334075        2650585                    2                       39                            0         0                  0                   0           0              0                       2667       0                   0                    8                         472                   8                  0                     0                          0                      0                            8                         472                   0                3       1660122213711
+time                applicationId       attemptNumber bytesRead bytesWritten completionTime executorCpuTime executorDeserializeCpuTime executorDeserializeTime executorRunTime failureReason jvmGCTime memoryBytesSpilled peakExecutionMemory recordsRead recordsWritten resultSerializationTime resultSize shuffleBytesWritten shuffleFetchWaitTime shuffleLocalBlocksFetched shuffleLocalBytesRead shuffleRecordsRead shuffleRecordsWritten shuffleRemoteBlocksFetched shuffleRemoteBytesRead shuffleRemoteBytesReadToDisk shuffleTotalBlocksFetched shuffleTotalBytesRead shuffleWriteTime spark.app.name spark.dynamicAllocation.enabled stageId submissionTime
+----                -------------       ------------- --------- ------------ -------------- --------------- -------------------------- ----------------------- --------------- ------------- --------- ------------------ ------------------- ----------- -------------- ----------------------- ---------- ------------------- -------------------- ------------------------- --------------------- ------------------ --------------------- -------------------------- ---------------------- ---------------------------- ------------------------- --------------------- ---------------- -------------- ------------------------------- ------- --------------
+1718107790934000000 local-1718107775270 0             0         0            1718107790934  600768868       6769045421                 30598                   4508                          9248      0                  0                   1000        0              273                     50592      0                   0                    0                         0                     0                  0                     0                          0                      0                            0                         0                     0                MyAppName      false                           0       1718107789534
+1718107791715000000 local-1718107775270 0             0         0            1718107791715  7957128399      312604886                  958                     14359                         0         0                  0                   1000        0              35                      64934      1880                0                    0                         0                     0                  32                    0                          0                      0                            0                         0                     419858111        MyAppName      false                           1       1718107791154
+1718107791910000000 local-1718107775270 0             0         0            1718107791910  81533655        4458869                    4                       90                            0         0                  0                   0           0              0                       4006       0                   0                    32                        1880                  32                 0                     0                          0                      0                            32                        1880                  0                MyAppName      false                           3       1718107791799
 ```
 
 ## List of the Task Metrics collected by InfluxDBSink
