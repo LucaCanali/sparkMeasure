@@ -76,6 +76,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
 
   var appId = "noAppId"
   var appName = "noAppName"
+  var dynamicAllocationEnabled = conf.get("spark.dynamicAllocation.enabled", "false")
 
   appId = SparkSession.getActiveSession match {
     case Some(sparkSession) => sparkSession.sparkContext.applicationId
@@ -89,6 +90,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
     val point = Point.measurement("executors_started")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .addField("executorId", executorId)
       .addField("executorHost", executorInfo.executorHost)
       .addField("totalCores", executorInfo.totalCores)
@@ -104,6 +106,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
     val point = Point.measurement("stages_started")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .addField("stageId", stageId)
       .addField("attemptNUmber", attemptNumber)
       .time(submissionTime, TimeUnit.MILLISECONDS)
@@ -120,6 +123,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
     val point1 = Point.measurement("stages_ended")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .time(completionTime, TimeUnit.MILLISECONDS)
       .addField("stageId", stageId)
       .addField("attemptNumber", attemptNumber)
@@ -132,6 +136,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
       val point2 = Point.measurement("stage_metrics")
         .tag("applicationId", appId)
         .tag("spark.app.name", appName)
+        .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
         .time(completionTime, TimeUnit.MILLISECONDS)
         .addField("stageId", stageId)
         .addField("attemptNumber", attemptNumber)
@@ -179,6 +184,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
         val point = Point.measurement("queries_started")
           .tag("applicationId", appId)
           .tag("spark.app.name", appName)
+          .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
           .time(startTime, TimeUnit.MILLISECONDS)
           .addField("description", description)
           .addField("queryId", queryId)
@@ -192,6 +198,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
         val point = Point.measurement("queries_ended")
           .tag("applicationId", appId)
           .tag("spark.app.name", appName)
+          .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
           .time(endTime, TimeUnit.MILLISECONDS)
           .addField("queryId", queryId)
           .build()
@@ -208,6 +215,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
     val point = Point.measurement("jobs_started")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .time(startTime, TimeUnit.MILLISECONDS)
       .addField("jobID", jobId)
       .build()
@@ -221,6 +229,7 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
     val point = Point.measurement("jobs_ended")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .time(completionTime, TimeUnit.MILLISECONDS)
       .addField("jobID", jobId)
       .build()
@@ -230,10 +239,34 @@ class InfluxDBSink(conf: SparkConf) extends SparkListener {
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
     appId = applicationStart.appId.getOrElse("noAppId")
     appName = applicationStart.appName
+
+    val point = Point.measurement("applications_started")
+      .tag("applicationId", appId)
+      .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
+      .time(applicationStart.time, TimeUnit.MILLISECONDS)
+      .field("startTime", conf.getLong("spark.app.startTime", 0))
+      .field("submitTime", conf.getLong("spark.app.submitTime", 0))
+      .field("totalCoresRequested", conf.getLong("spark.cores.max", 0))
+      .field("sparkDriverHost", conf.get("spark.driver.host", ""))
+      .field("sparkDriverPort", conf.getInt("spark.driver.port", 0))
+      .field("deployMode", conf.get("spark.submit.deployMode", ""))
+      .build()
+    database.write(point)
   }
 
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
     logger.info(s"Spark application ended, timestamp = ${applicationEnd.time}, closing InfluxDB connection.")
+
+    val point = Point.measurement("applications_ended")
+      .tag("applicationId", appId)
+      .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
+      .time(applicationEnd.time, TimeUnit.MILLISECONDS)
+      .field("duration", (applicationEnd.time - conf.getLong("spark.app.startTime", 0))/1000)
+      .build()
+    database.write(point)
+
     influxDB.close()
   }
 
@@ -252,6 +285,7 @@ class InfluxDBSinkExtended(conf: SparkConf) extends InfluxDBSink(conf: SparkConf
     val point = Point.measurement("tasks_started")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .time(taskInfo.launchTime, TimeUnit.MICROSECONDS)
       .addField("taskId", taskInfo.taskId)
       .addField("attemptNumber", taskInfo.attemptNumber)
@@ -267,6 +301,7 @@ class InfluxDBSinkExtended(conf: SparkConf) extends InfluxDBSink(conf: SparkConf
     val point1 = Point.measurement("tasks_ended")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .time(taskInfo.finishTime, TimeUnit.MILLISECONDS)
       .addField("taskId", taskInfo.taskId)
       .addField("attemptNumber", taskInfo.attemptNumber)
@@ -278,6 +313,7 @@ class InfluxDBSinkExtended(conf: SparkConf) extends InfluxDBSink(conf: SparkConf
     val point2 = Point.measurement("task_metrics")
       .tag("applicationId", appId)
       .tag("spark.app.name", appName)
+      .tag("spark.dynamicAllocation.enabled", dynamicAllocationEnabled)
       .time(taskInfo.finishTime, TimeUnit.MILLISECONDS)
       // task info
       .addField("taskId", taskInfo.taskId)
