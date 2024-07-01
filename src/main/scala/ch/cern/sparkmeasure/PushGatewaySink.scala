@@ -31,8 +31,9 @@ class PushGatewaySink(conf: SparkConf) extends SparkListener {
   logger.warn("Custom monitoring listener with Prometheus Push Gateway sink initializing. Now attempting to connect to the Push Gateway")
 
   // Initialize PushGateway connection
-  val (url, job) = Utils.parsePushGatewayConfig(conf, logger)
-  val gateway = PushGateway(url, job)
+  private val gateway: PushGateway = PushGateway(
+    Utils.parsePushGatewayConfig(conf, logger)
+  )
 
   var appId: String = SparkSession.getActiveSession match {
     case Some(sparkSession) => sparkSession.sparkContext.applicationId

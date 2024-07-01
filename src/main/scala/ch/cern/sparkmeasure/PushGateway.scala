@@ -1,7 +1,8 @@
 package ch.cern.sparkmeasure
 
-import java.net.{URL, URLEncoder, HttpURLConnection}
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
+
+import java.net.{HttpURLConnection, URL, URLEncoder}
 
 /**
  * PushGateway
@@ -30,25 +31,23 @@ import org.slf4j.LoggerFactory
 
 
 /**
- * serverIPnPort: String with prometheus pushgateway hostIP:Port,
- * metricsJob: job name
+ * config: case class with all required configuration for pushgateway,
  */
-case class PushGateway(serverIPnPort: String, metricsJob: String) {
+case class PushGateway(config: PushgatewayConfig) {
+  lazy val logger: Logger = LoggerFactory.getLogger(this.getClass.getName)
 
-  lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
-
-  var urlJob = s"DefaultJob"
+  private var urlJob = s"DefaultJob"
   try {
-    urlJob = URLEncoder.encode(metricsJob, s"UTF-8")
+    urlJob = URLEncoder.encode(config.jobName, s"UTF-8")
   } catch {
-    case uee: java.io.UnsupportedEncodingException =>
-      logger.error(s"metricsJob '$metricsJob' cannot be url encoded")
+    case _: java.io.UnsupportedEncodingException =>
+      logger.error(s"metricsJob '${config.jobName}' cannot be url encoded")
   }
-  val urlBase = s"http://" + serverIPnPort + s"/metrics/job/" + urlJob + s"/instance/sparkMeasure"
+  val urlBase = s"http://${config.serverIPnPort}/metrics/job/$urlJob/instance/sparkMeasure"
 
-  val requestMethod = s"POST"
-  val connectTimeout = 5000 // milliseconds
-  val readTimeout = 5000 // milliseconds
+  private val requestMethod = s"POST"
+  private val connectTimeout = config.connectionTimeoutMs
+  private val readTimeout = config.readTimeoutMs
 
 
   /**
@@ -127,11 +126,11 @@ case class PushGateway(serverIPnPort: String, metricsJob: String) {
     val urlFull = urlBase + s"/type/" + urlType + s"/" + urlLabelName + s"/" + urlLabelValue
 
     try {
-      val connection = (new URL(urlFull)).openConnection.asInstanceOf[HttpURLConnection]
+      val connection = new URL(urlFull).openConnection.asInstanceOf[HttpURLConnection]
       connection.setConnectTimeout(connectTimeout)
       connection.setReadTimeout(readTimeout)
       connection.setRequestMethod(requestMethod)
-      connection.setRequestProperty("Content-Type","text/plain; version=0.0.4")
+      connection.setRequestProperty("Content-Type", "text/plain; version=0.0.4")
       connection.setDoOutput(true)
 
       val outputStream = connection.getOutputStream
@@ -141,19 +140,18 @@ case class PushGateway(serverIPnPort: String, metricsJob: String) {
         outputStream.close();
       }
 
-      val responseCode = connection.getResponseCode()
-      val responseMessage = connection.getResponseMessage()
+      val responseCode = connection.getResponseCode
+      val responseMessage = connection.getResponseMessage
       connection.disconnect();
       if (responseCode != 200 && responseCode != 202) // 200 and 202 Accepted, 400 Bad Request
         logger.error(s"Data sent error, url: '$urlFull', response: $responseCode '$responseMessage'")
     } catch {
       case ste: java.net.SocketTimeoutException =>
         println("java.net.SocketTimeoutException")
-        logger.error(s"Data sent error, url: '$urlFull', " + ste.getMessage())
+        logger.error(s"Data sent error, url: '$urlFull', " + ste.getMessage)
       case ioe: java.io.IOException =>
         println("java.io.IOException")
-        logger.error(s"Data sent error, url: '$urlFull', " + ioe.getMessage())
+        logger.error(s"Data sent error, url: '$urlFull', " + ioe.getMessage)
     }
-
   }
 }
