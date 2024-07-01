@@ -1,9 +1,10 @@
 package ch.cern.sparkmeasure
 
-import org.scalatest.{FlatSpec, Matchers}
-import java.net.ServerSocket
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
+import org.scalatest.{FlatSpec, Matchers}
+
+import java.net.ServerSocket
 
 class PushGatewayTest extends FlatSpec with Matchers {
 
@@ -14,7 +15,9 @@ class PushGatewayTest extends FlatSpec with Matchers {
     ip_port = socket.getLocalPort
     socket.close
   }
-  catch { case _: Throwable => }
+  catch {
+    case _: Throwable =>
+  }
 
   if (ip_port == 0) {
     it should "get available ip port" in {
@@ -30,7 +33,12 @@ class PushGatewayTest extends FlatSpec with Matchers {
     val serverIPnPort = s"localhost:" + ip_port.toString
     val metricsJob = s"aaa_job"
 
-    val pushGateway = PushGateway(serverIPnPort, metricsJob)
+    val pushGateway = PushGateway(
+      PushgatewayConfig(
+        serverIPnPort = serverIPnPort,
+        jobName = metricsJob
+      )
+    )
 
 
     /** Check metric name validation for Prometheus */
@@ -69,7 +77,7 @@ class PushGatewayTest extends FlatSpec with Matchers {
       .withRequestBody(containing(str_metrics))
       .willReturn(
         aResponse()
-        .withStatus(200)
+          .withStatus(200)
       )
     )
 

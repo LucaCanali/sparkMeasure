@@ -219,9 +219,14 @@ case class TaskMetrics(sparkSession: SparkSession) {
     val aggregatedMetrics = aggregateTaskMetrics()
 
     /** Prepare a summary of the task metrics for Prometheus. */
-    val pushGateway = PushGateway(serverIPnPort, metricsJob)
-    var str_metrics = s""
+    val pushGateway = PushGateway(
+      PushgatewayConfig(
+        serverIPnPort = serverIPnPort,
+        jobName = metricsJob
+      )
+    )
 
+    var str_metrics = s""
     aggregatedMetrics.foreach {
       case (metric: String, value: Long) =>
           str_metrics += pushGateway.validateMetric(metric.toLowerCase()) + s" " + value.toString + s"\n"

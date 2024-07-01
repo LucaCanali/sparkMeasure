@@ -33,6 +33,10 @@ Configuration - PushGatewaySink parameters:
        Example: --conf spark.sparkmeasure.pushgateway=localhost:9091
 --conf spark.sparkmeasure.pushgateway.jobname=JOBNAME // defaut value is pushgateway
        Example: --conf spark.sparkmeasure.pushgateway.jobname=myjob1
+--conf spark.sparkmeasure.pushgateway.http.connection.timeout=TIME_IN_MS // defaut value is 5000
+       Example: --conf spark.sparkmeasure.pushgateway.http.connection.timeout=150
+--conf spark.sparkmeasure.pushgateway.http.read.timeout=TIME_IN_MS // defaut value is 5000
+       Example: --conf spark.sparkmeasure.pushgateway.http.read.timeout=150
 ```
 
 ## Use case
