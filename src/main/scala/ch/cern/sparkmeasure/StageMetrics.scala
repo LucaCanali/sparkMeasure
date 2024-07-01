@@ -4,12 +4,12 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters.mapAsJavaMap
-import scala.collection.mutable.{ListBuffer, LinkedHashMap}
-import scala.math.{min, max}
+import scala.collection.mutable.{LinkedHashMap, ListBuffer}
+import scala.math.{max, min}
 
 /**
- *  Stage Metrics: collects stage-level metrics with Stage granularity
- *  and provides aggregation and reporting functions for the end-user
+ * Stage Metrics: collects stage-level metrics with Stage granularity
+ * and provides aggregation and reporting functions for the end-user
  *
  * Example:
  * val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
@@ -39,7 +39,7 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   // Marks the beginning of data collection
   def begin(): Long = {
-    listenerStage.stageMetricsData.clear()    // clear previous data to reduce memory footprint
+    listenerStage.stageMetricsData.clear() // clear previous data to reduce memory footprint
     beginSnapshot = System.currentTimeMillis()
     endSnapshot = beginSnapshot
     beginSnapshot
@@ -63,7 +63,7 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   // Compute basic aggregations of the Stage metrics for the metrics report
   // also filter op the time boundaries for the report
-  def aggregateStageMetrics() : LinkedHashMap[String, Long] = {
+  def aggregateStageMetrics(): LinkedHashMap[String, Long] = {
 
     val agg = Utils.zeroMetricsStage()
     var submissionTime = Long.MaxValue
@@ -108,14 +108,14 @@ case class StageMetrics(sparkSession: SparkSession) {
   }
 
   // Transforms aggregateStageMetrics output in a Java Map, needed by the Python API
-  def aggregateStageMetricsJavaMap() : java.util.Map[String, Long] = {
+  def aggregateStageMetricsJavaMap(): java.util.Map[String, Long] = {
     mapAsJavaMap(aggregateStageMetrics())
   }
 
   // Extracts stages and their duration
-  def stagesDuration() : LinkedHashMap[Int, Long] = {
+  def stagesDuration(): LinkedHashMap[Int, Long] = {
 
-    val stages : LinkedHashMap[Int, Long] = LinkedHashMap.empty[Int,Long]
+    val stages: LinkedHashMap[Int, Long] = LinkedHashMap.empty[Int, Long]
     for (metrics <- listenerStage.stageMetricsData.sortBy(_.stageId)
          if (metrics.submissionTime >= beginSnapshot && metrics.completionTime <= endSnapshot)) {
       stages += (metrics.stageId -> metrics.stageDuration)
@@ -166,10 +166,12 @@ case class StageMetrics(sparkSession: SparkSession) {
   // between the end of the job and the time the last metrics value is received
   // if you receive the error message java.util.NoSuchElementException: key not found:
   // retry to run the report after a few seconds
-    def reportMemory(): String = {
+  def reportMemory(): String = {
 
     var result = ListBuffer[String]()
-    val stages = {for (metrics <- listenerStage.stageMetricsData) yield metrics.stageId}.sorted
+    val stages = {
+      for (metrics <- listenerStage.stageMetricsData) yield metrics.stageId
+    }.sorted
 
     // Additional details on executor (memory) metrics
     result = result :+ "\nAdditional stage-level executor metrics (memory usage info):\n"
@@ -194,7 +196,7 @@ case class StageMetrics(sparkSession: SparkSession) {
             if (executorMaxVal != "driver") {
               s" on executor $executorMaxVal"
             } else {
-            ""
+              ""
             }
           result = result :+ (messageHead + messageTail)
         }
@@ -235,14 +237,14 @@ case class StageMetrics(sparkSession: SparkSession) {
       s"max(completionTime) - min(submissionTime) as elapsedTime, sum(stageDuration) as stageDuration , " +
       s"sum(executorRunTime) as executorRunTime, sum(executorCpuTime) as executorCpuTime, " +
       s"sum(executorDeserializeTime) as executorDeserializeTime, sum(executorDeserializeCpuTime) as executorDeserializeCpuTime, " +
-      s"sum(resultSerializationTime) as resultSerializationTime, sum(jvmGCTime) as jvmGCTime, "+
+      s"sum(resultSerializationTime) as resultSerializationTime, sum(jvmGCTime) as jvmGCTime, " +
       s"sum(shuffleFetchWaitTime) as shuffleFetchWaitTime, sum(shuffleWriteTime) as shuffleWriteTime, " +
       s"max(resultSize) as resultSize, " +
       s"sum(diskBytesSpilled) as diskBytesSpilled, sum(memoryBytesSpilled) as memoryBytesSpilled, " +
       s"max(peakExecutionMemory) as peakExecutionMemory, sum(recordsRead) as recordsRead, sum(bytesRead) as bytesRead, " +
       s"sum(recordsWritten) as recordsWritten, sum(bytesWritten) as bytesWritten, " +
-      s"sum(shuffleRecordsRead) as shuffleRecordsRead, sum(shuffleTotalBlocksFetched) as shuffleTotalBlocksFetched, "+
-      s"sum(shuffleLocalBlocksFetched) as shuffleLocalBlocksFetched, sum(shuffleRemoteBlocksFetched) as shuffleRemoteBlocksFetched, "+
+      s"sum(shuffleRecordsRead) as shuffleRecordsRead, sum(shuffleTotalBlocksFetched) as shuffleTotalBlocksFetched, " +
+      s"sum(shuffleLocalBlocksFetched) as shuffleLocalBlocksFetched, sum(shuffleRemoteBlocksFetched) as shuffleRemoteBlocksFetched, " +
       s"sum(shuffleTotalBytesRead) as shuffleTotalBytesRead, sum(shuffleLocalBytesRead) as shuffleLocalBytesRead, " +
       s"sum(shuffleRemoteBytesRead) as shuffleRemoteBytesRead, sum(shuffleRemoteBytesReadToDisk) as shuffleRemoteBytesReadToDisk, " +
       s"sum(shuffleBytesWritten) as shuffleBytesWritten, sum(shuffleRecordsWritten) as shuffleRecordsWritten " +
@@ -269,10 +271,10 @@ case class StageMetrics(sparkSession: SparkSession) {
       result = result :+ "Aggregated Spark stage metrics:"
       val cols = aggregateDF.columns
       result = result :+ (cols zip aggregateValues)
-        .map{
-          case(n:String, v:Long) => Utils.prettyPrintValues(n, v)
-          case(n: String, null) => n + " => null"
-          case(_,_) => ""
+        .map {
+          case (n: String, v: Long) => Utils.prettyPrintValues(n, v)
+          case (n: String, null) => n + " => null"
+          case (_, _) => ""
         }.mkString("\n")
     } else {
       result = result :+ " no data to report "
@@ -314,13 +316,18 @@ case class StageMetrics(sparkSession: SparkSession) {
     val aggregatedMetrics = aggregateStageMetrics()
 
     /** Prepare a summary of the stage metrics for Prometheus. */
-    val pushGateway = PushGateway(serverIPnPort, metricsJob)
-    var str_metrics = s""
+    val pushGateway = PushGateway(
+      PushgatewayConfig(
+        serverIPnPort = serverIPnPort,
+        jobName = metricsJob
+      )
+    )
 
+    var str_metrics = s""
     aggregatedMetrics.foreach {
       case (metric: String, value: Long) =>
-          str_metrics += pushGateway.validateMetric(metric.toLowerCase()) + s" " + value.toString + s"\n"
-      }
+        str_metrics += pushGateway.validateMetric(metric.toLowerCase()) + s" " + value.toString + s"\n"
+    }
 
     /** Send stage metrics to Prometheus. */
     val metricsType = s"stage"
