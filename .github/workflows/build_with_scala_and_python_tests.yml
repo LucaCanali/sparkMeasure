@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         python-version: [ '3.9', '3.11' ]
@@ -23,6 +23,10 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: ${{ matrix.java-version }}
+        cache: sbt
+    - uses: sbt/setup-sbt@v1
+      with:
+        sbt-runner-version: 1.9.9
 
     - name: Build using sbt for all Scala versions supported
       run: sbt +package
