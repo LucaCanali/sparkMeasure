@@ -2,7 +2,7 @@
 ## Export metrics to the Prometheus monitoring system
 
 Batch jobs send metrics to an intermediary job which Prometheus can scrape.
-The Prometheus Pushgateway can accept collected data and keep it for Prometheus scraping.
+The Prometheus Pushgateway can accept collected data and keep it for Prometheus to scrape.
 * Related info:
    - [Prometheus monitoring system](https://prometheus.io/)
    - [Pushing metrics to Prometheus](https://prometheus.io/docs/instrumenting/pushing/)

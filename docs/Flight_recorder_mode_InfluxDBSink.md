@@ -15,7 +15,7 @@ provided by the user. Use this mode to monitor Spark execution workload.
 
 Notes:
 - InfluxDBSink: the amount of data generated is relatively small in most applications: O(number_of_stages)
-- InfluxDBSInkExtended can generate a large amount of data O(Number_of_tasks), use with care
+- InfluxDBSinkExtended can generate a large amount of data O(Number_of_tasks), use with care
   
 How to use: attach the InfluxDBSink to a Spark Context using the extra listener infrastructure. Example:
   - `--conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink`
@@ -101,7 +101,7 @@ spark.sql("select count(*) from range(1000) cross join range(1000) cross join ra
   - Task metrics for `task_metrics`, `tasks_ended` and `tasks_started` will only be populated if you use InfluxDBExtended class instead of InfluxDbSink
 - Connect to InfluxDB shell and explore the metrics collected:
 ```
-# Use this if you started InfluxDB uising a docker image
+# Use this if you started InfluxDB using a docker image
 docker exec -it influx /bin/bash
 
 # Start the InfluxDB CLI

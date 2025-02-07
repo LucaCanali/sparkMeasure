@@ -31,11 +31,11 @@ Configuration - PushGatewaySink parameters:
 
 --conf spark.sparkmeasure.pushgateway=SERVER:PORT 
        Example: --conf spark.sparkmeasure.pushgateway=localhost:9091
---conf spark.sparkmeasure.pushgateway.jobname=JOBNAME // defaut value is pushgateway
+--conf spark.sparkmeasure.pushgateway.jobname=JOBNAME // default value is pushgateway
        Example: --conf spark.sparkmeasure.pushgateway.jobname=myjob1
---conf spark.sparkmeasure.pushgateway.http.connection.timeout=TIME_IN_MS // defaut value is 5000
+--conf spark.sparkmeasure.pushgateway.http.connection.timeout=TIME_IN_MS // default value is 5000
        Example: --conf spark.sparkmeasure.pushgateway.http.connection.timeout=150
---conf spark.sparkmeasure.pushgateway.http.read.timeout=TIME_IN_MS // defaut value is 5000
+--conf spark.sparkmeasure.pushgateway.http.read.timeout=TIME_IN_MS // default value is 5000
        Example: --conf spark.sparkmeasure.pushgateway.http.read.timeout=150
 ```
 
@@ -52,7 +52,8 @@ Configuration - PushGatewaySink parameters:
   - Download and start the Pushgateway, from the [Prometheus download page](https://prometheus.io/download/)
   
 - Start Spark with sparkMeasure and attach the PushGatewaySink listener
-   -Note: make sure there is no firewall blocking connectivity between the driver and
+   
+- *Note*: make sure there is no firewall blocking connectivity between the driver and
      the Pushgateway
 ```
 Examples:  

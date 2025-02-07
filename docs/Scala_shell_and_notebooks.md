@@ -1,6 +1,6 @@
 # Use sparkMeasure with Scala shell or notebooks
 
-Notes on how to use sparkMeasure to collect Spark workload metrics when Scala shell or a Scala notebook.
+Notes on how to use sparkMeasure to collect Spark workload metrics with Scala shell or a Scala notebook.
 See also [README](../README.md) for an introduction to sparkMeasure and its architecture.
 
  
@@ -26,7 +26,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     # Run as in one of these examples:
     bin/spark-shell --jars <path>/spark-measure_2.12-0.24-SNAPSHOT.jar
     
-    # alternative, set classpath for the driver (the jar is only needed in the driver)
+    # Alternative, set classpath for the driver (the JAR is only needed in the driver)
     bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.24-SNAPSHOT.jar
     ```
 

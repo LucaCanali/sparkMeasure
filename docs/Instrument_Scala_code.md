@@ -18,7 +18,7 @@ bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure
  
 ### Collect and save Stage Metrics
 An example of how to collect task metrics aggregated at the stage execution level.
-Some relevant snippet of code are:
+Some relevant snippets of code are:
  ```scala
      val spark = SparkSession.
        builder().
@@ -64,7 +64,7 @@ to study skew effects, otherwise consider using stagemetrics aggregation as pref
 
 ### Export to Prometheus PushGateway
 
-You have the option to export aggregated stage metrics and/or task metrics a Prometheus push gateway.
+You have the option to export aggregated stage metrics and/or task metrics to a Prometheus push gateway.
 See details at: [Prometheus Pushgateway](Prometheus.md)
 
 ### Run sparkMeasure using the packaged version from Maven Central

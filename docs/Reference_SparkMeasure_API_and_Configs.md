@@ -60,7 +60,7 @@ def removeListener(): Unit // helper method to remove the listener
 
 // Compute basic aggregation on the Stage metrics for the metrics report
 // also filter on the time boundaries for the report
-// The output is a map with metrics names and their aggregatd values
+// The output is a map with metrics names and their aggregated values
 def aggregateStageMetrics() : LinkedHashMap[String, Long] 
 
 // Extracts stages and their duration
@@ -346,9 +346,9 @@ class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListene
 * stage aggregation, with FlightRecorderStageMetrics, and task-level metrics with FlightRecorderTaskMetrics.
 
 * How to use: attach the relevant listener to a Spark Context using the extra listener infrastructure
-   For lightRecorderStage:
+   For FlightRecorderStage:
       --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
-   For lightRecorderTaskMetrics:  
+   For FlightRecorderTaskMetrics:  
       --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics
 
 Configuration:
@@ -413,7 +413,7 @@ class KafkaSinkExtended(conf: SparkConf) extends KafkaSink(conf) {
 **KafkaSink** is a class that extends the SparkListener infrastructure.  
 It collects and writes Spark metrics and application info in near real-time to an Apache Kafka backend
 provided by the user. Use this mode to monitor Spark execution workload.  
-*  How to use: attach the InfluxDBSInk to a Spark Context using the extra listener infrastructure.
+*  How to use: attach the KafkaSink to a Spark Context using the extra listener infrastructure.
 *   --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink
 
 **KafkaSinkExtended** Extends the functionality to record metrics for each executed Task  
