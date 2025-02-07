@@ -31,13 +31,13 @@ The configuration parameters applicable to Flight recorder mode for Task granula
 
 ## Configuration
 
-Configuration parameters for the flight recorder more:
+Configuration parameters for the flight recorder mode:
    ```
    --conf spark.sparkmeasure.outputFormat=<format> 
        Note: valid values: json,json_to_hadoop,java the default is "json"
    --conf spark.sparkmeasure.outputFilename=<output file> 
        Note: default = "/tmp/stageMetrics_flightRecorder"
-   --conf spark.sparkmeasure.printToStdout=<true|false> /
+   --conf spark.sparkmeasure.printToStdout=<true|false> 
        Note: default is false. Set this to true to print JSON serialized metrics for debug purposes.
    ```
 **Notes:**

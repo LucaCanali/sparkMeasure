@@ -25,7 +25,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     # Run as in one of these examples:
     bin/pyspark --jars path>/spark-measure_2.12-0.24-SNAPSHOT.jar
     
-    #alternative:
+    #Alternative:
     bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.24-SNAPSHOT.jar
     ```
    
@@ -41,7 +41,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     stagemetrics.end()
 
     stagemetrics.print_report()
-    stageMetrics.print_memory_report()
+    stagemetrics.print_memory_report()
    
     # get metrics as a dictionary
     metrics = stagemetrics.aggregate_stage_metrics()

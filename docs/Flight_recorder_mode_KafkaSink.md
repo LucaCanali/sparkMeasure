@@ -56,11 +56,12 @@ in spark-submit as in:
   - This example uses Kafka configured as in the getting started instructions at
     [Apache Kafka quickstart](https://kafka.apache.org/quickstart)
     - download Apache Kafka and extract it (see instructions in the link above)
-    - start zookepeer: `bin/zookeeper-server-start.sh config/zookeeper.properties`
+    - start zookeeper: `bin/zookeeper-server-start.sh config/zookeeper.properties`
     - start kafka broker `bin/kafka-server-start.sh config/server.properties`
 
 - Start Spark with sparkMeasure and attach the KafkaSink Listener
-   -Note: make sure there is no firewall blocking connectivity between the driver and
+   
+- *Note*: make sure there is no firewall blocking connectivity between the driver and
      the Kafka broker ("my_kafka_server" in the example below)
 ```
 # edit my_kafka_server with the Kafka broker server name

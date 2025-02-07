@@ -47,8 +47,8 @@ bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 <path_t
     stagemetrics.save_data(aggregatedDF, "/tmp/stagemetrics_report_test2")
 ```
 
-Note: if you want to collect metrics at the task execution level, you can use TaskMetrics instead of StamgeMetrics.
-The details are discussed in the [examples for Python shell and notebook](docs/Python_shell_and_Jupyter.md).
+Note: if you want to collect metrics at the task execution level, you can use TaskMetrics instead of StageMetrics.
+The details are discussed in the [examples for Python shell and notebook](https://github.com/LucaCanali/sparkMeasure/blob/master/docs/Python_shell_and_Jupyter.md).
 
 ### Run sparkMeasure using the packaged version from Maven Central
 
