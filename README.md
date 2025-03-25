@@ -19,9 +19,9 @@ facilitating smoother and more reliable data processing operations.
 and spark-shell/pyspark environments.
 - **Development & CI/CD Integration:** Facilitates testing, measuring, and comparing execution metrics
   of Spark jobs under various configurations or code changes.
-- **Batch Job Analysis:** With Flight Recorder mode sparkMeasure records and analyzes batch job metrics
-  for thorough inspection.
-- **Monitoring Capabilities:** Seamlessly integrates with external systems like InfluxDB, Apache Kafka,
+- **Batch Job Analysis:** With Flight Recorder mode sparkMeasure transparently records batch job metrics 
+  for later analysis.
+- **Monitoring Capabilities:** Integrates with external systems like InfluxDB, Apache Kafka,
   and Prometheus Push Gateway for extensive monitoring.
 - **Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
   of detailed Spark task metrics.
@@ -248,7 +248,7 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
     from `jupyter notebooks`.  
     - **[SparkMeasure on PySpark and Jupyter notebooks](docs/Python_shell_and_Jupyter.md)**
     - **[SparkMeasure on Scala shell and notebooks](docs/Scala_shell_and_notebooks.md)**
-
+   
     
   * **Batch and code instrumentation**  
     Instrument your code with the sparkMeasure API, for collecting, saving,
@@ -257,9 +257,9 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
      - **[Instrument Spark-Scala code](docs/Instrument_Scala_code.md)**
      - See also [Spark_CPU_memory_load_testkit](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/Spark_CPU_memory_load_testkit)
        as an example of how to use sparkMeasure to instrument Spark code for performance testing.
- 
-    
-  * **Flight Recorder mode**:   
+       
+
+  * **Flight Recorder mode**
     SparkMeasure in flight recorder will collect metrics transparently, without any need for you 
     to change your code. 
     * Metrics can be saved to a file, locally, or to a Hadoop-compliant filesystem
@@ -269,9 +269,19 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
       - **[Flight Recorder mode with InfluxDB sink](docs/Flight_recorder_mode_InfluxDBSink.md)**
       - **[Flight Recorder mode with Apache Kafka sink](docs/Flight_recorder_mode_KafkaSink.md)**
       - **[Flight Recorder mode with Prometheus Pushgateway sink](docs/Flight_recorder_mode_PrometheusPushgatewaySink.md)**
+  
 
+  * **Limitations and known issues**
+    * Incompatibility with Spark Connect - SparkMeasure does not currently support
+    [Spark Connect](https://spark.apache.org/docs/latest/spark-connect-overview.html), as it requires 
+    access to the Spark Context and needs to report metrics back to the user outside of the DataFrame API.
+    *  The SparkMeasure APIs for generating reports using `StageMetric` and `TaskMetric` are best suited
+    for a single-threaded driver environment. These APIs capture metrics by calculating deltas between
+    snapshots taken at the start and end of an execution. If multiple Spark actions run concurrently on
+    the Spark driver, it may result in double-counting of metric values.
+  
 
-  * **Additional documentation and examples**:
+  * **Additional documentation and examples**
     - Presentations at Spark/Data+AI Summit:
       - [Performance Troubleshooting Using Apache Spark Metrics](https://databricks.com/session_eu19/performance-troubleshooting-using-apache-spark-metrics)
       - [Apache Spark Performance Troubleshooting at Scale, Challenges, Tools, and Methodologies](http://canali.web.cern.ch/docs/Spark_Summit_2017EU_Performance_Luca_Canali_CERN.pdf)
