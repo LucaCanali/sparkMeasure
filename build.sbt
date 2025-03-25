@@ -11,7 +11,7 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 publishMavenStyle := true
 isSnapshot := true
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.4"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.5"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.18.2"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.16"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.14"
