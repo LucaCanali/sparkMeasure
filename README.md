@@ -144,17 +144,15 @@ Stage 3 duration => 98 (98 ms)
 ```
 
 - Stage metrics collection mode has an optional memory report command
-    - this is new in sparkMeasure since version 0.21, it requires Spark versions 3.1 or higher
+    - this is available in sparkMeasure since version 0.21, it requires Spark versions 3.1 or higher
     - note: this report makes use of per-stage memory (executor metrics) data which is sent by the
       executors at each heartbeat to the driver, there could be a small delay or the order of
       a few seconds between the end of the job and the time the last metrics value is received.
-    - If you receive the error message java.util.NoSuchElementException: key not found,
-      retry running the report after waiting for a few seconds.
 ```
 (scala)> stageMetrics.printMemoryReport
 (python)> stagemetrics.print_memory_report()
 
-Additional stage-level executor metrics (memory usasge info):
+Additional stage-level executor metrics (memory usage info updated at each heartbeat):
 
 Stage 0 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
 Stage 0 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)

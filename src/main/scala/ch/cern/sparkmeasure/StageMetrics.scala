@@ -164,44 +164,39 @@ case class StageMetrics(sparkSession: SparkSession) {
   // Note this report requires per-stage memory (executor metrics) data which is sent by the executors
   // at each heartbeat to the driver, there could be a small delay or the order of a few seconds
   // between the end of the job and the time the last metrics value is received
-  // if you receive the error message java.util.NoSuchElementException: key not found:
-  // retry to run the report after a few seconds
   def reportMemory(): String = {
+    import scala.collection.mutable.ListBuffer
 
     var result = ListBuffer[String]()
-    val stages = {
-      for (metrics <- listenerStage.stageMetricsData) yield metrics.stageId
-    }.sorted
+    val stages = listenerStage.stageMetricsData.map(_.stageId).sorted
 
-    // Additional details on executor (memory) metrics
-    result = result :+ "\nAdditional stage-level executor metrics (memory usage info):\n"
+    // Append detailed stage-level executor metrics,
+    // including real-time memory usage data updated during each executor heartbeat.
+    result += "\nAdditional stage-level executor metrics (memory usage info updated at each heartbeat):\n"
 
-    stages.foreach {
-      case (stageId: Int) =>
-        for (metric <- executorMetricsNames) {
+    stages.foreach { stageId =>
+      executorMetricsNames.foreach { metric =>
+        try {
           val stageExecutorMetricsRaw = listenerStage.stageIdtoExecutorMetrics(stageId, metric)
 
-          // Find maximum metric value and corresponding executor
-          val (executorMaxVal, maxVal) = stageExecutorMetricsRaw.maxBy(_._2)
+          if (stageExecutorMetricsRaw.isEmpty) {
+            // Handle gracefully if no data was returned
+            result += s"No executor metrics available for stage $stageId and metric $metric. Please retry after a few seconds."
+          } else {
+            // Find maximum metric value and corresponding executor
+            val (executorMaxVal, maxVal) = stageExecutorMetricsRaw.maxBy(_._2)
 
-          // This code is commented on purpose
-          // It's there if in the future you want to have more complex metrics
-          // 1. remove duplicate stageId values more precisely take the maximum value for each stageId
-          // val stageExecutorMetrics  = stageExecutorMetricsRaw.groupBy(_._1).transform((_,v) => v.sortBy(_._2).last)
-          // 2. find maximum value and corresponding executor value
-          // val (executorMaxVal, maxVal) = stageExecutorMetrics.maxBy { case (key, value) => value }._2
-
-          val messageHead = Utils.prettyPrintValues(s"Stage $stageId $metric maxVal bytes", maxVal)
-          val messageTail =
-            if (executorMaxVal != "driver") {
-              s" on executor $executorMaxVal"
-            } else {
-              ""
-            }
-          result = result :+ (messageHead + messageTail)
+            val messageHead = Utils.prettyPrintValues(s"Stage $stageId $metric maxVal bytes", maxVal)
+            val messageTail = if (executorMaxVal != "driver") s" on executor $executorMaxVal" else ""
+            result += (messageHead + messageTail)
+          }
+        } catch {
+          case e: NoSuchElementException =>
+            // Instead of propagating the exception, append a user-friendly message
+            result += s"Could not retrieve metric '$metric' for stage $stageId: missing key. Please retry after a few seconds."
         }
+      }
     }
-
     result.mkString("\n")
   }
 
