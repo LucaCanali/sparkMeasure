@@ -11,14 +11,19 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 publishMavenStyle := true
 isSnapshot := true
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.5"
-libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.18.3"
-libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.17"
-libraryDependencies += "org.influxdb" % "influxdb-java" % "2.25"
-libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.9.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test"
-libraryDependencies += "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % "test"
-libraryDependencies += "org.wiremock" % "wiremock" % "3.13.0" % "test"
+val testDeps = Seq(
+  "org.scalatest" %% "scalatest" % "3.2.19" % Test,
+  "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test,
+  "org.wiremock" % "wiremock" % "3.13.0" % Test
+)
+
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-sql" % "3.5.5",
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.18.3",
+  "org.slf4j" % "slf4j-api" % "2.0.17",
+  "org.influxdb" % "influxdb-java" % "2.25",
+  "org.apache.kafka" % "kafka-clients" % "3.9.0"
+) ++ testDeps
 
 // This is for kafka-clients conflicting with Spark 3.5.5 jni dependency, remove with Spark 4.x
 dependencyOverrides += "com.github.luben" % "zstd-jni" % "1.5.5-4"
