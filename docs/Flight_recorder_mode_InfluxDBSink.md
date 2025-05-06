@@ -51,8 +51,7 @@ Note: The current implementation depends on "influxdb.java". If you deploy spark
 the dependency is being taken care of.  
 If you run sparkMeasure from a jar instead, you may need to add the dependency manually
 in spark-submit/spark-shell as in:
- - `--packages org.influxdb:influxdb-java:2.14`
-Note currently we need to use influxdb-java version 2.14, as newer versions generate jar conflicts (tested up to Spark version 3.3.1)
+ - `--packages org.influxdb:influxdb-java:2.25`
 
 ## Use cases
 

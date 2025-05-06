@@ -42,7 +42,7 @@ This code depends on "kafka-clients". If you deploy sparkMeasure from maven cent
 the dependency is being taken care of.
 If you run sparkMeasure from a jar instead, you may need to add the dependency manually
 in spark-submit as in:
- - `--packages org.apache.kafka:kafka-clients:3.3.1`
+ - `--packages org.apache.kafka:kafka-clients:3.9.0`
 
 ## Use cases
 
@@ -55,9 +55,7 @@ in spark-submit as in:
 - Start Apache Kafka. 
   - This example uses Kafka configured as in the getting started instructions at
     [Apache Kafka quickstart](https://kafka.apache.org/quickstart)
-    - download Apache Kafka and extract it (see instructions in the link above)
-    - start zookeeper: `bin/zookeeper-server-start.sh config/zookeeper.properties`
-    - start kafka broker `bin/kafka-server-start.sh config/server.properties`
+    - for example run from Docker image: `docker run -p 9092:9092 apache/kafka:4.0.0`
 
 - Start Spark with sparkMeasure and attach the KafkaSink Listener
    
@@ -67,15 +65,15 @@ in spark-submit as in:
 # edit my_kafka_server with the Kafka broker server name
 bin/spark-shell \
 --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink \
---conf spark.sparkmeasure.kafkaBroker=my_kafka_server:9092 \
+--conf spark.sparkmeasure.kafkaBroker=localhost:9092 \
 --conf spark.sparkmeasure.kafkaTopic=metrics
 --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 ```
 
-- Look at the metrics being written to Kafka:
+- Look at the metrics being written into Kafka:
 ```
 # edit my_kafka_server with the Kafka broker server name
-bin/kafka-console-consumer.sh --topic metrics --from-beginning --bootstrap-server my_kafka_server:9092
+/opt/kafka/bin/kafka-console-consumer.sh --topic metrics --from-beginning --bootstrap-server localhost:9092
 
 
 {
