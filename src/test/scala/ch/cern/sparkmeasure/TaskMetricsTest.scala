@@ -2,11 +2,14 @@ package ch.cern.sparkmeasure
 
 import org.apache.spark.sql.SparkSession
 
-import org.scalatest.{FunSuite, BeforeAndAfterAll}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.BeforeAndAfterAll
 
 import scala.util.Properties
 
-class TaskMetricsTest extends FunSuite with BeforeAndAfterAll {
+class TaskMetricsTest extends AnyFunSuite with BeforeAndAfterAll {
 
   var spark: SparkSession = _
 

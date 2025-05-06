@@ -2,11 +2,13 @@ package ch.cern.sparkmeasure
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import java.net.ServerSocket
 
-class PushGatewayTest extends FlatSpec with Matchers {
+class PushGatewayTest extends AnyFlatSpec with Matchers {
 
   /** Get available ip port */
   var ip_port = 0

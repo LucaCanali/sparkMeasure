@@ -16,8 +16,10 @@ libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.17"
 libraryDependencies += "org.influxdb" % "influxdb-java" % "2.25"
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "3.9.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.4" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % "test"
 libraryDependencies += "com.github.tomakehurst" % "wiremock" % "2.27.2" % "test"
+
 
 // This is for kafka-clients conflicting with Spark 3.5.5 jni dependency, remove with Spark 4.x
 dependencyOverrides += "com.github.luben" % "zstd-jni" % "1.5.5-4"

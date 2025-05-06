@@ -4,9 +4,11 @@ import java.io.File
 
 import scala.collection.mutable.ListBuffer
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class UtilsTest extends FlatSpec with Matchers {
+class UtilsTest extends AnyFlatSpec with Matchers {
 
   val stageVals0 = StageVals(jobId = 1, jobGroup = "test", stageId= 2, name = "stageVal",
     submissionTime = 10, completionTime = 11, stageDuration = 12, numTasks = 13,
