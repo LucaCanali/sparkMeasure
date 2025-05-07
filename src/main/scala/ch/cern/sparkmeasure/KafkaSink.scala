@@ -221,15 +221,19 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     )
   }
 
+  protected def report[T <: Any](metrics: Map[String, T]): Unit = {
+    val result: Unit = Try {
+      ensureProducer()
+      val str = IOUtils.writeToStringSerializedJSON(metrics)
+      val message = str.getBytes(StandardCharsets.UTF_8)
+      producer.send(new ProducerRecord[String, Array[Byte]](topic, message))
+    }.recover {
+      case ex: Throwable =>
+        logger.error(s"Error on reporting metrics to Kafka stream, details=${ex.getMessage}", ex)
+        () // Explicitly return Unit
+    }.getOrElse(()) // Ensure Unit is the final type
 
-  protected def report[T <: Any](metrics: Map[String, T]): Unit = Try {
-    ensureProducer()
-
-    val str = IOUtils.writeToStringSerializedJSON(metrics)
-    val message = str.getBytes(StandardCharsets.UTF_8)
-    producer.send(new ProducerRecord[String, Array[Byte]](topic, message))
-  }.recover {
-    case ex: Throwable => logger.error(s"error on reporting metrics to kafka stream, details=${ex.getMessage}", ex)
+    result // Return Unit
   }
 
   private def ensureProducer(): Unit = {
