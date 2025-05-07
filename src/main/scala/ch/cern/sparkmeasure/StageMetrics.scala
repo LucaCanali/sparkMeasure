@@ -3,8 +3,8 @@ package ch.cern.sparkmeasure
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 
-import scala.collection.JavaConverters.mapAsJavaMap
 import scala.collection.mutable.{LinkedHashMap, ListBuffer}
+import scala.jdk.CollectionConverters._
 import scala.math.{max, min}
 
 /**
@@ -109,7 +109,7 @@ case class StageMetrics(sparkSession: SparkSession) {
 
   // Transforms aggregateStageMetrics output in a Java Map, needed by the Python API
   def aggregateStageMetricsJavaMap(): java.util.Map[String, Long] = {
-    mapAsJavaMap(aggregateStageMetrics())
+    aggregateStageMetrics().asJava
   }
 
   // Extracts stages and their duration
@@ -167,7 +167,7 @@ case class StageMetrics(sparkSession: SparkSession) {
   def reportMemory(): String = {
     import scala.collection.mutable.ListBuffer
 
-    var result = ListBuffer[String]()
+    val result = ListBuffer[String]()
     val stages = listenerStage.stageMetricsData.map(_.stageId).sorted
 
     // Append detailed stage-level executor metrics,
@@ -177,7 +177,12 @@ case class StageMetrics(sparkSession: SparkSession) {
     stages.foreach { stageId =>
       executorMetricsNames.foreach { metric =>
         try {
-          val stageExecutorMetricsRaw = listenerStage.stageIdtoExecutorMetrics(stageId, metric)
+          val stageExecutorMetricsRaw = listenerStage.stageIdtoExecutorMetrics.get((stageId, metric)) match {
+            case Some(metrics) => metrics
+            case None =>
+              logger.warn(s"No executor metrics found for stage $stageId and metric $metric.")
+              ListBuffer.empty[(String, Long)]
+          }
 
           if (stageExecutorMetricsRaw.isEmpty) {
             // Handle gracefully if no data was returned

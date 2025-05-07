@@ -3,8 +3,8 @@ package ch.cern.sparkmeasure
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory
 
-import scala.collection.JavaConverters.mapAsJavaMap
 import scala.collection.mutable.{LinkedHashMap, ListBuffer}
+import scala.jdk.CollectionConverters._
 import scala.math.max
 
 /**
@@ -105,7 +105,7 @@ case class TaskMetrics(sparkSession: SparkSession) {
 
   // Transforms aggregateTaskMetrics output in a Java Map, needed by the Python API
   def aggregateTaskMetricsJavaMap(): java.util.Map[String, Long] = {
-    mapAsJavaMap(aggregateTaskMetrics())
+    aggregateTaskMetrics().asJava
   }
 
   // Custom aggregations and post-processing of metrics data

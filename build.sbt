@@ -11,9 +11,6 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 publishMavenStyle := true
 isSnapshot := true
 
-// deprecations
-// scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-Xlint")
-
 val testDeps = Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test,
