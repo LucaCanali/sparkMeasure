@@ -44,7 +44,7 @@ class FlightRecorderStageMetrics(conf: SparkConf) extends
 
     if (printToStdout) {
       logger.info(s"Printing Stage metrics values serialized to JSON to stdout")
-      val stringMetrics = IOUtils.writeToStringSerializedJSON(metricsFilename, stageMetricsData)
+      val stringMetrics = IOUtils.writeToStringSerializedJSON(stageMetricsData)
       print("Stage metrics values serialized to JSON:")
       print(stringMetrics)
     }
@@ -103,7 +103,7 @@ class FlightRecorderTaskMetrics(conf: SparkConf) extends TaskInfoRecorderListene
 
     if (printToStdout) {
       logger.info(s"Printing Task metrics values serialized to JSON to stdout")
-      val stringMetrics = IOUtils.writeToStringSerializedJSON(metricsFilename, taskMetricsData)
+      val stringMetrics = IOUtils.writeToStringSerializedJSON(taskMetricsData)
       print("Task metrics values serialized to JSON:")
       print(stringMetrics)
     }
