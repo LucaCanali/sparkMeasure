@@ -14,7 +14,7 @@ making it a practical choice for both developers and data engineers.
 With sparkMeasure, users can obtain a clearer understanding of their Spark job performance, 
 facilitating smoother and more reliable data processing operations.
 
-### Key Features
+### ✨ Highlights
 - **Interactive Troubleshooting:** Ideal for real-time analysis of Spark workloads in notebooks 
 and spark-shell/pyspark environments.
 - **Development & CI/CD Integration:** Facilitates testing, measuring, and comparing execution metrics
@@ -28,7 +28,7 @@ and spark-shell/pyspark environments.
 - **Language Compatibility:** Fully supports Scala, Java, and Python, making it versatile for a wide range
   of Spark applications.
 
-### Contents
+### 📚 Table of Contents
 - [Getting started with sparkMeasure](#getting-started-with-sparkmeasure)
   - [Demo](#demo) 
   - [Examples of sparkMeasure on notebooks](#examples-of-sparkmeasure-on-notebooks)  
@@ -39,7 +39,6 @@ and spark-shell/pyspark environments.
 - [Documentation and API reference](#documentation-api-and-examples)
 - [Architecture diagram](#architecture-diagram)
 - [Concepts and FAQ](#main-concepts-underlying-sparkmeasure-implementation)
-
 
 ### Resources   
 - Blog on [building an Apache Spark Performance Lab](https://db-blog.web.cern.ch/node/195)
@@ -52,13 +51,11 @@ and spark-shell/pyspark environments.
 Main author and contact: Luca.Canali@cern.ch
 
 ---
-### Getting started with sparkMeasure
-
-#### Demo
+## 🚀 Quick start
 
 [![Watch the video](https://www.youtube.com/s/desktop/050e6796/img/favicon_32x32.png) Watch sparkMeasure's getting started demo tutorial](https://www.youtube.com/watch?v=NEA1kkFcZWs)
 
-#### Examples of sparkMeasure on notebooks
+### Examples of sparkMeasure on notebooks
 - Run locally or on hosted resources like Google Colab, Databricks, GitHub Codespaces, etc on Jupyter notebooks
 
 - [<img src="https://raw.githubusercontent.com/googlecolab/open_in_colab/master/images/icon128.png" height="50"> Jupyter notebook on Google Colab Research](https://colab.research.google.com/github/LucaCanali/sparkMeasure/blob/master/examples/SparkMeasure_Jupyter_Colab_Example.ipynb)
@@ -70,26 +67,29 @@ Main author and contact: Luca.Canali@cern.ch
 - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/250px-Jupyter_logo.svg.png" height="50"> Local Python/Jupyter Notebook](examples/SparkMeasure_Jupyter_Python_getting_started.ipynb)
     
   
-#### Examples of sparkMeasure on the CLI 
+### Examples of sparkMeasure on the CLI 
   - Run locally or on hosted resources
     - [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/LucaCanali/sparkMeasure)
-  ```
-  # Scala CLI
-  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
 
-  val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
-  stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
-  ```
+#### Python CLI
   ```
   # Python CLI
   # pip install pyspark
   pip install sparkmeasure
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
 
   from sparkmeasure import StageMetrics
   stagemetrics = StageMetrics(spark)
   stagemetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
   ```
+#### Scala CLI
+  ```
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
+
+  val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
+  stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
+  ```
+
 The output should look like this:
 ```
 +----------+
@@ -143,11 +143,8 @@ Stage 1 duration => 411 (0.4 s)
 Stage 3 duration => 98 (98 ms)
 ```
 
-- Stage metrics collection mode has an optional memory report command
-    - this is available in sparkMeasure since version 0.21, it requires Spark versions 3.1 or higher
-    - note: this report makes use of per-stage memory (executor metrics) data which is sent by the
-      executors at each heartbeat to the driver, there could be a small delay or the order of
-      a few seconds between the end of the job and the time the last metrics value is received.
+### Memory report
+Stage metrics collection mode has an optional memory report command:
 ```
 (scala)> stageMetrics.printMemoryReport
 (python)> stagemetrics.print_memory_report()
@@ -161,12 +158,17 @@ Stage 1 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 Stage 3 JVMHeapMemory maxVal bytes => 322888344 (307.9 MB)
 Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 ```
+Notes:
+- this is available in sparkMeasure since version 0.21, it requires Spark versions 3.1 or higher
+- note: this report makes use of per-stage memory (executor metrics) data which is sent by the
+  executors at each heartbeat to the driver, there could be a small delay or the order of
+  a few seconds between the end of the job and the time the last metrics value is received.
 
-#### Command line example for Task Metrics:
+### CLI example for Task Metrics:
 This is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -175,41 +177,42 @@ This is similar but slightly different from the example above as it collects met
   # Python CLI
   # pip install pyspark
   pip install sparkmeasure
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
 
   from sparkmeasure import TaskMetrics
   taskmetrics = TaskMetrics(spark)
   taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
   ```
+---
+## Spark configuration
 
-### Spark configuration
-
-* Choose the sparkMeasure version suitable for your environment:
+* Choose sparkMeasure version suitable for your environment:
   * For Spark 3.x, please use the latest version
+  * For Spark 4.x, please use the latest version and scala 2.13
   * For Spark 2.4 and 2.3, use version 0.19
   * For Spark 2.1 and 2.2, use version 0.16
 
 * Where to get sparkMeasure:
     * [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.24)
+    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.25)
     * Bleeding edge jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
     * Build jars from master using sbt: `sbt +package`
 
 * Choose your preferred method to include sparkMeasure in your Spark environment:
-  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
-  * `--jars /path/to/spark-measure_2.12-0.24.jar`
-  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.24/spark-measure_2.12-0.24.jar`
-  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.24.jar`
+  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
+  * `--jars /path/to/spark-measure_2.12-0.25.jar`
+  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.25/spark-measure_2.12-0.25.jar`
+  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.25.jar`
 
 Examples:
  * Spark with Scala 2.12:
-   - **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
-   - **Python:** `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24`
+   - **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
+   - **Python:** `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
       - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
  
  * Spark with Scala 2.13:
-   - Scala: `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
-   - Python: `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.24`
+   - Scala: `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25`
+   - Python: `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25`
      - note: `pip install sparkmeasure` to get the Python wrapper API
 
 * Spark 2.4 and 2.3 with Scala 2.11:
@@ -218,7 +221,7 @@ Examples:
         - note: `pip install sparkmeasure==0.19` to get the Python wrapper API
 
 ---
-### Notes on Spark Metrics
+## Notes on Spark Metrics
 Spark is instrumented with several metrics, collected at task execution, they are described in the documentation:  
 - [Spark Task Metrics docs](https://spark.apache.org/docs/latest/monitoring.html#executor-task-metrics)
 
@@ -234,7 +237,7 @@ To learn more about the metrics, I advise you set up your lab environment and ru
 A good place to start with is [TPCDS PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark) - A tool you can use run TPCDS with PySpark, instrumented with sparkMeasure
 
 ---
-### Documentation, API, and examples 
+## Documentation, API, and examples 
 SparkMeasure is one tool for many different use cases, languages, and environments:
   * [![API Documentation](https://img.shields.io/badge/API-Documentation-brightgreen)](docs/Reference_SparkMeasure_API_and_Configs.md) 
     - [SparkMeasure's API and configurations](docs/Reference_SparkMeasure_API_and_Configs.md)
@@ -291,11 +294,11 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
     a tool for running the TPCDS benchmark workload with PySpark and instrumented with sparkMeasure
 
 ---
-### Architecture diagram  
+## Architecture diagram  
 ![sparkMeasure architecture diagram](docs/sparkMeasure_architecture_diagram.png)
 
 ---
-### Main concepts underlying sparkMeasure implementation 
+## Main concepts underlying sparkMeasure implementation 
 * The tool is based on the Spark Listener interface. Listeners transport Spark executor 
   [Task Metrics](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Spark_TaskMetrics.md)
   data from the executor to the driver.

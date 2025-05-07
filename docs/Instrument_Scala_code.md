@@ -71,7 +71,7 @@ See details at: [Prometheus Pushgateway](Prometheus.md)
 
 - This is how to run sparkMeasure using a packaged version in Maven Central
     ```
-    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
 
     // or just download and use the jar (it is only needed in the driver) as in:
     bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.24.jar ...

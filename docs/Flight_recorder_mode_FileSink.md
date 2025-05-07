@@ -80,7 +80,7 @@ This example collected metrics with Task granularity.
 (note: source the Hadoop environment before running this)
 ```
 bin/spark-submit --master yarn --deploy-mode cluster \
---packages ch.cern.sparkmeasure:spark-measure_2.12:0.24 \
+--packages ch.cern.sparkmeasure:spark-measure_2.12:0.25 \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics \
 --conf spark.sparkmeasure.outputFormat=json_to_hadoop \
 --conf spark.sparkmeasure.outputFilename="hdfs://myclustername/user/luca/test/myoutput_$(date +%s).json" \
@@ -96,7 +96,7 @@ Example, use spark-3.3.0, Kubernetes, Scala 2.12 and write output to S3:
 bin/spark-submit --master k8s://https://XXX.XXX.XXX.XXX --deploy-mode client --conf spark.executor.instances=3 \
 --conf spark.executor.cores=2 --executor-memory 6g --driver-memory 8g \
 --conf spark.kubernetes.container.image=<registry-URL>/spark:v3.0.0_20190529_hadoop32 \
---packages org.apache.hadoop:hadoop-aws:3.3.2,ch.cern.sparkmeasure:spark-measure_2.12:0.24 \
+--packages org.apache.hadoop:hadoop-aws:3.3.2,ch.cern.sparkmeasure:spark-measure_2.12:0.25 \
 --conf spark.hadoop.fs.s3a.secret.key="YYY..." \
 --conf spark.hadoop.fs.s3a.access.key="ZZZ..." \
 --conf spark.hadoop.fs.s3a.endpoint="https://s3.cern.ch" \
@@ -115,7 +115,7 @@ To post-process the saved metrics you will need to deserialize objects saved by 
 This is an example of how to do that using the supplied helper object sparkmeasure.Utils
 
 ```
-bin/spark-shell  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.24
+bin/spark-shell  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
 
 val myMetrics = ch.cern.sparkmeasure.IOUtils.readSerializedStageMetricsJSON("/tmp/stageMetrics_flightRecorder")
 // use ch.cern.sparkmeasure.IOUtils.readSerializedStageMetrics("/tmp/stageMetrics.serialized") for java serialization
