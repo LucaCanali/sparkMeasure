@@ -14,8 +14,7 @@ isSnapshot := true
 val testDeps = Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test,
-  "com.github.tomakehurst" % "wiremock" % "2.27.2" % Test
-  // "org.wiremock" % "wiremock" % "3.13.0" % Test
+  "org.wiremock" % "wiremock" % "3.13.0" % Test
 )
 
 libraryDependencies ++= Seq(
@@ -28,6 +27,13 @@ libraryDependencies ++= Seq(
 
 // This is for kafka-clients conflicting with Spark 3.5.5 jni dependency, remove with Spark 4.x
 dependencyOverrides += "com.github.luben" % "zstd-jni" % "1.5.5-4"
+
+// This is for tests, TaskMetricsTest and StageMetricsTest need to access these java packages
+Test / fork := true        // separate JVM so the flags are used
+Test / javaOptions ++= Seq(
+  "--add-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+  "--add-opens=java.base/java.nio=ALL-UNNAMED"
+)
 
 organization := "ch.cern.sparkmeasure"
 description := "sparkMeasure is a tool for performance troubleshooting of Apache Spark workloads."
