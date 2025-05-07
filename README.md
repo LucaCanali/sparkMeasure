@@ -11,8 +11,8 @@
 SparkMeasure is a tool and library designed for efficient analysis and troubleshooting of 
 Apache Spark jobs. It focuses on easing the collection and examination of Spark metrics, 
 making it a practical choice for both developers and data engineers.
-With sparkMeasure, users can obtain a clearer understanding of their Spark job performance, 
-facilitating smoother and more reliable data processing operations.
+With SparkMeasure, users gain a deeper understanding of their Spark job performance,
+enabling faster and more reliable data processing workflows.
 
 ### ✨ Highlights
 - **Interactive Troubleshooting:** Ideal for real-time analysis of Spark workloads in notebooks 
@@ -34,7 +34,11 @@ and spark-shell/pyspark environments.
   - [Examples of sparkMeasure on notebooks](#examples-of-sparkmeasure-on-notebooks)  
   - [Examples of sparkMeasure on the CLI](#examples-of-sparkmeasure-on-the-cli)
   - [Command line example for Task Metrics](#command-line-example-for-task-metrics)
-- [Configuration and setup](#spark-configuration)
+- [Setting Up SparkMeasure with Spark](#setting-up-sparkmeasure-with-spark)
+  - [Version Compatibility for SparkMeasure](#version-compatibility-for-sparkmeasure)
+  - [Downloading SparkMeasure](#downloading-sparkmeasure)
+  - [Including sparkMeasure in Your Spark Environment](#including-sparkmeasure-in-your-spark-environment)
+  - [Setup Examples](#setup-examples)
 - [Notes on Metrics](#notes-on-metrics)
 - [Documentation and API reference](#documentation-api-and-examples)
 - [Architecture diagram](#architecture-diagram)
@@ -184,41 +188,86 @@ This is similar but slightly different from the example above as it collects met
   taskmetrics.runandmeasure(globals(), 'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
   ```
 ---
-## Spark configuration
 
-* Choose sparkMeasure version suitable for your environment:
-  * For Spark 3.x, please use the latest version
-  * For Spark 4.x, please use the latest version and scala 2.13
-  * For Spark 2.4 and 2.3, use version 0.19
-  * For Spark 2.1 and 2.2, use version 0.16
+## Setting Up SparkMeasure with Spark
 
-* Where to get sparkMeasure:
-    * [sparkMeasure on Maven Central](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure)
-    * Jars in sparkMeasure's [release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.25)
-    * Bleeding edge jars as artifacts in [GitHub actions](https://github.com/LucaCanali/sparkMeasure/actions)
-    * Build jars from master using sbt: `sbt +package`
+### Version Compatibility for SparkMeasure
 
-* Choose your preferred method to include sparkMeasure in your Spark environment:
-  * `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
-  * `--jars /path/to/spark-measure_2.12-0.25.jar`
-  * `--jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.25/spark-measure_2.12-0.25.jar`
-  * `--conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.25.jar`
+| Spark Version  | Recommended SparkMeasure Version | Scala Version       |
+| -------------- |----------------------------------| ------------------- |
+| Spark 4.x      | 0.25 (latest)                    | Scala 2.13          |
+| Spark 3.x      | 0.25 (latest)                    | Scala 2.12 and 2.13 |
+| Spark 2.4, 2.3 | 0.19                             | Scala 2.11 and 2.12 |
+| Spark 2.2, 2.1 | 0.16                             | Scala 2.11          |
 
-Examples:
- * Spark with Scala 2.12:
-   - **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
-   - **Python:** `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
-      - note: you also need `pip install sparkmeasure` to get the [Python wrapper API](https://pypi.org/project/sparkmeasure/) 
- 
- * Spark with Scala 2.13:
-   - Scala: `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25`
-   - Python: `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25`
-     - note: `pip install sparkmeasure` to get the Python wrapper API
+### 📥 Downloading SparkMeasure
 
-* Spark 2.4 and 2.3 with Scala 2.11:
-    - Scala: `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
-    - Python: `pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
-        - note: `pip install sparkmeasure==0.19` to get the Python wrapper API
+To get SparkMeasure, choose one of the following options:
+
+1. **Stable Releases:**
+
+    * Available on [Maven Central Repository](https://mvnrepository.com/artifact/ch.cern.sparkmeasure/spark-measure).
+
+2. **Specific Versions:**
+
+    * Download JAR files from the [sparkMeasure release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.25).
+
+3. **Latest Development Builds:**
+
+    * Access the latest development builds from [GitHub Actions](https://github.com/LucaCanali/sparkMeasure/actions).
+
+4. **Build from Source:**
+
+    * Clone the repository and use sbt to build: `sbt +package`.
+
+### Including sparkMeasure in Your Spark Environment
+
+Choose your preferred method:
+
+* Use the `--packages` option:
+
+  ```bash
+  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
+  ```
+* Directly reference the JAR file:
+
+  ```bash
+  --jars /path/to/spark-measure_2.12-0.25.jar
+  --jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.25/spark-measure_2.12-0.25.jar
+  --conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.25.jar
+  ```
+
+### Setup Examples
+
+#### Spark with Scala 2.12
+
+* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
+* **Python:**
+
+  ```bash
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
+  pip install sparkmeasure
+  ```
+
+#### Spark with Scala 2.13
+
+* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25`
+* **Python:**
+
+  ```bash
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  pip install sparkmeasure
+  ```
+
+#### Spark 2.4 and 2.3 with Scala 2.11
+
+* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19`
+* **Python:**
+
+  ```bash
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.11:0.19
+  pip install sparkmeasure==0.19
+  ```
 
 ---
 ## Notes on Spark Metrics
