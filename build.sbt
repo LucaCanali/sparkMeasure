@@ -4,8 +4,8 @@
 
 name := "spark-measure"
 
-version := "0.25"
-isSnapshot := false
+version := "0.26-SNAPSHOT"
+isSnapshot := true
 
 scalaVersion       := "2.12.18"
 crossScalaVersions := Seq("2.12.18", "2.13.8")
