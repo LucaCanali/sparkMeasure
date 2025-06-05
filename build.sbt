@@ -20,7 +20,7 @@ val testDeps = Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark"            %% "spark-sql"            % "3.5.5",
+  "org.apache.spark"            %% "spark-sql"            % "3.5.6",
   "com.fasterxml.jackson.module"%% "jackson-module-scala" % "2.18.3",
   "org.slf4j"                    % "slf4j-api"            % "2.0.17",
   "org.influxdb"                 % "influxdb-java"        % "2.25",

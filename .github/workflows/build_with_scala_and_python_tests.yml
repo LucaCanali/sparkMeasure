@@ -34,7 +34,7 @@ jobs:
     - name: Run tests for all Scala versions supported
       run: sbt +test
 
-    - name: Upload sparkMeasure package for Scala 2.13 (Java 11 and Python 3.12)
+    - name: Upload sparkMeasure package for Scala 2.13 (Java 17 and Python 3.12)
       if: matrix.java-version == '17' && matrix.python-version == '3.12'
       uses: actions/upload-artifact@v4
       with:
@@ -48,7 +48,7 @@ jobs:
       with:
         name: sparkMeasure package scala 2.12
         path: target/scala-2.12/*.jar
-      # This upload step is also conditional on Java 11 and Python 3.12
+      # This upload step is conditional on Java 11 and Python 3.12
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
