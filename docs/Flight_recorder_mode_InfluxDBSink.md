@@ -71,12 +71,12 @@ in spark-submit/spark-shell as in:
   - This example uses InfluxDB version 1.8 (using InfluxDB version 2 requires some changes in the example)
 ```
 # Alternative 1. 
-# Use this if you plan to use the Spark dashboard as in
+# Use this if you plan to use the Spark dashboard v1 as in
 # https://github.com/cerndb/spark-dashboard 
 docker run --name influx --network=host -d lucacanali/spark-dashboard:v01
 
 # Alternative 2.
-# Start InfluxDB, for example using a docker image 
+# Start InfluxDB stand-alone, for example using a docker image 
 docker run --name influx --network=host -d influxdb:1.8.10
 ```
 
@@ -87,7 +87,7 @@ bin/spark-shell \
   --conf spark.sparkmeasure.influxdbURL="http://localhost:8086" \
   --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink,ch.cern.sparkmeasure.InfluxDBSinkExtended \
   --conf spark.sparkmeasure.influxdbStagemetrics=true
-  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
+  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
 
 // run a Spark job, this will produce metrics  
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show

@@ -12,7 +12,7 @@ Metrics can also be printed to stdout.
 ## Recording metrics using the Flight Recorder mode with Stage-level granularity  
 To record metrics at the stage execution level granularity add these configurations to spark-submit: 
    ```
-   --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+   --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
    --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics
    ```
 
@@ -25,7 +25,7 @@ The usage is almost the same as for the stage metrics mode described above, just
 The configuration parameters applicable to Flight recorder mode for Task granularity are:
 
    ```
-   --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23
+   --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
    --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics
    ```
 
@@ -51,7 +51,7 @@ A Python example
  - This runs the pi.py example script 
  - collects and saves the metrics to `/tmp/stageMetrics_flightRecorder` in json format:
 ```
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 \
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25 \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
 examples/src/main/python/pi.py
 
@@ -63,7 +63,7 @@ A Scala example
 - same example as above, in addition use a custom output filename
 - print metrics also to stdout
 ```
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 \
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25 \
 --class org.apache.spark.examples.SparkPi \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
 --conf spark.sparkmeasure.printToStdout=true \
@@ -80,7 +80,7 @@ This example collected metrics with Task granularity.
 (note: source the Hadoop environment before running this)
 ```
 bin/spark-submit --master yarn --deploy-mode cluster \
---packages ch.cern.sparkmeasure:spark-measure_2.12:0.25 \
+--packages ch.cern.sparkmeasure:spark-measure_2.13:0.25 \
 --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderTaskMetrics \
 --conf spark.sparkmeasure.outputFormat=json_to_hadoop \
 --conf spark.sparkmeasure.outputFilename="hdfs://myclustername/user/luca/test/myoutput_$(date +%s).json" \
@@ -90,13 +90,13 @@ examples/src/main/python/pi.py
 hdfs dfs -ls <path>/myoutput_*.json
 ```
 
-Example, use spark-3.3.0, Kubernetes, Scala 2.12 and write output to S3:  
+Example, use Spark 4, Kubernetes, Scala 2.13 and write output to S3:  
 (note: export KUBECONFIG=... + setup Hadoop environment + configure s3a keys in the script)
 ```
 bin/spark-submit --master k8s://https://XXX.XXX.XXX.XXX --deploy-mode client --conf spark.executor.instances=3 \
 --conf spark.executor.cores=2 --executor-memory 6g --driver-memory 8g \
---conf spark.kubernetes.container.image=<registry-URL>/spark:v3.0.0_20190529_hadoop32 \
---packages org.apache.hadoop:hadoop-aws:3.3.2,ch.cern.sparkmeasure:spark-measure_2.12:0.25 \
+--conf spark.kubernetes.container.image=apache/spark \
+--packages org.apache.hadoop:hadoop-aws:3.4.1,ch.cern.sparkmeasure:spark-measure_2.13:0.25 \
 --conf spark.hadoop.fs.s3a.secret.key="YYY..." \
 --conf spark.hadoop.fs.s3a.access.key="ZZZ..." \
 --conf spark.hadoop.fs.s3a.endpoint="https://s3.cern.ch" \
@@ -105,7 +105,7 @@ bin/spark-submit --master k8s://https://XXX.XXX.XXX.XXX --deploy-mode client --c
 --conf spark.sparkmeasure.outputFormat=json_to_hadoop \
 --conf spark.sparkmeasure.outputFilename="s3a://test/myoutput_$(date +%s).json" \
 --class org.apache.spark.examples.SparkPi \
-examples/jars/spark-examples_2.12-3.3.1.jar 10
+examples/jars/spark-examples_2.13-4.4.0.jar 10
 ```
 
 
@@ -115,7 +115,7 @@ To post-process the saved metrics you will need to deserialize objects saved by 
 This is an example of how to do that using the supplied helper object sparkmeasure.Utils
 
 ```
-bin/spark-shell  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
+bin/spark-shell  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
 
 val myMetrics = ch.cern.sparkmeasure.IOUtils.readSerializedStageMetricsJSON("/tmp/stageMetrics_flightRecorder")
 // use ch.cern.sparkmeasure.IOUtils.readSerializedStageMetrics("/tmp/stageMetrics.serialized") for java serialization

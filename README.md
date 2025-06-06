@@ -32,12 +32,10 @@ and spark-shell/pyspark environments.
   - [Demo](#demo) 
   - [Examples of sparkMeasure on notebooks](#examples-of-sparkmeasure-on-notebooks)  
   - [Examples of sparkMeasure on the CLI](#examples-of-sparkmeasure-on-the-cli)
-  - [Command line example for Task Metrics](#command-line-example-for-task-metrics)
-- [Setting Up SparkMeasure with Spark](#setting-up-sparkmeasure-with-spark)
-  - [Version Compatibility for SparkMeasure](#version-compatibility-for-sparkmeasure)
-  - [Downloading SparkMeasure](#downloading-sparkmeasure)
-  - [Including sparkMeasure in Your Spark Environment](#including-sparkmeasure-in-your-spark-environment)
-  - [Setup Examples](#setup-examples)
+- [Setting up SparkMeasure with Spark](#setting-up-sparkmeasure-with-spark)
+  - [Version vompatibility for SparkMeasure](#version-compatibility-for-sparkmeasure)
+  - [Downloading sparkMeasure](#downloading-sparkmeasure)
+  - [Setup examples](#setup-examples)
 - [Notes on Metrics](#notes-on-metrics)
 - [Documentation and API reference](#documentation-api-and-examples)
 - [Architecture diagram](#architecture-diagram)
@@ -241,23 +239,6 @@ To get SparkMeasure, choose one of the following options:
 
     * Clone the repository and use sbt to build: `sbt +package`.
 
-### Including sparkMeasure in your Spark environment
-
-Choose your preferred method:
-
-* Use the `--packages` option:
-
-  ```bash
-  --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
-  ```
-* Directly reference the JAR file:
-
-  ```bash
-  --jars /path/to/spark-measure_2.12-0.25.jar
-  --jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.25/spark-measure_2.12-0.25.jar
-  --conf spark.driver.extraClassPath=/path/to/spark-measure_2.12-0.25.jar
-  ```
-
 ### Setup Examples
 
 #### Spark 4 with Scala 2.13
@@ -278,6 +259,22 @@ Choose your preferred method:
   ```bash
   pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
   pip install sparkmeasure
+  ```
+### Including sparkMeasure in your Spark environment
+
+Choose your preferred method:
+
+* Use the `--packages` option:
+
+  ```bash
+  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  ```
+* Directly reference the JAR file:
+
+  ```bash
+  --jars /path/to/spark-measure_2.13-0.25.jar
+  --jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.25/spark-measure_2.13-0.25.jar
+  --conf spark.driver.extraClassPath=/path/to/spark-measure_2.13-0.25.jar
   ```
 
 ---

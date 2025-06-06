@@ -11,7 +11,7 @@ You can find an example of how to instrument a Scala application running Apache 
  
 How to run the example:
  ```
-bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 <path_to_examples>/test_sparkmeasure_python.py
+bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25 <path_to_examples>/test_sparkmeasure_python.py
  ```
 
  Some relevant snippet of code are:
@@ -36,7 +36,7 @@ bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.23 <path_t
     metrics = stagemetrics.aggregate_stagemetrics()
     print(f"metrics elapsedTime = {metrics.get('elapsedTime')}")
     
-    # Introduced in sparkMeasure v0.21, memory metrics report:
+    # memory metrics report:
     stageMetrics.print_memory_report()
 
     # save session metrics data in json format (default)
@@ -54,10 +54,10 @@ The details are discussed in the [examples for Python shell and notebook](https:
 
 - This is how to run sparkMeasure using a packaged version in Maven Central
   ```
-  bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25 your_python_code.py
+  bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25 your_python_code.py
 
   // alternative: just download and use the jar (it is only needed in the driver) as in:
-  bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.24.jar ...
+  bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.25.jar ...
   ```
 
 ### Download and build sparkMeasure (optional)
@@ -67,14 +67,14 @@ The details are discussed in the [examples for Python shell and notebook](https:
      git clone https://github.com/lucacanali/sparkmeasure
      cd sparkmeasure
      sbt +package
-     ls -l target/scala-2.12/spark-measure*.jar  # location of the compiled jar
+     ls -l target/scala-2.13/spark-measure*.jar  # location of the compiled jar
 
      cd python
      pip install .
   
      # Run as in one of these examples:
-     bin/spark-submit --jars path>/spark-measure_2.12-0.25-SNAPSHOT.jar ...
+     bin/spark-submit --jars path>/spark-measure_2.13-0.26-SNAPSHOT.jar ...
      
      # alternative, set classpath for the driver (sparkmeasure code runs only in the driver)
-     bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.12-0.25-SNAPSHOT.jar ...
+     bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.26-SNAPSHOT.jar ...
      ```
