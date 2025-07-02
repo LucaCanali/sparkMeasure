@@ -1,0 +1,40 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: spark-sql
+spec:
+  type: Python
+  mode: cluster
+  image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+  imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+  mainApplicationFile: local:///opt/spark/examples/spark-sql.py
+  sparkVersion: "3.5.6"
+  driver:
+    cores: 1
+    coreLimit: "1200m"
+    memory: "512m"
+    serviceAccount: spark-operator-spark
+    volumeMounts:
+      - name: jmx-config
+        mountPath: /config-jmx
+  executor:
+    cores: 1
+    instances: 1
+    memory: "512m"
+    volumeMounts:
+      - name: jmx-config
+        mountPath: /config-jmx
+  volumes:
+    - name: jmx-config
+      configMap:
+        name: spark-jmx-config
+  monitoring:
+    exposeDriverMetrics: true
+    exposeExecutorMetrics: true
+    prometheus:
+      # This is the path to the jmx_exporter jar in the spark container image, added at build time
+      jmxExporterJar: "/opt/spark/jars/jmx_prometheus_javaagent-1.1.0.jar"
+      configFile: /config-jmx/prometheus.yaml
+      port: 8090
+
+

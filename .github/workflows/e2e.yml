@@ -1,0 +1,40 @@
+name: "e2e tests"
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+jobs:
+  main:
+    name: Run spark-measure end-to-end tests
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        # Required by ciux
+        with:
+          fetch-depth: 0
+      - name: Stop apparmor
+        run: |
+          sudo /etc/init.d/apparmor stop
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '^1.21.4'
+      - name: Run ciux and create k8s/kind cluster
+        run: |
+          ./e2e/prereq.sh
+      - name: Build spark-measure image
+        run: |
+          ./e2e/build.sh
+      - name: Load spark-measure image into k8s/kind cluster
+        run: |
+          ./e2e/push-image.sh -k -d
+      - name: Run argocd
+        run: |
+          ./e2e/argocd.sh
+      - name: Access prometheus exporter metrics
+        run: |
+          ./e2e/check-metrics.sh
+      # - name: Push image
+      #   run: |
+      #     ./push-image.sh

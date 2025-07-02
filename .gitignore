@@ -1,4 +1,7 @@
+/.ciux.d/
+/.vscode
 .idea
 target/
 project/project/
 project/target/
+__pycache__
