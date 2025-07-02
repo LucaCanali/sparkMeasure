@@ -8,6 +8,9 @@ jobs:
   main:
     name: Run spark-measure end-to-end tests
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        spark_image_tag: [ '3.5.6-scala2.12-java17-python3-ubuntu', '4.0.0-scala2.13-java17-python3-ubuntu' ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -25,7 +28,7 @@ jobs:
           ./e2e/prereq.sh
       - name: Build spark-measure image
         run: |
-          ./e2e/build.sh
+          ./e2e/build.sh -i ${{ matrix.spark_image_tag }}
       - name: Load spark-measure image into k8s/kind cluster
         run: |
           ./e2e/push-image.sh -k -d

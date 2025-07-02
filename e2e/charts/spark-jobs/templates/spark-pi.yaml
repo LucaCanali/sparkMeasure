@@ -10,7 +10,7 @@ spec:
   mainApplicationFile: local:///opt/spark/examples/spark-pi.py
   arguments:
     - "10"
-  sparkVersion: "3.5.6"
+  sparkVersion: "4.0.0"
   driver:
     cores: 1
     coreLimit: "1200m"
