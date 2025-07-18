@@ -131,8 +131,8 @@ case class TaskMetrics(sparkSession: SparkSession) {
   // Legacy transformation of data recorded from the custom Stage listener
   // into a DataFrame and register it as a view for querying with SQL
   def createTaskMetricsDF(nameTempView: String = "PerfTaskMetrics"): DataFrame = {
-    import sparkSession.implicits._
-    val resultDF = listenerTask.taskMetricsData.toSeq.toDF()
+    // Create a DataFrame from the task metrics data
+    val resultDF = sparkSession.createDataFrame(listenerTask.taskMetricsData.toSeq)
     resultDF.createOrReplaceTempView(nameTempView)
     logger.warn(s"Stage metrics data refreshed into temp view $nameTempView")
     resultDF
