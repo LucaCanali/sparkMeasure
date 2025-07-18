@@ -1,0 +1,8 @@
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  sparkAppName: spark-jobs
+  source:
+    repoURL: https://github.com/k8s-school/sparkmeasure
+    targetRevision:
+      default: nil

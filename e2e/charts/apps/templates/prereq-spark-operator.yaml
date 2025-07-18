@@ -1,0 +1,7 @@
+# Required by sparkJobNamespaces
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.spec.sparkAppName }}
+  annotations:
+    argocd.argoproj.io/hook: PreSync

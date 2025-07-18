@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.spec.sparkAppName }}
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: {{ .Values.spec.sparkAppName }}
+    app.kubernetes.io/part-of: sparkmeasure
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: {{ .Values.spec.sparkAppName }}
+  project: default
+  source:
+    path: e2e/charts/{{ .Values.spec.sparkAppName }}
+    repoURL: {{ .Values.spec.source.repoURL }}
+    targetRevision: {{ .Values.spec.source.targetRevision.default }}
+    helm:
+      releaseName: {{ .Values.spec.sparkAppName }}
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true

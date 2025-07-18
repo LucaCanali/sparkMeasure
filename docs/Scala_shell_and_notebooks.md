@@ -3,8 +3,8 @@
 Notes on how to use sparkMeasure to collect Spark workload metrics with Scala shell or a Scala notebook.
 See also [README](../README.md) for an introduction to sparkMeasure and its architecture.
 
- 
-### Run sparkMeasure using the packaged version from Maven Central 
+
+### Run sparkMeasure using the packaged version from Maven Central
 
 - The alternative, see paragraph above, is to build a jar from master.
     ```
@@ -22,21 +22,21 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     cd sparkmeasure
     sbt +package
     ls -l target/scala-2.13/spark-measure*.jar  # location of the compiled jar
- 
+
     # Run as in one of these examples:
     bin/spark-shell --jars <path>/spark-measure_2.13-0.26-SNAPSHOT.jar
-    
+
     # Alternative, set classpath for the driver (the JAR is only needed in the driver)
     bin/spark-shell --conf spark.driver.extraClassPath=<path>/spark-measure_2.11-0.24-SNAPSHOT.jar
     ```
 
 ### Example: collect and print stage metrics with sparkMeasure
- 
+
 1. Measure metrics at the Stage level, a basic example:
     ```
     bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
-    
-    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+
+    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
     stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show)
 
     // get metrics as a Map
@@ -95,7 +95,7 @@ Stage 0 duration => 355 (0.4 s)
 Stage 1 duration => 411 (0.4 s)
 Stage 3 duration => 98 (98 ms)
 ```
- 
+
 - New in sparkMeasure v01: memory metrics report:
 ```
 > stageMetrics.printMemoryReport
@@ -112,11 +112,11 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 
 2. An alternative way to collect and print metrics:
     ```scala
-    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
     stageMetrics.begin()
-    
+
     ...execute one or more Spark jobs...
-    
+
     stageMetrics.end()
     stageMetrics.printReport()
     ```
@@ -124,7 +124,7 @@ Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 ### Collecting metrics at finer granularity: use Task metrics
 
 Collecting Spark task metrics at the granularity of each task completion has additional overhead
-compare to collecting at the stage completion level, therefore this option should only be used if you need data with 
+compare to collecting at the stage completion level, therefore this option should only be used if you need data with
 this finer granularity, for example because you want
 to study skew effects, otherwise consider using stagemetrics aggregation as preferred choice.
 
@@ -138,16 +138,16 @@ to study skew effects, otherwise consider using stagemetrics aggregation as pref
 
 ### Exporting metrics data for archiving and/or further analysis
 
-One simple use case is to make use of the data collected and reported by stagemetrics and taskmetrics 
-printReport methods for immediate troubleshooting and workload analysis.  
-You also have options to save metrics aggregated as in the printReport output.  
-Another option is to export the metrics to an external system, such as [Prometheus Pushgateway](Prometheus.md) 
-  
+One simple use case is to make use of the data collected and reported by stagemetrics and taskmetrics
+printReport methods for immediate troubleshooting and workload analysis.
+You also have options to save metrics aggregated as in the printReport output.
+Another option is to export the metrics to an external system, such as [Prometheus Pushgateway](Prometheus.md) or [Prometheus exporter through JMX](Prometheus_through_JMX.md).
+
 - Example on how to export raw "StageMetrics" into a DataFrame and save data in json format
     ```scala
-    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
     stageMetrics.runAndMeasure( ...your workload here ... )
-  
+
     val df = stageMetrics.createStageMetricsDF("PerfStageMetrics")
     df.show()
     stageMetrics.saveData(df.orderBy("jobId", "stageId"), "/tmp/stagemetrics_test1")
@@ -156,9 +156,9 @@ Another option is to export the metrics to an external system, such as [Promethe
 - Example, save aggregated metrics (as found in the printReport output) in json format
 
     ```scala
-    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
     stageMetrics.runAndMeasure( ...your workload here ... )
-    
+
     val df = stageMetrics.createStageMetricsDF("PerfStageMetrics")
     val aggregatedDF = stageMetrics.aggregateStageMetrics("PerfStageMetrics")
     aggregatedDF.show()
@@ -166,9 +166,9 @@ Another option is to export the metrics to an external system, such as [Promethe
     ```
  Aggregated data in name,value format:
  ```scala
-    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+    val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
     stageMetrics.runAndMeasure( ...your workload here ... )
-    
+
     val df = stageMetrics.aggregateStageMetrics.toList.toDF("name","value")
     stageMetrics.saveData(df, "/tmp/stagemetrics_report_test3")
  ```
