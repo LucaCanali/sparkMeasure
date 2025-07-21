@@ -4,11 +4,11 @@
 
 name := "spark-measure"
 
-version := "0.26-SNAPSHOT"
+version := "0.26-spark4-SNAPSHOT"
 isSnapshot := true
 
-scalaVersion       := "2.12.18"
-crossScalaVersions := Seq("2.12.18", "2.13.8")
+scalaVersion       := "2.13.8"
+//crossScalaVersions := Seq("2.12.18", "2.13.8")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
@@ -20,15 +20,12 @@ val testDeps = Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark"            %% "spark-sql"            % "3.5.6",
+  "org.apache.spark"            %% "spark-sql"            % "4.0.0",
   "com.fasterxml.jackson.module"%% "jackson-module-scala" % "2.18.3",
   "org.slf4j"                    % "slf4j-api"            % "2.0.17",
   "org.influxdb"                 % "influxdb-java"        % "2.25",
   "org.apache.kafka"             % "kafka-clients"        % "3.9.1"
 ) ++ testDeps
-
-// ── Override to resolve Kafka/Spark JNI clash (remove once on Spark 4.x) ──────
-dependencyOverrides += "com.github.luben" % "zstd-jni" % "1.5.5-4"
 
 // ─── Test JVM flags (needed by TaskMetricsTest & StageMetricsTest) ─────────────
 Test / fork := true
