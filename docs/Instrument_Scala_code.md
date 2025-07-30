@@ -3,11 +3,11 @@
 SparkMeasure can be used to instrument parts of your Scala code to measure Apache Spark workload.
 Use this for example for performance troubleshooting, application instrumentation, workload studies, etc.
 
-### Example code 
- 
-You can find an example of how to instrument a Scala application running Apache Spark jobs at this link:  
+### Example code
+
+You can find an example of how to instrument a Scala application running Apache Spark jobs at this link:
 [link to example application](../examples/testSparkMeasureScala)
- 
+
 How to run the example:
  ```
 # build the example jar
@@ -15,7 +15,7 @@ sbt package
 
 bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25 --class ch.cern.testSparkMeasure.testSparkMeasure <path_to_the_example_jar>/testsparkmeasurescala_2.13-0.1.jar
  ```
- 
+
 ### Collect and save Stage Metrics
 An example of how to collect task metrics aggregated at the stage execution level.
 Some relevant snippets of code are:
@@ -29,7 +29,7 @@ Some relevant snippets of code are:
      stageMetrics.runAndMeasure {
        spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
      }
- 
+
      // print report to standard output
      stageMetrics.printReport()
 
@@ -39,11 +39,11 @@ Some relevant snippets of code are:
 
      // Introduced in sparkMeasure v0.21, memory metrics report:
      stageMetrics.printMemoryReport()
- 
+
      //save session metrics data
      val df = stageMetrics.createStageMetricsDF("PerfStageMetrics")
      stageMetrics.saveData(df.orderBy("jobId", "stageId"), "/tmp/stagemetrics_test1")
- 
+
      val aggregatedDF = stageMetrics.aggregateStageMetrics("PerfStageMetrics")
      stageMetrics.saveData(aggregatedDF, "/tmp/stagemetrics_report_test2")
 ```
@@ -64,8 +64,9 @@ to study skew effects, otherwise consider using stagemetrics aggregation as pref
 
 ### Export to Prometheus PushGateway
 
-You have the option to export aggregated stage metrics and/or task metrics to a Prometheus push gateway.
-See details at: [Prometheus Pushgateway](Prometheus.md)
+You have the option to export aggregated stage metrics and/or task metrics to:
+- a Prometheus push gateway, see details at: [Prometheus Pushgateway](Prometheus.md)
+- the JMX Prometheus exporter, see details at: [Prometheus exporter through JMX](Prometheus_through_JMX.md)
 
 ### Run sparkMeasure using the packaged version from Maven Central
 
@@ -89,7 +90,7 @@ See details at: [Prometheus Pushgateway](Prometheus.md)
 
    # Run as in one of these examples:
    bin/spark-submit --jars path>/spark-measure_2.13-0.26-SNAPSHOT.jar
-   
+
    # alternative, set classpath for the driver (it is only needed in the driver)
    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.26-SNAPSHOT.jar ...
    ```

@@ -1,12 +1,12 @@
 # sparkMeasure on PySpark
 
-Notes on how to use sparkMeasure to collect Spark workload metrics when using PySpark from command line 
-or from a Jupyter notebook.  
+Notes on how to use sparkMeasure to collect Spark workload metrics when using PySpark from command line
+or from a Jupyter notebook.
 See also [README](../README.md) for an introduction to sparkMeasure and its architecture.
 
 ### Deployment and installation
 
-- Use PyPi to install the Python wrapper and take the jar from Maven central: 
+- Use PyPi to install the Python wrapper and take the jar from Maven central:
     ```
     pip install pyspark # Spark 4
     pip install sparkmeasure
@@ -18,32 +18,32 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     cd sparkmeasure
     sbt +package
     ls -l target/scala-2.13/spark-measure*.jar  # note location of the compiled and packaged jar
- 
+
     # Install the Python wrapper package
     cd python
     pip install .
-    
+
     # Run as in one of these examples:
     bin/pyspark --jars path>/spark-measure_2.13-0.26-SNAPSHOT.jar
-    
+
     #Alternative:
     bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.26-SNAPSHOT.jar
     ```
-   
-   
+
+
 ### PySpark example
 1. How to collect and print Spark task stage metrics using sparkMeasure, example in Python:
     ```python
     from sparkmeasure import StageMetrics
     stagemetrics = StageMetrics(spark)
-   
+
     stagemetrics.begin()
     spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
     stagemetrics.end()
 
     stagemetrics.print_report()
     stagemetrics.print_memory_report()
-   
+
     # get metrics as a dictionary
     metrics = stagemetrics.aggregate_stage_metrics()
    ```
@@ -51,18 +51,18 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     ```python
     from sparkmeasure import StageMetrics
     stagemetrics = StageMetrics(spark)
-    
+
     stagemetrics.runandmeasure(globals(),
     'spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()')
-   
+
    stageMetrics.print_memory_report()
    ```
 
 ### Jupyter notebook example
 
-Jupyter notebooks are a popular way to interact with PySpark for data analysis.  
+Jupyter notebooks are a popular way to interact with PySpark for data analysis.
 Example Jupyter notebook showing the use of basic sparkMeasure instrumentation:
-  
+
 [SparkMeasure_Jupyer_Python_getting_started.ipynb](examples/SparkMeasure_Jupyer_Python_getting_started.ipynb)
 
 Note, in particular with Jupyter notebooks it can be handy to write cell magic to wrap the instrumentation,
@@ -84,7 +84,7 @@ def sparkmeasure(line, cell=None):
 ### Collecting metrics at finer granularity: use Task metrics
 
 Collecting Spark task metrics at the granularity of each task completion has additional overhead
-compare to collecting at the stage completion level, therefore this option should only be used if you need data with 
+compare to collecting at the stage completion level, therefore this option should only be used if you need data with
 this finer granularity, for example because you want to study skew effects, otherwise consider using
 stagemetrics aggregation as preferred choice.
 
@@ -98,7 +98,7 @@ stagemetrics aggregation as preferred choice.
     taskmetrics.end()
     taskmetrics.print_report()
     ```
-  
+
     ```python
     from sparkmeasure import TaskMetrics
     taskmetrics = TaskMetrics(spark)
@@ -108,18 +108,18 @@ stagemetrics aggregation as preferred choice.
 
 ### Exporting metrics data for archiving and/or further analysis
 
-One simple use case is to make use of the data collected and reported by stagemetrics and taskmetrics 
-printReport methods for immediate troubleshooting and workload analysis.  
-You also have options to save metrics aggregated as in the printReport output.  
+One simple use case is to make use of the data collected and reported by stagemetrics and taskmetrics
+printReport methods for immediate troubleshooting and workload analysis.
+You also have options to save metrics aggregated as in the printReport output.
 
-Another option is to export the metrics to an external system, see details at [Prometheus Pushgateway](Prometheus.md) 
-  
+Another option is to export the metrics to an external system, see details at [Prometheus Pushgateway](Prometheus.md) or or [Prometheus exporter through JMX](Prometheus_through_JMX.md).
+
 - Example on how to export raw Stage metrics data in json format
     ```python
     from sparkmeasure import StageMetrics
     stagemetrics = StageMetrics(spark)
     stagemetrics.runandmeasure(globals(), ...your workload here ... )
-  
+
     df = stagemetrics.create_stagemetrics_DF("PerfStageMetrics")
     df.show()
     stagemetrics.save_data(df.orderBy("jobId", "stageId"), "stagemetrics_test1", "json")
@@ -156,4 +156,4 @@ Stage 3 JVMHeapMemory maxVal bytes => 279558120 (266.6 MB)
 Stage 3 OnHeapExecutionMemory maxVal bytes => 0 (0 Bytes)
 ```
 
-    
+

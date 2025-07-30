@@ -1,0 +1,10 @@
+image:
+  pullPolicy: IfNotPresent
+  repository: k8sschool
+  name: sparkmeasure
+  tag: "v0.0.1-rc1"
+jmxConfigMountPath: /opt/jmx-config
+jmxConfig: |
+  rules:
+    - pattern: "org.apache.spark.metrics.MetricsSystem.*"
+    - pattern: ".*"
