@@ -23,14 +23,18 @@ kubectl config set-context --current --namespace="$NS"
 
 # Add support for Github PR, which do not have a branch name in the git repository
 if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ]; then
-  revision="$GITHUB_HEAD_REF"
+  revision="${GITHUB_HEAD_REF}"
+  # During a PR, the git repository containing the CI code is the forked one
+  git_repo=$(jq -r '.pull_request.head.repo.full_name' "$GITHUB_EVENT_PATH")
 else
-  revision="$SPARKMEASURE_WORKBRANCH"
+  revision="${SPARKMEASURE_WORKBRANCH:-main}"
+  git_repo="${GITHUB_REPOSITORY}"
 fi
+git_repo="https://github.com/${git_repo}"
 
-argocd app create $app_name --dest-server https://kubernetes.default.svc \
+argocd app create "$app_name" --dest-server https://kubernetes.default.svc \
     --dest-namespace "$app_name" \
-    --repo https://github.com/k8s-school/$app_name \
+    --repo "$git_repo" \
     --path e2e/charts/apps --revision "$revision" \
     -p spec.source.targetRevision.default="$revision"
 
