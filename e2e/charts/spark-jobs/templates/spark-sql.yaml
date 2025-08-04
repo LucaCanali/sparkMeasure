@@ -8,7 +8,6 @@ spec:
   image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
   imagePullPolicy: "{{ .Values.image.pullPolicy }}"
   mainApplicationFile: local:///opt/spark/examples/spark-sql.py
-  sparkVersion: "4.0.0"
   driver:
     cores: 1
     coreLimit: "1200m"
