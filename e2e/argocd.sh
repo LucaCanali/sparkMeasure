@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Install pre-requisite for fink ci
+# Run integration tests for sparkMeasure over Kubernetes
 
 # @author  Fabrice Jammes
 
@@ -8,6 +8,28 @@ set -euxo pipefail
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 PROJECT_DIR=$(cd "$DIR/.."; pwd -P)
+
+usage() {
+  cat << EOD
+
+Usage: `basename $0` [options]
+
+  Available options:
+    -h        this message
+
+Run integration tests for sparkMeasure over Kubernetes
+
+EOD
+}
+
+# get the options
+while getopts hi: c ; do
+    case $c in
+	    h) usage ; exit 0 ;;
+	    \?) usage ; exit 2 ;;
+    esac
+done
+shift `expr $OPTIND - 1`
 
 ciux ignite --selector itest "$PROJECT_DIR"
 
@@ -27,7 +49,7 @@ if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ]; then
   # During a PR, the git repository containing the CI code is the forked one
   git_repo=$(jq -r '.pull_request.head.repo.full_name' "$GITHUB_EVENT_PATH")
 else
-  revision="${SPARKMEASURE_WORKBRANCH:-main}"
+  revision="${SPARKMEASURE_WORKBRANCH}"
   git_repo="${GITHUB_REPOSITORY}"
 fi
 git_repo="https://github.com/${git_repo}"
