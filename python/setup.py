@@ -20,7 +20,7 @@ For more information, see the [sparkMeasure GitHub page and documentation](https
 
 setup(
     name='sparkmeasure',
-    version='0.25.0',
+    version='0.26.0',
     description='Python API for sparkMeasure, a tool for performance troubleshooting of Apache Spark workloads.',
     long_description=long_description,
     long_description_content_type='text/markdown',

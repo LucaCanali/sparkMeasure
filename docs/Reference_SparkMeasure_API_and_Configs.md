@@ -450,6 +450,39 @@ Configuration - PushGatewaySink parameters
 --conf spark.sparkmeasure.pushgateway.jobname=JOBNAME // default is pushgateway
 ```
 
+## Prometheus JMX Exporter 
+```
+\\ This object provides an interface to the Dropwizard metrics registry
+object DropwizardMetrics
+
+def setMetric(shortname: String, value: Double, metricType: String): Unit
+def describeMetrics() : String
+```
+
+## Prometheus JMX Exporter - Python
+```
+from sparkmeasure.jmx import jmxexport
+
+def jmxexport(spark: SparkSession, metrics: dict):
+    """
+    Export the provided metrics to the JMX MBean server for Prometheus scraping.
+
+    Parameters:
+    spark (SparkSession): The active Spark session.
+    metrics (dict): A dictionary of metric names and their corresponding values.
+
+    This function updates the JMX MBean server with the provided metrics,
+    making them available for scraping by Prometheus.
+    """
+
+Example:
+
+# get metrics data as a dictionary
+current_metrics = stagemetrics.aggregate_stagemetrics()
+# export metrics to JMX Prometheus exporter
+jmxexport(spark, current_metrics)
+```
+
 ## IOUtils
 
 The object IOUtils contains some helper code for the sparkMeasure package

@@ -48,7 +48,7 @@ In addition to exposing metrics via JMX, you must configure the Prometheus JMX e
 Ensure your Spark pod manifest or Helm chart includes a properly configured `ConfigMap` for the JMX exporter. Specifically, you’ll need to add mappings for the custom `sparkMeasure` metrics to the YAML under the `rules` section used by the Prometheus JMX exporter.
 
 A production-ready configuration example is available here:
-📄 [How to configure the Prometheus exporter to expose sparkMeasure metrics](../e2e/charts/spark-demo/templates/jmx-configmap.yaml)
+📄 [How to configure the Prometheus exporter to expose sparkMeasure metrics](../e2e/charts/spark-jobs/templates/jmx-configmap.yaml)
 
 ---
 

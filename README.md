@@ -20,8 +20,8 @@ and spark-shell/pyspark environments.
   of Spark jobs under various configurations or code changes.
 - **Batch Job Analysis:** With Flight Recorder mode sparkMeasure transparently records batch job metrics
   for later analysis.
-- **Monitoring Capabilities:** Integrates with external systems like Apache Kafka, InfluxDB,
-  and Prometheus Push Gateway for extensive monitoring.
+- **Monitoring Capabilities:** Integrates with external systems like Apache Kafka, 
+  Prometheus Push Gateway, Prometheus JMX Exporter, and InfluxDB for extensive monitoring.
 - **Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
   of detailed Spark task metrics.
 - **Language Compatibility:** Fully supports Scala, Java, and Python, making it versatile for a wide range
@@ -332,6 +332,7 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
     and analyzing Spark workload metrics data. Examples and how-to guides:
      - **[Instrument Spark-Python code](docs/Instrument_Python_code.md)**
      - **[Instrument Spark-Scala code](docs/Instrument_Scala_code.md)**
+     - **[JMX Exporter integration](docs/JMX_Exporter_integration.md)**
      - See also [Spark_CPU_memory_load_testkit](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/Spark_CPU_memory_load_testkit)
        as an example of how to use sparkMeasure to instrument Spark code for performance testing.
 
