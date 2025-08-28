@@ -332,7 +332,7 @@ SparkMeasure is one tool for many different use cases, languages, and environmen
     and analyzing Spark workload metrics data. Examples and how-to guides:
      - **[Instrument Spark-Python code](docs/Instrument_Python_code.md)**
      - **[Instrument Spark-Scala code](docs/Instrument_Scala_code.md)**
-     - **[JMX Exporter integration](docs/JMX_Exporter_integration.md)**
+     - **[JMX Exporter integration](docs/Prometheus_through_JMX.md)**
      - See also [Spark_CPU_memory_load_testkit](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/Spark_CPU_memory_load_testkit)
        as an example of how to use sparkMeasure to instrument Spark code for performance testing.
 
