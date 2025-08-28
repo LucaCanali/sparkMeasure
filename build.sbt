@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module"%% "jackson-module-scala" % "2.18.3",
   "org.slf4j"                    % "slf4j-api"            % "2.0.17",
   "org.influxdb"                 % "influxdb-java"        % "2.25",
-  "org.apache.kafka"             % "kafka-clients"        % "3.9.0"
+  "org.apache.kafka"             % "kafka-clients"        % "3.9.1"
 ) ++ testDeps
 
 // ── Override to resolve Kafka/Spark JNI clash (remove once on Spark 4.x) ──────
