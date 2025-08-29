@@ -1,4 +1,7 @@
 credentials += Credentials(
-  Path.userHome / ".sbt" / "1.0" / "sonatype_credentials"
+  "Sonatype Nexus Repository Manager",
+  "central.sonatype.com",
+  sys.env.getOrElse("SONATYPE_USERNAME",""),
+  sys.env.getOrElse("SONATYPE_PASSWORD","")
 )
 

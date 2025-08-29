@@ -5,10 +5,9 @@
 name := "spark-measure"
 
 version := "0.26"
-isSnapshot := false
 
 scalaVersion       := "2.12.18"
-crossScalaVersions := Seq("2.12.18", "2.13.8")
+crossScalaVersions := Seq("2.12.18", "2.13.16")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
@@ -38,14 +37,16 @@ Test / javaOptions ++= Seq(
 )
 
 // ─── Publishing ────────────────────────────────────────────────────────────────
-publishMavenStyle := true
+Compile / packageSrc / publishArtifact := true
+Compile / packageDoc / publishArtifact := true
 
-publishTo := Some {
-  if (isSnapshot.value)
-    Opts.resolver.sonatypeOssSnapshots.head
-  else
-    Opts.resolver.sonatypeStaging
+ThisBuild / publishTo := {
+  val snapshots = "https://central.sonatype.com/repository/maven-snapshots/"
+  if (isSnapshot.value) Some("central-snapshots" at snapshots)
+  else localStaging.value
 }
+ThisBuild / organizationHomepage := Some(url("https://github.com/LucaCanali"))
+ThisBuild / versionScheme := Some("early-semver")
 
 // ─── Project metadata ─────────────────────────────────────────────────────────
 organization := "ch.cern.sparkmeasure"
@@ -65,7 +66,7 @@ homepage := Some(url("https://github.com/LucaCanali/sparkMeasure"))
 scmInfo := Some(
   ScmInfo(
     browseUrl  = url("https://github.com/LucaCanali/sparkMeasure"),
-    connection = "scm:git@github.com:LucaCanali/sparkMeasure.git"
+    connection = "scm:git:git@github.com:LucaCanali/sparkMeasure.git"
   )
 )
 
