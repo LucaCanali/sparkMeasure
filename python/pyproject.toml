@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sparkmeasure"
+version = "0.26.0"
+description = "Python API for sparkMeasure, a tool for performance troubleshooting of Apache Spark workloads."
+readme = { text = """
+SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads.
+It simplifies the collection and analysis of Spark performance metrics. The bulk of sparkMeasure is written in Scala.
+This package contains the Python API for sparkMeasure.
+Use it from Python programs, PySpark, Jupyter notebooks, or in general as a tool to instrument and collect runtime metrics for your Spark jobs.
+
+Key Features:
+- Interactive troubleshooting for Spark workloads.
+- Batch job analysis with Flight Recorder mode.
+- Monitoring with external systems (InfluxDB, Kafka, Prometheus).
+- Language support for Scala, Java, and Python.
+- Educational tool demonstrating Spark Listener interface.
+
+For more information, see the [sparkMeasure GitHub page and documentation](https://github.com/lucacanali/sparkMeasure).
+""", content-type = "text/markdown" }
+requires-python = ">=3.9"
+license = { text = "Apache License 2.0" }
+authors = [{ name = "Luca Canali", email = "luca.canali@cern.ch" }]
+keywords = ["spark", "apache spark", "performance", "monitoring", "metrics", "troubleshooting"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: Apache Software License",
+]
+dependencies = [
+  "pyspark>=3.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/lucacanali/sparkMeasure"
+Documentation = "https://github.com/lucacanali/sparkMeasure"
+Source = "https://github.com/lucacanali/sparkMeasure"
+Tracker = "https://github.com/lucacanali/sparkMeasure/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["sparkmeasure", "sparkmeasure.*"]
