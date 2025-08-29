@@ -35,7 +35,7 @@ https://prometheus.io/docs/instrumenting/exposition_formats/
 
 1. Measure metrics at the Stage level (example in Scala):
 ```
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25 
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26 
 
 val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
 stageMetrics.begin()

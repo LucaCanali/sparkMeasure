@@ -95,7 +95,7 @@ Main author and contact: Luca.Canali@cern.ch
   # Python CLI
   # pip install pyspark
   pip install sparkmeasure
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
 
   # Import sparkMeasure
   from sparkmeasure import StageMetrics
@@ -120,7 +120,7 @@ Main author and contact: Luca.Canali@cern.ch
   ```
 #### Scala CLI
   ```
-  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -203,7 +203,7 @@ Notes:
 This is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.26
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -212,7 +212,7 @@ This is similar but slightly different from the example above as it collects met
   # Python CLI
   # pip install pyspark
   pip install sparkmeasure
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
 
   from sparkmeasure import TaskMetrics
   taskmetrics = TaskMetrics(spark)
@@ -226,8 +226,8 @@ This is similar but slightly different from the example above as it collects met
 
 | Spark Version  | Recommended SparkMeasure Version | Scala Version       |
 | -------------- |----------------------------------|---------------------|
-| Spark 4.x      | 0.25 (latest)                    | Scala 2.13          |
-| Spark 3.x      | 0.25 (latest)                    | Scala 2.12 and 2.13 |
+| Spark 4.x      | 0.26 (latest)                    | Scala 2.13          |
+| Spark 3.x      | 0.26 (latest)                    | Scala 2.12 and 2.13 |
 | Spark 2.4, 2.3 | 0.19                             | Scala 2.11          |
 | Spark 2.2, 2.1 | 0.16                             | Scala 2.11          |
 
@@ -241,7 +241,7 @@ To get SparkMeasure, choose one of the following options:
 
 2. **Specific Versions:**
 
-    * Download JAR files from the [sparkMeasure release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.25).
+    * Download JAR files from the [sparkMeasure release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.26).
 
 3. **Latest Development Builds:**
 
@@ -255,21 +255,21 @@ To get SparkMeasure, choose one of the following options:
 
 #### Spark 4 with Scala 2.13
 
-* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25`
+* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26`
 * **Python:**
 
   ```bash
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
   pip install sparkmeasure
   ```
 
 #### Spark 3 with Scala 2.12
 
-* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25`
+* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.26`
 * **Python:**
 
   ```bash
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.25
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.26
   pip install sparkmeasure
   ```
 ### Including sparkMeasure in your Spark environment
@@ -279,14 +279,14 @@ Choose your preferred method:
 * Use the `--packages` option:
 
   ```bash
-  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
   ```
 * Directly reference the JAR file:
 
   ```bash
-  --jars /path/to/spark-measure_2.13-0.25.jar
-  --jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.25/spark-measure_2.13-0.25.jar
-  --conf spark.driver.extraClassPath=/path/to/spark-measure_2.13-0.25.jar
+  --jars /path/to/spark-measure_2.13-0.26.jar
+  --jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.26/spark-measure_2.13-0.26.jar
+  --conf spark.driver.extraClassPath=/path/to/spark-measure_2.13-0.26.jar
   ```
 
 

@@ -87,7 +87,7 @@ bin/spark-shell \
   --conf spark.sparkmeasure.influxdbURL="http://localhost:8086" \
   --conf spark.extraListeners=ch.cern.sparkmeasure.InfluxDBSink,ch.cern.sparkmeasure.InfluxDBSinkExtended \
   --conf spark.sparkmeasure.influxdbStagemetrics=true
-  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
 
 // run a Spark job, this will produce metrics  
 spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show

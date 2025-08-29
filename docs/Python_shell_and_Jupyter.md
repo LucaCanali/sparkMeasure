@@ -10,7 +10,7 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     ```
     pip install pyspark # Spark 4
     pip install sparkmeasure
-    bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.25
+    bin/pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
     ```
  - If you prefer to build from the latest development version:
     ```
@@ -24,10 +24,10 @@ See also [README](../README.md) for an introduction to sparkMeasure and its arch
     pip install .
 
     # Run as in one of these examples:
-    bin/pyspark --jars path>/spark-measure_2.13-0.26-SNAPSHOT.jar
+    bin/pyspark --jars path>/spark-measure_2.13-0.27-SNAPSHOT.jar
 
     #Alternative:
-    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.26-SNAPSHOT.jar
+    bin/pyspark --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.27-SNAPSHOT.jar
     ```
 
 
