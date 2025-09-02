@@ -118,6 +118,9 @@ Main author and contact: Luca.Canali@cern.ch
   # get metrics as a dictionary
   metrics = stagemetrics.aggregate_stage_metrics()
   ```
+Note: for Spark 3.x with Scala 2.12, use `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.26` 
+instead of `--packages ch.cern.sparkmeasure:spark-measure_2.13:0.26`
+
 #### Scala CLI
   ```
   spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
@@ -203,7 +206,7 @@ Notes:
 This is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.26
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
