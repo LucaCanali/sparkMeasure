@@ -1,7 +1,7 @@
 # SparkMeasure - a performance tool for Apache Spark
 
 [![Test](https://github.com/LucaCanali/sparkmeasure/actions/workflows/build_with_scala_and_python_tests.yml/badge.svg)](https://github.com/LucaCanali/sparkmeasure/actions/workflows/build_with_scala_and_python_tests.yml)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.cern.sparkmeasure/spark-measure_2.12)
+[![Maven Central](https://maven-badges.sml.io/sonatype-central/ch.cern.sparkmeasure/spark-measure_2.13/badge.svg)](https://central.sonatype.com/artifact/ch.cern.sparkmeasure/spark-measure_2.13)
 [![DOI](https://zenodo.org/badge/85240663.svg)](https://doi.org/10.5281/zenodo.7891017)
 [![PyPI](https://img.shields.io/pypi/v/sparkmeasure.svg)](https://pypi.org/project/sparkmeasure/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/sparkmeasure)](https://pypistats.org/packages/sparkmeasure)
