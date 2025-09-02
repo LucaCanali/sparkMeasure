@@ -8,7 +8,7 @@ import os
 def setup_sparksession():
     # Note this is supposed to run after sbt package on the sparkmeasure project
     # so that we can get the jar file from the target folder
-    SPARKMEASURE_JAR_FOLDER = "target/scala-2.12/"
+    SPARKMEASURE_JAR_FOLDER = "target/scala-2.13/"
 
     # Scan SPARKMEASURE_JAR_FOLDER for the spark-measure jar file
     # Set the directory you want to scan
