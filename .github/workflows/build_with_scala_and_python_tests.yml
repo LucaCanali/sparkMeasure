@@ -20,12 +20,12 @@ jobs:
     - name: Set up Java ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
-        distribution: 'adopt'
+        distribution: temurin
         java-version: ${{ matrix.java-version }}
         cache: sbt
     - uses: sbt/setup-sbt@v1
       with:
-        sbt-runner-version: 1.9.9
+        sbt-runner-version: 1.11.5
 
     - name: Build using sbt for all Scala versions supported
       run: sbt +package
