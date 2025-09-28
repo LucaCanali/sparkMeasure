@@ -39,7 +39,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
   logger.warn("Custom monitoring listener with Kafka sink initializing. Now attempting to connect to Kafka topic")
 
   // Initialize Kafka connection
-  val (broker, topic) = Utils.parseKafkaConfig(conf, logger)
+  val (broker, topic, properties) = Utils.parseKafkaConfig(conf, logger)
   private var producer: Producer[String, Array[Byte]] = _
 
   var appId: String = SparkSession.getActiveSession match {
@@ -248,6 +248,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
         props.put("value.serializer", classOf[ByteArraySerializer].getName)
         props.put("client.id", "spark-measure")
+        properties.foreach{ case (k, v) => props.put(k, v) }
         producer = new KafkaProducer(props)
       }
     )

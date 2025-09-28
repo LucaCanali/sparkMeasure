@@ -245,7 +245,7 @@ object Utils {
     influxdbStagemetrics
   }
 
-  def parseKafkaConfig(conf: SparkConf, logger: Logger): (String, String) = {
+  def parseKafkaConfig(conf: SparkConf, logger: Logger): (String, String, Map[String, String]) = {
     // handle Kafka broker and topic
     val broker = conf.get("spark.sparkmeasure.kafkaBroker", "")
     val topic = conf.get("spark.sparkmeasure.kafkaTopic", "")
@@ -255,7 +255,15 @@ object Utils {
       logger.info(s"Kafka broker: $broker")
       logger.info(s"Kafka topic: $topic")
     }
-    (broker, topic)
+
+    val prefix = "spark.sparkmeasure.kafka."
+    val kafkaParams: Map[String, String] = conf.getAll
+      .collect {
+        case (k, v) if k.startsWith(prefix) => k.stripPrefix(prefix) -> v
+      }
+      .toMap
+
+    (broker, topic, kafkaParams)
   }
 
   def parsePushGatewayConfig(conf: SparkConf, logger: Logger): PushgatewayConfig = {
