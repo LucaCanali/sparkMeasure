@@ -36,6 +36,8 @@ Configuration - KafkaSink parameters:
 --conf spark.sparkmeasure.kafkaTopic = Kafka topic
        Example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
        Note: the topic will be created if it does not yet exist
+--conf spark.sparkmeasure.kafka.* = Other kafka properties
+       Example: --conf spark.sparkmeasure.kafka.ssl.keystore.location=/var/private/ssl/kafka.server.keystore.jks
 ```
 
 This code depends on "kafka-clients". If you deploy sparkMeasure from maven central,
