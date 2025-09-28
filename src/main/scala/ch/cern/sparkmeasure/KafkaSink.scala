@@ -27,6 +27,8 @@ import scala.util.Try
  * example: --conf spark.sparkmeasure.kafkaBroker=kafka.your-site.com:9092
  * spark.sparkmeasure.kafkaTopic = Kafka topic
  * example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
+ * spark.sparkmeasure.kafka.* = Other kafka properties
+ * example: --conf spark.sparkmeasure.kafka.ssl.keystore.location=/var/private/ssl/kafka.server.keystore.jks
  *
  * This code depends on "kafka clients", you may need to add the dependency:
  * --packages org.apache.kafka:kafka-clients:3.2.1
