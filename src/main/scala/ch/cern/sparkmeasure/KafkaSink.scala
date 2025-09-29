@@ -27,6 +27,8 @@ import scala.util.Try
  * example: --conf spark.sparkmeasure.kafkaBroker=kafka.your-site.com:9092
  * spark.sparkmeasure.kafkaTopic = Kafka topic
  * example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
+ * spark.sparkmeasure.kafka.* = Other kafka properties
+ * example: --conf spark.sparkmeasure.kafka.ssl.keystore.location=/var/private/ssl/kafka.server.keystore.jks
  *
  * This code depends on "kafka clients", you may need to add the dependency:
  * --packages org.apache.kafka:kafka-clients:3.2.1
@@ -39,7 +41,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
   logger.warn("Custom monitoring listener with Kafka sink initializing. Now attempting to connect to Kafka topic")
 
   // Initialize Kafka connection
-  val (broker, topic) = Utils.parseKafkaConfig(conf, logger)
+  val (broker, topic, properties) = Utils.parseKafkaConfig(conf, logger)
   private var producer: Producer[String, Array[Byte]] = _
 
   var appId: String = SparkSession.getActiveSession match {
@@ -248,6 +250,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
         props.put("value.serializer", classOf[ByteArraySerializer].getName)
         props.put("client.id", "spark-measure")
+        properties.foreach{ case (k, v) => props.put(k, v) }
         producer = new KafkaProducer(props)
       }
     )
