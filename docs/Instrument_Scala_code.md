@@ -13,7 +13,7 @@ How to run the example:
 # build the example jar
 sbt package
 
-bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26 --class ch.cern.testSparkMeasure.testSparkMeasure <path_to_the_example_jar>/testsparkmeasurescala_2.13-0.1.jar
+bin/spark-submit --master local[*] --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27 --class ch.cern.testSparkMeasure.testSparkMeasure <path_to_the_example_jar>/testsparkmeasurescala_2.13-0.1.jar
  ```
 
 ### Collect and save Stage Metrics
@@ -72,10 +72,10 @@ You have the option to export aggregated stage metrics and/or task metrics to:
 
 - This is how to run sparkMeasure using a packaged version in Maven Central
     ```
-    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
+    bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
 
     // or just download and use the jar (it is only needed in the driver) as in:
-    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.26.jar ...
+    bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.27.jar ...
    ```
 - The alternative, see paragraph above, is to build a jar from master (See below).
 
@@ -86,11 +86,11 @@ You have the option to export aggregated stage metrics and/or task metrics to:
    git clone https://github.com/lucacanali/sparkmeasure
    cd sparkmeasure
    sbt +package
-   ls -l target/scala-2.12/spark-measure*.jar  # location of the compiled jar
+   ls -l target/scala-2.13/spark-measure*.jar  # location of the compiled jar
 
    # Run as in one of these examples:
-   bin/spark-submit --jars path>/spark-measure_2.13-0.27-SNAPSHOT.jar
+   bin/spark-submit --jars path>/spark-measure_2.13-0.28-SNAPSHOT.jar
 
    # alternative, set classpath for the driver (it is only needed in the driver)
-   bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.27-SNAPSHOT.jar ...
+   bin/spark-submit --conf spark.driver.extraClassPath=<path>/spark-measure_2.13-0.28-SNAPSHOT.jar ...
    ```

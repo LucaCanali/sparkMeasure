@@ -60,7 +60,7 @@ Examples:
 bin/spark-shell \
 --conf spark.extraListeners=ch.cern.sparkmeasure.PushGatewaySink \
 --conf spark.sparkmeasure.pushgateway=localhost:9091 \
---packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
+--packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
 ```
 
 - Look at the metrics being written to the Pushgateway

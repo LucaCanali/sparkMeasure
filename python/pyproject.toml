@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sparkmeasure"
-version = "0.26.0"
+version = "0.27.0"
 description = "Python API for sparkMeasure, a tool for performance troubleshooting of Apache Spark workloads."
 readme = { text = """
 SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads.
@@ -22,7 +22,7 @@ Key Features:
 For more information, see the [sparkMeasure GitHub page and documentation](https://github.com/lucacanali/sparkMeasure).
 """, content-type = "text/markdown" }
 requires-python = ">=3.9"
-license = { text = "Apache License 2.0" }
+license = { text = "Apache-2.0" }
 authors = [{ name = "Luca Canali", email = "luca.canali@cern.ch" }]
 keywords = ["spark", "apache spark", "performance", "monitoring", "metrics", "troubleshooting"]
 classifiers = [
@@ -30,6 +30,7 @@ classifiers = [
   "Intended Audience :: Developers",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -38,15 +39,20 @@ classifiers = [
   "Operating System :: OS Independent",
   "License :: OSI Approved :: Apache Software License",
 ]
-dependencies = [
-  "pyspark>=3.0.0",
-]
+
+# Keep PySpark optional to avoid heavy installs/conflicts
+# Users who need it can: pip install "sparkmeasure[pyspark]"
+dependencies = []
+
+[project.optional-dependencies]
+pyspark = ["pyspark>=3.0.0"]
 
 [project.urls]
 Homepage = "https://github.com/lucacanali/sparkMeasure"
 Documentation = "https://github.com/lucacanali/sparkMeasure"
 Source = "https://github.com/lucacanali/sparkMeasure"
 Tracker = "https://github.com/lucacanali/sparkMeasure/issues"
+Changelog = "https://github.com/lucacanali/sparkMeasure/releases"
 
 [tool.setuptools]
 include-package-data = true

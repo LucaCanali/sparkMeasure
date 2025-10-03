@@ -4,7 +4,7 @@ Prerequisite:
    pip install pyspark
    pip install sparkmeasure
 Run with:
-  ./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26 test_sparkmeasure_python.py
+  ./bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27 test_sparkmeasure_python.py
 """
 
 from pyspark.sql import SparkSession

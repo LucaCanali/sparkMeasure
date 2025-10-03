@@ -44,7 +44,7 @@ This code depends on "kafka-clients". If you deploy sparkMeasure from maven cent
 the dependency is being taken care of.
 If you run sparkMeasure from a jar instead, you may need to add the dependency manually
 in spark-submit as in:
- - `--packages org.apache.kafka:kafka-clients:3.9.0`
+ - `--packages org.apache.kafka:kafka-clients:4.1.0`
 
 ## Use cases
 
@@ -69,7 +69,7 @@ bin/spark-shell \
 --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink \
 --conf spark.sparkmeasure.kafkaBroker=localhost:9092 \
 --conf spark.sparkmeasure.kafkaTopic=metrics
---packages ch.cern.sparkmeasure:spark-measure_2.13:0.26
+--packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
 ```
 
 - Look at the metrics being written into Kafka:

@@ -6,7 +6,7 @@ import ch.cern.sparkmeasure.{StageMetrics, TaskMetrics}
 
 /**
   * Test sparkMeasure (https://github.com/LucaCanali/sparkMeasure). Use:
-  * bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.26 \
+  * bin/spark-submit --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27 \
   * --class ch.cern.testSparkMeasure.testSparkMeasure <path>/testsparkmeasurescala_2.13-0.1.jar
   */
 object testSparkMeasure {

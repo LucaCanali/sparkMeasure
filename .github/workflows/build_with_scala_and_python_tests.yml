@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: [ '3.9', '3.12' ]
+        python-version: [ '3.10', '3.12' ]
         java-version: [ 11, 17 ]
 
     steps:
@@ -25,7 +25,7 @@ jobs:
         cache: sbt
     - uses: sbt/setup-sbt@v1
       with:
-        sbt-runner-version: 1.11.5
+        sbt-runner-version: 1.11.6
 
     - name: Build using sbt for all Scala versions supported
       run: sbt +package
