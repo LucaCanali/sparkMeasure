@@ -15,19 +15,16 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 val testDeps = Seq(
   "org.scalatest"      %% "scalatest"               % "3.2.19" % Test,
   "org.scalatest"      %% "scalatest-shouldmatchers"% "3.2.19" % Test,
-  "org.wiremock"        % "wiremock"                % "3.13.0" % Test
+  "org.wiremock"        % "wiremock"                % "3.13.1" % Test
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark"            %% "spark-sql"            % "3.5.6",
-  "com.fasterxml.jackson.module"%% "jackson-module-scala" % "2.18.3",
+  "org.apache.spark"            %% "spark-sql"            % "3.5.7",
+  "com.fasterxml.jackson.module"%% "jackson-module-scala" % "2.20.0",
   "org.slf4j"                    % "slf4j-api"            % "2.0.17",
   "org.influxdb"                 % "influxdb-java"        % "2.25",
-  "org.apache.kafka"             % "kafka-clients"        % "3.9.1"
+  "org.apache.kafka"             % "kafka-clients"        % "4.1.0"
 ) ++ testDeps
-
-// ── Override to resolve Kafka/Spark JNI clash (remove once on Spark 4.x) ──────
-dependencyOverrides += "com.github.luben" % "zstd-jni" % "1.5.5-4"
 
 // ─── Test JVM flags (needed by TaskMetricsTest & StageMetricsTest) ─────────────
 Test / fork := true
