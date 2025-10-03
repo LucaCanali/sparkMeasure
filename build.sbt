@@ -6,8 +6,7 @@ name := "spark-measure"
 
 version := "0.28-SNAPSHOT"
 
-scalaVersion       := "2.12.18"
-crossScalaVersions := Seq("2.12.18", "2.13.16")
+scalaVersion       := "2.13.16"
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
@@ -19,7 +18,7 @@ val testDeps = Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark"            %% "spark-sql"            % "3.5.7",
+  "org.apache.spark"            %% "spark-sql"            % "4.1.0-preview2",
   "com.fasterxml.jackson.module"%% "jackson-module-scala" % "2.20.0",
   "org.slf4j"                    % "slf4j-api"            % "2.0.17",
   "org.influxdb"                 % "influxdb-java"        % "2.25",
