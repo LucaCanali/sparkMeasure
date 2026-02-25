@@ -14,7 +14,7 @@ import scala.util.Try
  * 1. All stage/executor/query metrics from the base KafkaSink
  * 2. Application-level metrics (executor counts, stage counts, task counts)
  * 3. Custom fields passed via spark configurations
- * 4. Enhanced app_start and app_end events with metadata
+ * 4. Enhanced application_started and applications_ended events with metadata
  *
  * Configuration:
  * --conf spark.extraListeners=com.example.listener.AppEventKafkaSink
