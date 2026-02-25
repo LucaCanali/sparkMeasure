@@ -35,7 +35,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
 
   // Application tracking
   private var appName: String = "unknown"
-  private var start_time: Long = 0L
+  private var startTime: Long = 0L
 
   // Executor tracking
   private val executorIds: mutable.HashSet[String] = mutable.HashSet.empty[String]
@@ -63,7 +63,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
 
     appId = applicationStart.appId.getOrElse("noAppId")
     appName = applicationStart.appName
-    start_time = applicationStart.time
+    startTime = applicationStart.time
     val customFields = extractCustomFields(conf)
 
     val epochMillis = System.currentTimeMillis()
@@ -72,7 +72,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
       "name" -> "application_started",
       "appId" -> appId,
       "appName" -> appName,
-      "start_time" -> start_time,
+      "startTime" -> startTime,
       "epochMillis" -> epochMillis
     ) ++ customFields
 
@@ -154,7 +154,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
     val completionTime = applicationEnd.time
 
     val safeEndTime = if (completionTime > 0) completionTime else System.currentTimeMillis()
-    val duration = if (start_time > 0) safeEndTime - start_time else 0L
+    val duration = if (startTime > 0) safeEndTime - startTime else 0L
     val successful = succeededJobsCount > 0 && failedJobsCount == 0
     val epochMillis = System.currentTimeMillis()
     val configurations = conf.getAll.toMap
@@ -164,7 +164,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
       "name" -> "applications_ended",
       "appId" -> appId,
       "appName" -> appName,
-      "start_time" -> start_time,
+      "startTime" -> startTime,
       "completionTime" -> completionTime,
       "duration" -> duration,
       "successful" -> successful,
