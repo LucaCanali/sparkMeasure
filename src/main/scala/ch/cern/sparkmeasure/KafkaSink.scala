@@ -57,8 +57,6 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
   private var startTime: Long = 0L
 
   // Executor tracking
-  private val executorIds: mutable.HashSet[String] = mutable.HashSet.empty[String]
-  private var totalExecutorCount: Int = 0
   private var executorsFailed: Int = 0
   private var executorsKilled: Int = 0
 
@@ -90,14 +88,6 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "epochMillis" -> epochMillis
     )
     report(metrics)
-
-    if (executorAdded != null && executorAdded.executorId != null) {
-      val execId = executorAdded.executorId
-      if (!executorIds.contains(execId) && execId != "driver") {
-        executorIds += execId
-        totalExecutorCount += 1
-      }
-    }
   }
 
   override def onExecutorRemoved(executorRemoved: SparkListenerExecutorRemoved): Unit = {
@@ -308,7 +298,6 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "completionTime" -> completionTime,
       "duration" -> duration,
       "successful" -> successful,
-      "totalExecutorCount" -> totalExecutorCount,
       "executorsFailed" -> executorsFailed,
       "executorsKilled" -> executorsKilled,
       "totalJobsCompleted" -> totalJobsCompleted,
