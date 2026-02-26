@@ -8,12 +8,12 @@ import scala.util.Try
 
 /**
  * AppEventKafkaSink: An extended version of ch.cern.sparkmeasure.KafkaSink that adds
- * application-level metrics and custom fields support.
+ * application-level metrics and custom labels support.
  *
  * This listener combines:
  * 1. All stage/executor/query metrics from the base KafkaSink
  * 2. Application-level metrics (executor counts, stage counts, task counts)
- * 3. Custom fields passed via spark configurations
+ * 3. Custom labels passed via spark configurations
  * 4. Enhanced application_started and applications_ended events with metadata
  *
  * Configuration:
@@ -21,14 +21,14 @@ import scala.util.Try
  * --conf spark.sparkmeasure.kafkaBroker=kafka.example.com:9092
  * --conf spark.sparkmeasure.kafkaTopic=spark-metrics
  * --conf spark.sparkmeasure.kafka.* = Additional Kafka properties
- * --conf spark.sparkmeasure.customFields.* = Custom metadata to include in app events
+ * --conf spark.sparkmeasure.appLabels.* = Custom metadata to include in app events
  *
  * More configuration parameters and how-to use: see KafkaSink
  *
  * Example custom configs:
- * --conf spark.sparkmeasure.customFields.project=my-project
- * --conf spark.sparkmeasure.customFields.environment=production
- * --conf spark.sparkmeasure.customFields.team=engineering
+ * --conf spark.sparkmeasure.appLabels.project=my-project
+ * --conf spark.sparkmeasure.appLabels.environment=production
+ * --conf spark.sparkmeasure.appLabels.team=engineering
  *
  */
 class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
@@ -64,7 +64,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
     appId = applicationStart.appId.getOrElse("noAppId")
     appName = applicationStart.appName
     startTime = applicationStart.time
-    val customFields = extractCustomFields(conf)
+    val appLabels = extractAppLabels(conf)
 
     val epochMillis = System.currentTimeMillis()
 
@@ -74,7 +74,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
       "appName" -> appName,
       "startTime" -> startTime,
       "epochMillis" -> epochMillis
-    ) ++ customFields
+    ) ++ appLabels
 
     report(appStartMetrics)
   }
@@ -158,7 +158,7 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
     val successful = succeededJobsCount > 0 && failedJobsCount == 0
     val epochMillis = System.currentTimeMillis()
     val configurations = conf.getAll.toMap
-    val customFields = extractCustomFields(conf)
+    val appLabels = extractAppLabels(conf)
 
     val appEndMetrics = Map[String, Any](
       "name" -> "applications_ended",
@@ -182,17 +182,17 @@ class AppEventKafkaSink(conf: SparkConf) extends KafkaSink(conf) {
       "numTaskKilled" -> numTaskKilled,
       "epochMillis" -> epochMillis,
       "configurations" -> configurations
-    ) ++ customFields
+    ) ++ appLabels
 
     report(appEndMetrics)
     super.onApplicationEnd(applicationEnd)
   }
 
-  private def extractCustomFields(conf: SparkConf): Map[String, String] = {
+  private def extractAppLabels(conf: SparkConf): Map[String, String] = {
     Try {
       conf.getAll
-        .filter { case (key, _) => key.startsWith("spark.sparkmeasure.customFields.") }
-        .map { case (key, value) => (key.stripPrefix("spark.sparkmeasure.customFields."), value) }
+        .filter { case (key, _) => key.startsWith("spark.sparkmeasure.appLabels.") }
+        .map { case (key, value) => (key.stripPrefix("spark.sparkmeasure."), value) }
         .toMap
     }.getOrElse(Map.empty[String, String])
   }
