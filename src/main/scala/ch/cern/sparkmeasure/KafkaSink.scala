@@ -2,7 +2,7 @@ package ch.cern.sparkmeasure
 
 import org.apache.kafka.clients.producer.{KafkaProducer, Producer, ProducerRecord}
 import org.apache.kafka.common.serialization.ByteArraySerializer
-import org.apache.spark.SparkConf
+import org.apache.spark.{SparkConf, TaskFailedReason, TaskKilled}
 import org.apache.spark.scheduler._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.ui.{SparkListenerSQLExecutionEnd, SparkListenerSQLExecutionStart}
@@ -10,6 +10,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 import java.nio.charset.StandardCharsets
 import java.util.Properties
+import scala.collection.mutable
 import scala.util.Try
 
 /**
@@ -29,6 +30,8 @@ import scala.util.Try
  * example: --conf spark.sparkmeasure.kafkaTopic=sparkmeasure-stageinfo
  * spark.sparkmeasure.kafka.* = Other kafka properties
  * example: --conf spark.sparkmeasure.kafka.ssl.keystore.location=/var/private/ssl/kafka.server.keystore.jks
+ * spark.sparkmeasure.appLabels.* = Custom labels to include in application start and end events
+ * example: --conf spark.sparkmeasure.appLabels.environment=production
  *
  * This code depends on "kafka clients", you may need to add the dependency:
  * --packages org.apache.kafka:kafka-clients:3.2.1
@@ -49,6 +52,31 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     case _ => "noAppId"
   }
 
+  // Application tracking
+  private var appName: String = "noAppName"
+  private var startTime: Long = 0L
+
+  // Executor tracking
+  private val executorIds: mutable.HashSet[String] = mutable.HashSet.empty[String]
+  private var totalExecutorCount: Int = 0
+  private var executorsFailed: Int = 0
+  private var executorsKilled: Int = 0
+
+  // Job tracking
+  private var totalJobsCompleted: Int = 0
+  private var succeededJobsCount: Int = 0
+  private var failedJobsCount: Int = 0
+
+  // Stage tracking
+  private var totalStagesCompleted: Int = 0
+  private var succeededStagesCount: Int = 0
+  private var failedStagesCount: Int = 0
+
+  // Task tracking
+  private var totalTaskCount: Int = 0
+  private var numTaskFailed: Int = 0
+  private var numTaskKilled: Int = 0
+
   override def onExecutorAdded(executorAdded: SparkListenerExecutorAdded): Unit = {
     val executorInfo = executorAdded.executorInfo
     val epochMillis = System.currentTimeMillis()
@@ -62,6 +90,25 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "epochMillis" -> epochMillis
     )
     report(metrics)
+
+    if (executorAdded != null && executorAdded.executorId != null) {
+      val execId = executorAdded.executorId
+      if (!executorIds.contains(execId) && execId != "driver") {
+        executorIds += execId
+        totalExecutorCount += 1
+      }
+    }
+  }
+
+  override def onExecutorRemoved(executorRemoved: SparkListenerExecutorRemoved): Unit = {
+    if (executorRemoved != null && executorRemoved.reason != null) {
+      executorRemoved.reason match {
+        case reason if reason.toLowerCase.contains("kill") =>
+          executorsKilled += 1
+        case _ =>
+          executorsFailed += 1
+      }
+    }
   }
 
   override def onStageSubmitted(stageSubmitted: SparkListenerStageSubmitted): Unit = {
@@ -80,7 +127,6 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     )
     report(metrics)
   }
-
 
   override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
     val stageId = stageCompleted.stageInfo.stageId.toString
@@ -140,6 +186,17 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     )
 
     report(stageTaskMetrics)
+
+    if (stageCompleted != null && stageCompleted.stageInfo != null) {
+      val stageInfo = stageCompleted.stageInfo
+      totalStagesCompleted += 1
+
+      if (stageInfo.failureReason.isDefined) {
+        failedStagesCount += 1
+      } else {
+        succeededStagesCount += 1
+      }
+    }
   }
 
   override def onOtherEvent(event: SparkListenerEvent): Unit = {
@@ -203,13 +260,72 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "epochMillis" -> epochMillis
     )
     report(jobEndMetrics)
+
+    if (jobEnd != null) {
+      totalJobsCompleted += 1
+
+      jobEnd.jobResult match {
+        case org.apache.spark.scheduler.JobSucceeded =>
+          succeededJobsCount += 1
+        case _ =>
+          failedJobsCount += 1
+      }
+    }
   }
 
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
     appId = applicationStart.appId.getOrElse("noAppId")
+    appName = applicationStart.appName
+    startTime = applicationStart.time
+    val appLabels = extractAppLabels(conf)
+    val epochMillis = System.currentTimeMillis()
+
+    val appStartMetrics = Map[String, Any](
+      "name" -> "applications_started",
+      "appId" -> appId,
+      "appName" -> appName,
+      "startTime" -> startTime,
+      "epochMillis" -> epochMillis
+    ) ++ appLabels
+
+    report(appStartMetrics)
   }
 
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
+    val completionTime = applicationEnd.time
+    val safeEndTime = if (completionTime > 0) completionTime else System.currentTimeMillis()
+    val duration = if (startTime > 0) safeEndTime - startTime else 0L
+    val successful = succeededJobsCount > 0 && failedJobsCount == 0
+    val epochMillis = System.currentTimeMillis()
+    val configurations = conf.getAll.toMap
+    val appLabels = extractAppLabels(conf)
+
+    val appEndMetrics = Map[String, Any](
+      "name" -> "applications_ended",
+      "appId" -> appId,
+      "appName" -> appName,
+      "startTime" -> startTime,
+      "completionTime" -> completionTime,
+      "duration" -> duration,
+      "successful" -> successful,
+      "totalExecutorCount" -> totalExecutorCount,
+      "executorsFailed" -> executorsFailed,
+      "executorsKilled" -> executorsKilled,
+      "totalJobsCompleted" -> totalJobsCompleted,
+      "succeededJobsCount" -> succeededJobsCount,
+      "failedJobsCount" -> failedJobsCount,
+      "numStagesCompleted" -> totalStagesCompleted,
+      "numSucceededStages" -> succeededStagesCount,
+      "numFailedStages" -> failedStagesCount,
+      "totalTaskCount" -> totalTaskCount,
+      "numTaskFailed" -> numTaskFailed,
+      "numTaskKilled" -> numTaskKilled,
+      "epochMillis" -> epochMillis,
+      "configurations" -> configurations
+    ) ++ appLabels
+
+    report(appEndMetrics)
+
     logger.info(s"Spark application ended, timestamp = ${applicationEnd.time}, closing Kafka connection.")
     synchronized(
       if (Option(producer).isDefined) {
@@ -221,6 +337,22 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
         producer = null
       }
     )
+  }
+
+  override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
+    if (taskEnd != null) {
+      totalTaskCount += 1
+
+      if (taskEnd.reason != null) {
+        taskEnd.reason match {
+          case _: TaskKilled =>
+            numTaskKilled += 1
+          case _: TaskFailedReason =>
+            numTaskFailed += 1
+          case _ =>
+        }
+      }
+    }
   }
 
   protected def report[T <: Any](metrics: Map[String, T]): Unit = {
@@ -256,6 +388,14 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     )
   }
 
+  private def extractAppLabels(conf: SparkConf): Map[String, String] = {
+    Try {
+      conf.getAll
+        .filter { case (key, _) => key.startsWith("spark.sparkmeasure.appLabels.") }
+        .map { case (key, value) => (key.stripPrefix("spark.sparkmeasure."), value) }
+        .toMap
+    }.getOrElse(Map.empty[String, String])
+  }
 }
 
 /**
@@ -282,6 +422,8 @@ class KafkaSinkExtended(conf: SparkConf) extends KafkaSink(conf) {
   }
 
   override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
+    super.onTaskEnd(taskEnd)
+
     val taskInfo = taskEnd.taskInfo
     val taskmetrics = taskEnd.taskMetrics
     val epochMillis = System.currentTimeMillis()
