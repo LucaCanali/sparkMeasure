@@ -285,7 +285,6 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
     val completionTime = applicationEnd.time
     val safeEndTime = if (completionTime > 0) completionTime else System.currentTimeMillis()
     val duration = if (startTime > 0) safeEndTime - startTime else 0L
-    val successful = succeededJobsCount > 0 && failedJobsCount == 0
     val epochMillis = System.currentTimeMillis()
     val configurations = conf.getAll.toMap
     val appLabels = extractAppLabels(conf)
@@ -297,7 +296,6 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "startTime" -> startTime,
       "completionTime" -> completionTime,
       "duration" -> duration,
-      "successful" -> successful,
       "executorsFailed" -> executorsFailed,
       "executorsKilled" -> executorsKilled,
       "totalJobsCompleted" -> totalJobsCompleted,
