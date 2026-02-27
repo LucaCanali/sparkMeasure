@@ -112,7 +112,7 @@ class KafkaSink(conf: SparkConf) extends SparkListener {
       "completionTime" -> completionTime,
       "failureReason" -> stageCompleted.stageInfo.failureReason.getOrElse(""),
       "executorRunTime" -> taskMetrics.executorRunTime,
-      "executorCpuTime" -> taskMetrics.executorRunTime,
+      "executorCpuTime" -> taskMetrics.executorCpuTime,
       "executorDeserializeCpuTime" -> taskMetrics.executorDeserializeCpuTime,
       "executorDeserializeTime" -> taskMetrics.executorDeserializeTime,
       "jvmGCTime" -> taskMetrics.jvmGCTime,
