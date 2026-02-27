@@ -11,19 +11,34 @@ crossScalaVersions := Seq("2.12.18", "2.13.16")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-// ─── Dependencies ──────────────────────────────────────────────────────────────
+// ─── Dependencies ─────────────────────────────────────────────────────────────
 val testDeps = Seq(
-  "org.scalatest"      %% "scalatest"               % "3.2.19" % Test,
-  "org.scalatest"      %% "scalatest-shouldmatchers"% "3.2.19" % Test,
-  "org.wiremock"        % "wiremock"                % "3.13.1" % Test
+  "org.scalatest" %% "scalatest"                % "3.2.19" % Test,
+  "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test,
+  "org.wiremock"   % "wiremock"                 % "3.13.1" % Test
+)
+
+// Keep Jackson compatible with Spark 3.5.x
+val jacksonV = "2.15.2"
+
+dependencyOverrides ++= Seq(
+  "com.fasterxml.jackson.core"   % "jackson-core"        % jacksonV,
+  "com.fasterxml.jackson.core"   % "jackson-annotations" % jacksonV,
+  "com.fasterxml.jackson.core"   % "jackson-databind"    % jacksonV,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonV
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark"            %% "spark-sql"            % "3.5.7",
-  "com.fasterxml.jackson.module"%% "jackson-module-scala" % "2.20.0",
-  "org.slf4j"                    % "slf4j-api"            % "2.0.17",
-  "org.influxdb"                 % "influxdb-java"        % "2.25",
-  "org.apache.kafka"             % "kafka-clients"        % "4.1.0"
+  "org.apache.spark" %% "spark-sql" % "3.5.8" % Provided,
+  "org.slf4j"        %  "slf4j-api" % "2.0.17" % Provided,
+
+  // Do NOT bundle Jackson in your published jar; Spark provides it.
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonV % Provided,
+
+  "org.influxdb"     %  "influxdb-java" % "2.25",
+
+  // Use Kafka 3.x line to reduce conflicts with Spark environments (avoid Kafka 4.x)
+  "org.apache.kafka" %  "kafka-clients" % "3.9.1"
 ) ++ testDeps
 
 // ─── Test JVM flags (needed by TaskMetricsTest & StageMetricsTest) ─────────────

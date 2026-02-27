@@ -4,61 +4,109 @@ on:
   push:
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-
+  scala:
+    name: Scala build & test (Java ${{ matrix.java-version }})
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [ '3.10', '3.12' ]
         java-version: [ 11, 17 ]
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
 
-    - name: Set up Java ${{ matrix.java-version }}
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: ${{ matrix.java-version }}
-        cache: sbt
-    - uses: sbt/setup-sbt@v1
-      with:
-        sbt-runner-version: 1.11.7
+      - name: Setup JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java-version }}
+          cache: sbt
 
-    - name: Build using sbt for all Scala versions supported
-      run: sbt +package
+      - name: Setup sbt 1.12.4
+        uses: sbt/setup-sbt@v1
+        with:
+          sbt-runner-version: 1.12.4
 
-    - name: Run tests for all Scala versions supported
-      run: sbt +test
+      - name: Show tool versions
+        run: |
+          java -version
+          sbt --version
 
-    - name: Upload sparkMeasure package for Scala 2.13 (Java 17 and Python 3.12)
-      if: matrix.java-version == '17' && matrix.python-version == '3.12'
-      uses: actions/upload-artifact@v4
-      with:
-        name: sparkMeasure package scala 2.13
-        path: target/scala-2.13/*.jar
-      # This upload step is conditional on Java 17 and Python 3.12
+      - name: Compile & test (all cross Scala versions)
+        run: sbt -v +test
 
-    - name: Upload sparkMeasure package for Scala 2.12 (Java 11 and Python 3.12)
-      if: matrix.java-version == '11' && matrix.python-version == '3.12'
-      uses: actions/upload-artifact@v4
-      with:
-        name: sparkMeasure package scala 2.12
-        path: target/scala-2.12/*.jar
-      # This upload step is conditional on Java 11 and Python 3.12
+      - name: Package (all cross Scala versions)
+        run: sbt -v +package
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Upload jars (from Java 17 only)
+        if: matrix.java-version == 17
+        uses: actions/upload-artifact@v4
+        with:
+          name: sparkMeasure-jars
+          path: |
+            **/target/scala-2.12/*.jar
+            **/target/scala-2.13/*.jar
+          if-no-files-found: error
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r python/requirements.txt
+  python:
+    name: Python tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    needs: scala
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.10", "3.13" ]
 
-    - name: Run pytest
-      run: |
-        pytest python/sparkmeasure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download sparkMeasure jars
+        uses: actions/download-artifact@v4
+        with:
+          name: sparkMeasure-jars
+          path: _sparkmeasure_jars
+
+      - name: Place Scala 2.12 jar where python tests expect it
+        run: |
+          mkdir -p target/scala-2.12
+          # Copy any sparkMeasure Scala 2.12 jar into the expected folder
+          find _sparkmeasure_jars -type f -path "*/scala-2.12/*.jar" -name "spark-measure_*.jar" -exec cp -v {} target/scala-2.12/ \;
+          echo "Contents of target/scala-2.12:"
+          ls -lah target/scala-2.12
+          # Fail fast with a clear message if nothing was copied
+          test -n "$(ls -1 target/scala-2.12/spark-measure_*.jar 2>/dev/null | head -n 1)" || (echo "No spark-measure_*.jar found for Scala 2.12 after download/copy." && exit 1)
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: python/requirements.txt
+
+      # Keep Java if Python tests use PySpark
+      - name: Setup JDK 17 (for PySpark tests)
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Python dependencies
+        working-directory: python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pytest
+        run: pytest -q python/sparkmeasure
