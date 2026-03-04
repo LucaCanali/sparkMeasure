@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java-version: [ 11, 17 ]
+        java-version: [ 17, 21 ]
 
     steps:
       - name: Checkout
@@ -55,7 +55,6 @@ jobs:
         with:
           name: sparkMeasure-jars
           path: |
-            **/target/scala-2.12/*.jar
             **/target/scala-2.13/*.jar
           if-no-files-found: error
 
@@ -78,15 +77,15 @@ jobs:
           name: sparkMeasure-jars
           path: _sparkmeasure_jars
 
-      - name: Place Scala 2.12 jar where python tests expect it
+      - name: Place Scala 2.13 jar where python tests expect it
         run: |
-          mkdir -p target/scala-2.12
-          # Copy any sparkMeasure Scala 2.12 jar into the expected folder
-          find _sparkmeasure_jars -type f -path "*/scala-2.12/*.jar" -name "spark-measure_*.jar" -exec cp -v {} target/scala-2.12/ \;
-          echo "Contents of target/scala-2.12:"
-          ls -lah target/scala-2.12
+          mkdir -p target/scala-2.13
+          # Copy any sparkMeasure Scala 2.13 jar into the expected folder
+          find _sparkmeasure_jars -type f -path "*/scala-2.13/*.jar" -name "spark-measure_*.jar" -exec cp -v {} target/scala-2.13/ \;
+          echo "Contents of target/scala-2.13:"
+          ls -lah target/scala-2.13
           # Fail fast with a clear message if nothing was copied
-          test -n "$(ls -1 target/scala-2.12/spark-measure_*.jar 2>/dev/null | head -n 1)" || (echo "No spark-measure_*.jar found for Scala 2.12 after download/copy." && exit 1)
+          test -n "$(ls -1 target/scala-2.13/spark-measure_*.jar 2>/dev/null | head -n 1)" || (echo "No spark-measure_*.jar found for Scala 2.13 after download/copy." && exit 1)
 
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5

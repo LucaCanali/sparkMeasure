@@ -6,8 +6,7 @@ name := "spark-measure"
 
 version := "0.28-SNAPSHOT"
 
-scalaVersion       := "2.12.18"
-crossScalaVersions := Seq("2.12.18", "2.13.16")
+scalaVersion       := "2.13.18"
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
@@ -18,22 +17,23 @@ val testDeps = Seq(
   "org.wiremock"   % "wiremock"                 % "3.13.1" % Test
 )
 
-// Keep Jackson compatible with Spark 3.5.x
-val jacksonV = "2.15.2"
+// Spark 4.1.x Jackson line
+val jacksonCoreV = "2.20.0"
+val jacksonAnnV  = "2.20"
 
 dependencyOverrides ++= Seq(
-  "com.fasterxml.jackson.core"   % "jackson-core"        % jacksonV,
-  "com.fasterxml.jackson.core"   % "jackson-annotations" % jacksonV,
-  "com.fasterxml.jackson.core"   % "jackson-databind"    % jacksonV,
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonV
+  "com.fasterxml.jackson.core"   % "jackson-core"          % jacksonCoreV,
+  "com.fasterxml.jackson.core"   % "jackson-databind"      % jacksonCoreV,
+  "com.fasterxml.jackson.core"   % "jackson-annotations"   % jacksonAnnV,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonCoreV
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-sql" % "3.5.8" % Provided,
+  "org.apache.spark" %% "spark-sql" % "4.1.1" % Provided,
   "org.slf4j"        %  "slf4j-api" % "2.0.17" % Provided,
 
-  // Do NOT bundle Jackson in your published jar; Spark provides it.
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonV % Provided,
+  // Do not bundle Jackson in published jar; Spark provides it.
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonCoreV % Provided,
 
   "org.influxdb"     %  "influxdb-java" % "2.25",
 
