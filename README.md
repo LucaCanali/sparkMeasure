@@ -275,16 +275,17 @@ To get SparkMeasure, choose one of the following options:
   pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.27
   pip install sparkmeasure
   ```
-### Including sparkMeasure in your Spark environment
 
-Choose your preferred method:
+### Add sparkMeasure to your Spark runtime classpath
 
-* Use the `--packages` option:
+Choose one of the following options. You only need a single method to make sparkMeasure available to Spark.
+
+* Preferred: use the `--packages` option to download sparkMeasure from Maven Central and automatically resolve its dependencies:
 
   ```bash
   --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
   ```
-* Directly reference the JAR file:
+* Alternatively, provide the JAR yourself with one of these direct JAR/classpath methods:
 
   ```bash
   --jars /path/to/spark-measure_2.13-0.27.jar
@@ -292,8 +293,7 @@ Choose your preferred method:
   --conf spark.driver.extraClassPath=/path/to/spark-measure_2.13-0.27.jar
   ```
 
-
---
+---
 ## Running unit tests
 
 To ensure the integrity of the sparkMeasure codebase and validate your setup, you can run the built-in unit tests. These tests are designed to verify core functionality.
