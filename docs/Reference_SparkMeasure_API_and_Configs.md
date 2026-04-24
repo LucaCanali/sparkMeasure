@@ -433,6 +433,54 @@ This code depends on "kafka-clients", you may need to add the dependency explici
   --packages org.apache.kafka:kafka-clients:3.7.0
 ```
 
+## KafkaSinkV2 and KafkaSinkV2Extended
+
+```
+class KafkaSinkV2(conf: SparkConf) extends KafkaSink(conf)
+class KafkaSinkV2Extended(conf: SparkConf) extends KafkaSinkV2(conf)
+
+**KafkaSinkV2** is an enhanced version of KafkaSink that extends the SparkListener infrastructure
+with application-level aggregated metrics and custom labels support.
+
+Key Features:
+1. All stage/executor/query metrics from the base KafkaSink
+2. Application-level aggregated counters (executor/job/stage/task counts)
+3. Custom labels via spark.sparkmeasure.appLabels.* configurations
+4. Enhanced applications_started and applications_ended events with metadata
+5. Automatic capture of selected Spark configurations
+
+**Backward Compatibility:** KafkaSinkV2 emits all the same event types as KafkaSink,
+ensuring existing consumers continue to work. It adds two new event types that can be
+safely ignored by consumers that don't need them.
+
+How to use:
+*   --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSinkV2
+
+**KafkaSinkV2Extended** adds verbose task-level metrics (can generate O(Number_of_tasks) data)
+* How to use:
+*   --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSinkV2Extended
+
+Configuration - KafkaSinkV2 parameters:
+
+Required:
+--conf spark.sparkmeasure.kafkaBroker = Kafka broker endpoint URL
+       Example: --conf spark.sparkmeasure.kafkaBroker=kafka.your-site.com:9092
+--conf spark.sparkmeasure.kafkaTopic = Kafka topic
+       Example: --conf spark.sparkmeasure.kafkaTopic=spark-metrics
+
+Optional - Custom labels (recommended for filtering and organization):
+--conf spark.sparkmeasure.appLabels.<labelKey> = Custom metadata value
+       Example: --conf spark.sparkmeasure.appLabels.project=my-project
+       Example: --conf spark.sparkmeasure.appLabels.environment=production
+       Example: --conf spark.sparkmeasure.appLabels.team=data-engineering
+
+For detailed event schemas and examples, see:
+  - docs/Flight_recorder_mode_KafkaSink.md
+
+This code depends on "kafka-clients", you may need to add the dependency explicitly, example:
+  --packages org.apache.kafka:kafka-clients:3.7.0
+```
+
 ## Prometheus PushGatewaySink
 ```
 class PushGatewaySink(conf: SparkConf) extends SparkListener
