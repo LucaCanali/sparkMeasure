@@ -1,3 +1,2 @@
-pyspark==4.1.1
+pyspark==4.2.0.dev5
 pytest
-

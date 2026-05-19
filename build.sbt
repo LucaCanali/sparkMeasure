@@ -17,7 +17,7 @@ val testDeps = Seq(
   "org.wiremock"   % "wiremock"                 % "3.13.1" % Test
 )
 
-// Spark 4.1.x Jackson line
+// Spark 4.2.x Jackson line
 val jacksonCoreV = "2.20.0"
 val jacksonAnnV  = "2.20"
 
@@ -29,7 +29,7 @@ dependencyOverrides ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-sql" % "4.1.1" % Provided,
+  "org.apache.spark" %% "spark-sql" % "4.2.0-preview5" % Provided,
   "org.slf4j"        %  "slf4j-api" % "2.0.17" % Provided,
 
   // Do not bundle Jackson in published jar; Spark provides it.
