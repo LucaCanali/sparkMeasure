@@ -46,7 +46,7 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-pyspark = ["pyspark>=3.0.0"]
+pyspark = ["pyspark==4.1.1"]
 
 [project.urls]
 Homepage = "https://github.com/lucacanali/sparkMeasure"
