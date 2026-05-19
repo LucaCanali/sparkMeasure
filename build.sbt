@@ -4,7 +4,7 @@
 
 name := "spark-measure"
 
-version := "0.28-SNAPSHOT"
+version := "0.29-SNAPSHOT"
 
 scalaVersion       := "2.13.18"
 
@@ -81,4 +81,3 @@ scmInfo := Some(
     connection = "scm:git:git@github.com:LucaCanali/sparkMeasure.git"
   )
 )
-
