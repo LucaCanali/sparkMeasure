@@ -29,15 +29,15 @@ https://prometheus.io/docs/instrumenting/exposition_formats/
  * If some name starts with digit leading '_' will be added.
 
 **Examples:**
- 
+
 - Start the prometheus gateway. For testing, you can use:
 `docker run -d -p 9091:9091 prom/pushgateway`
 
 1. Measure metrics at the Stage level (example in Scala):
 ```
-bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27 
+bin/spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
 
-val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark) 
+val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
 stageMetrics.begin()
 
 ...execute one or more Spark jobs...
@@ -84,4 +84,4 @@ Added method:
    * def sendReportPrometheus(serverIPnPort: String, metricsJob: String,
      labelName: String = sparkSession.sparkContext.appName,
      labelValue: String = sparkSession.sparkContext.applicationId): Unit -> send metrics to prometheus pushgateway
-   
+

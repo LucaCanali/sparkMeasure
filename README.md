@@ -20,7 +20,7 @@ and spark-shell/pyspark environments.
   of Spark jobs under various configurations or code changes.
 - **Batch Job Analysis:** With Flight Recorder mode sparkMeasure transparently records batch job metrics
   for later analysis.
-- **Monitoring Capabilities:** Integrates with external systems like Apache Kafka, 
+- **Monitoring Capabilities:** Integrates with external systems like Apache Kafka,
   Prometheus Push Gateway, Prometheus JMX Exporter, and InfluxDB for extensive monitoring.
 - **Educational Tool:** Serves as a practical example of implementing Spark Listeners for the collection
   of detailed Spark task metrics.
@@ -95,7 +95,7 @@ Main author and contact: Luca.Canali@cern.ch
   # Python CLI
   # pip install pyspark
   pip install sparkmeasure
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
 
   # Import sparkMeasure
   from sparkmeasure import StageMetrics
@@ -118,12 +118,12 @@ Main author and contact: Luca.Canali@cern.ch
   # get metrics as a dictionary
   metrics = stagemetrics.aggregate_stage_metrics()
   ```
-Note: for Spark 3.x with Scala 2.12, use `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.27` 
-instead of `--packages ch.cern.sparkmeasure:spark-measure_2.13:0.27`
+Note: for Spark 3.x with Scala 2.12, use `--packages ch.cern.sparkmeasure:spark-measure_2.12:0.28`
+instead of `--packages ch.cern.sparkmeasure:spark-measure_2.13:0.28`
 
 #### Scala CLI
   ```
-  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
 
   val stageMetrics = ch.cern.sparkmeasure.StageMetrics(spark)
   stageMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -206,7 +206,7 @@ Notes:
 This is similar but slightly different from the example above as it collects metrics at the Task-level rather than Stage-level
   ```
   # Scala CLI
-  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
+  spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
 
   val taskMetrics = ch.cern.sparkmeasure.TaskMetrics(spark)
   taskMetrics.runAndMeasure(spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show())
@@ -215,7 +215,7 @@ This is similar but slightly different from the example above as it collects met
   # Python CLI
   # pip install pyspark
   pip install sparkmeasure
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
 
   from sparkmeasure import TaskMetrics
   taskmetrics = TaskMetrics(spark)
@@ -229,8 +229,8 @@ This is similar but slightly different from the example above as it collects met
 
 | Spark Version  | Recommended SparkMeasure Version | Scala Version       |
 | -------------- |----------------------------------|---------------------|
-| Spark 4.x      | 0.27 (latest)                    | Scala 2.13          |
-| Spark 3.x      | 0.27 (latest)                    | Scala 2.12 and 2.13 |
+| Spark 4.x      | 0.28 (latest)                    | Scala 2.13          |
+| Spark 3.x      | 0.28 (latest)                    | Scala 2.12 and 2.13 |
 | Spark 2.4, 2.3 | 0.19                             | Scala 2.11          |
 | Spark 2.2, 2.1 | 0.16                             | Scala 2.11          |
 
@@ -244,7 +244,7 @@ To get SparkMeasure, choose one of the following options:
 
 2. **Specific Versions:**
 
-    * Download JAR files from the [sparkMeasure release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.27).
+    * Download JAR files from the [sparkMeasure release notes](https://github.com/LucaCanali/sparkMeasure/releases/tag/v0.28).
 
 3. **Latest Development Builds:**
 
@@ -258,21 +258,21 @@ To get SparkMeasure, choose one of the following options:
 
 #### Spark 4 with Scala 2.13
 
-* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27`
+* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28`
 * **Python:**
 
   ```bash
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
   pip install sparkmeasure
   ```
 
 #### Spark 3 with Scala 2.12
 
-* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.27`
+* **Scala:** `spark-shell --packages ch.cern.sparkmeasure:spark-measure_2.12:0.28`
 * **Python:**
 
   ```bash
-  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.27
+  pyspark --packages ch.cern.sparkmeasure:spark-measure_2.12:0.28
   pip install sparkmeasure
   ```
 
@@ -283,14 +283,14 @@ Choose one of the following options. You only need a single method to make spark
 * Preferred: use the `--packages` option to download sparkMeasure from Maven Central and automatically resolve its dependencies:
 
   ```bash
-  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
+  --packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
   ```
 * Alternatively, provide the JAR yourself with one of these direct JAR/classpath methods:
 
   ```bash
-  --jars /path/to/spark-measure_2.13-0.27.jar
-  --jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.27/spark-measure_2.13-0.27.jar
-  --conf spark.driver.extraClassPath=/path/to/spark-measure_2.13-0.27.jar
+  --jars /path/to/spark-measure_2.13-0.28.jar
+  --jars https://github.com/LucaCanali/sparkMeasure/releases/download/v0.28/spark-measure_2.13-0.28.jar
+  --conf spark.driver.extraClassPath=/path/to/spark-measure_2.13-0.28.jar
   ```
 
 ---

@@ -114,7 +114,7 @@ bin/spark-shell \
 --conf spark.extraListeners=ch.cern.sparkmeasure.KafkaSink \
 --conf spark.sparkmeasure.kafkaBroker=localhost:9092 \
 --conf spark.sparkmeasure.kafkaTopic=metrics
---packages ch.cern.sparkmeasure:spark-measure_2.13:0.27
+--packages ch.cern.sparkmeasure:spark-measure_2.13:0.28
 ```
 
 - Look at the metrics being written into Kafka:

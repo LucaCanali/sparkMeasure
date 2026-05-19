@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sparkmeasure"
-version = "0.27.0"
+version = "0.28.0"
 description = "Python API for sparkMeasure, a tool for performance troubleshooting of Apache Spark workloads."
 readme = { text = """
 SparkMeasure is a tool for performance troubleshooting of Apache Spark workloads.
@@ -36,6 +36,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Operating System :: OS Independent",
   "License :: OSI Approved :: Apache Software License",
 ]
