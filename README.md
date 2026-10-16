@@ -55,14 +55,13 @@ and spark-shell/pyspark environments.
 
 ### Links to related work on Spark Performance
 
-- **[Building an Apache Spark Performance Lab](https://db-blog.web.cern.ch/node/195)**
+- **[Building an Apache Spark Performance Lab](https://externaltable.blogspot.com/2024/04/building-apache-spark-performance-lab.html)**
   Guide to setting up a Spark performance testing environment.
+- **[Unlocking Apache Spark Performance: Three Open-Source Tools We Use at CERN](https://externaltable.blogspot.com/2026/05/unlocking-apache-spark-performance.html)**
 - **[TPC-DS Benchmark with PySpark](https://github.com/LucaCanali/Miscellaneous/tree/master/Performance_Testing/TPCDS_PySpark)**
   Tool for running TPC-DS with PySpark, instrumented with `sparkMeasure`.
 - **[Spark Monitoring Dashboard](https://github.com/cerndb/spark-dashboard)**
   Custom monitoring solution with real-time dashboards for Spark.
-- **[Flamegraphs for Profiling Spark Jobs](https://github.com/LucaCanali/Miscellaneous/blob/master/Spark_Notes/Tools_Spark_Pyroscope_FlameGraph.md)**
-  Guide to profiling Spark with Pyroscope and Flamegraphs.
 - **[Advanced Notes on Apache Spark](https://github.com/LucaCanali/Miscellaneous/tree/master/Spark_Notes)**
   Tips, configuration, and troubleshooting for Spark.
 - **[Introductory Course on Apache Spark](https://sparktraining.web.cern.ch/)**
