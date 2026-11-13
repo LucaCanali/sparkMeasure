@@ -99,6 +99,26 @@ class PushGatewayTest extends AnyFlatSpec with Matchers {
     }
 
 
+    /** Send metrics with empty and null label name, the default label name is expected */
+    val urlNoLabelName = urlBase + s"/type/" + metricsType + s"/NoLabelName/" + labelValue
+
+    wireMockServer.stubFor(post(urlEqualTo(urlNoLabelName))
+      .willReturn(
+        aResponse()
+          .withStatus(200)
+      )
+    )
+
+    pushGateway.post(str_metrics, metricsType, s"", labelValue)
+    pushGateway.post(str_metrics, metricsType, null, labelValue)
+
+    val reqListNoLabelName = wireMockServer.findAll(postRequestedFor(urlEqualTo(urlNoLabelName)))
+
+    it should "use default label name if label name is empty or null" in {
+      reqListNoLabelName.size() shouldEqual 2
+    }
+
+
     wireMockServer.stop()
   }
 
