@@ -112,7 +112,7 @@ case class PushGateway(config: PushgatewayConfig) {
     }
 
     var urlLabelName = s"NoLabelName"
-    if ((urlLabelName != null) && (urlLabelName != ""))
+    if ((labelName != null) && (labelName != ""))
       urlLabelName = validateLabel(labelName)
 
     var urlLabelValue = s"NoLabelValue"
